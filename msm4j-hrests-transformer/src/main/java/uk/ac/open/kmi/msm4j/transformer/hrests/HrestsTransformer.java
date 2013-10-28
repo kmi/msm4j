@@ -19,8 +19,6 @@ package uk.ac.open.kmi.msm4j.transformer.hrests;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.commons.cli.*;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -59,7 +57,7 @@ public class HrestsTransformer implements ServiceTransformer {
 
     // Include information about the software version
     private static final String VERSION_PROP_FILE = "hrests-transformer.properties";
-    private static final String VERSION_PROP = "version";
+    private static final String VERSION_PROP = "hrests-transformer.version";
     private static final String VERSION_UNKNOWN = "Unknown";
 
     private
@@ -88,21 +86,8 @@ public class HrestsTransformer implements ServiceTransformer {
     public HrestsTransformer() {
         parser = new Tidy();
         xformFactory = TransformerFactory.newInstance();
-        if (this.version == null || this.version == VERSION_UNKNOWN) {
-            obtainVersionInformation();
-        }
     }
 
-    private void obtainVersionInformation() {
-        log.info("Loading version information from {}", VERSION_PROP_FILE);
-        PropertiesConfiguration config;
-        try {
-            config = new PropertiesConfiguration(VERSION_PROP_FILE);
-            this.version = config.getString(VERSION_PROP, VERSION_UNKNOWN);
-        } catch (ConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
 
     /**
      * Obtains the Media Type this plugin supports for transformation.

@@ -25,8 +25,6 @@ import com.ebmwebsourcing.easywsdl11.api.element.*;
 import com.ebmwebsourcing.easywsdl11.api.type.TBindingOperationMessage;
 import com.ebmwebsourcing.easywsdl11.api.type.TDocumented;
 import org.apache.commons.cli.*;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -60,7 +58,7 @@ public class SawsdlTransformer implements ServiceTransformer {
 
     // Include information about the software version
     private static final String VERSION_PROP_FILE = "sawsdl-transformer.properties";
-    private static final String VERSION_PROP = "version";
+    private static final String VERSION_PROP = "sawsdl-transformer.version";
     private static final String VERSION_UNKNOWN = "Unknown";
     private String version = VERSION_UNKNOWN;
 
@@ -107,19 +105,6 @@ public class SawsdlTransformer implements ServiceTransformer {
         log.debug(this.getJaxpImplementationInfo("XPathFactory", XPathFactory.newInstance().getClass()));
         log.debug(this.getJaxpImplementationInfo("TransformerFactory", TransformerFactory.newInstance().getClass()));
         log.debug(this.getJaxpImplementationInfo("SAXParserFactory", SAXParserFactory.newInstance().getClass()));
-
-        obtainVersionInformation();
-    }
-
-    private void obtainVersionInformation() {
-        log.info("Loading version information from {}", VERSION_PROP_FILE);
-        PropertiesConfiguration config = null;
-        try {
-                config = new PropertiesConfiguration(VERSION_PROP_FILE);
-            this.version = config.getString(VERSION_PROP, VERSION_UNKNOWN);
-        } catch (ConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
     }
 
     public void setProxy(String proxyHost, String proxyPort) {

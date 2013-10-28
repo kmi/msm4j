@@ -18,8 +18,14 @@ package uk.ac.open.kmi.msm4j.transformer.sawsdl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
 import uk.ac.open.kmi.msm4j.io.TransformationPluginModule;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * SawsdlTransformationPlugin is a Guice module providing support for transforming SAWSDL services into MSM
@@ -29,9 +35,24 @@ import uk.ac.open.kmi.msm4j.io.TransformationPluginModule;
  */
 public class SawsdlTransformationPlugin extends AbstractModule implements TransformationPluginModule {
 
+    private static final Logger log = LoggerFactory.getLogger(SawsdlTransformationPlugin.class);
+
     @Override
     protected void configure() {
         MapBinder<String, ServiceTransformer> binder = MapBinder.newMapBinder(binder(), String.class, ServiceTransformer.class);
         binder.addBinding(SawsdlTransformer.mediaType).to(SawsdlTransformer.class);
+        // Bind the configuration as well
+        Names.bindProperties(binder(), getProperties());
+    }
+
+    private Properties getProperties() {
+        try {
+            Properties properties = new Properties();
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("sawsdl-transformer.properties"));
+            return properties;
+        } catch (IOException ex) {
+            log.error("Error obtaining plugin properties", ex);
+        }
+        return new Properties();
     }
 }

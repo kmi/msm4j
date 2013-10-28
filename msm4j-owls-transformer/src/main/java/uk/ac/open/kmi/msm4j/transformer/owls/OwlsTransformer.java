@@ -29,8 +29,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import org.apache.commons.cli.*;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.*;
@@ -188,7 +186,7 @@ public class OwlsTransformer implements ServiceTransformer {
 
     // Include information about the software version
     private static final String VERSION_PROP_FILE = "owls-transformer.properties";
-    private static final String VERSION_PROP = "version";
+    private static final String VERSION_PROP = "owls-transformer.version";
     private static final String VERSION_UNKNOWN = "Unknown";
     private static final String OWL_S_11_SERVICE = "http://www.daml.org/services/owl-s/1.1/Service.owl#";
     private static final String OWL_S_11_PROFILE = "http://www.daml.org/services/owl-s/1.1/Profile.owl#";
@@ -230,10 +228,6 @@ public class OwlsTransformer implements ServiceTransformer {
         prefixes.put("expr", OWL_S_11_EXPRESSION);
 
         setupModelSpecification();
-
-        if (version == null) {
-            obtainVersionInformation();
-        }
     }
 
 
@@ -256,17 +250,6 @@ public class OwlsTransformer implements ServiceTransformer {
 
         this.modelSpec = new OntModelSpec(OntModelSpec.OWL_MEM_MICRO_RULE_INF);
         this.modelSpec.setDocumentManager(documentManager);
-    }
-
-    private void obtainVersionInformation() {
-        log.info("Loading version information from {}", VERSION_PROP_FILE);
-        PropertiesConfiguration config = null;
-        try {
-            config = new PropertiesConfiguration(VERSION_PROP_FILE);
-            this.version = config.getString(VERSION_PROP, VERSION_UNKNOWN);
-        } catch (ConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
     }
 
     /**
