@@ -1,21 +1,8 @@
 MSM4J
 =====
 
-MSM4J is a Java library that helps manipulate service descriptions expressed in terms of the Minimal Service Model (MSM).
-MSM (http://iserve.kmi.open.ac.uk/ns/msm) is a simple RDF(S) integration ontology based on the principle of minimal
-ontological commitment; it captures the maximum common denominator between existing conceptual models for services. Thus,
-MSM does not aim to be yet another service model to bring further heterogeneity to the services landscape; it is instead
-an integration model at the intersection of existing formalisms, able to capture the core semantics of both Web services
-and Web APIs in a common model, homogeneously supporting publication and discovery.
+MSM4J is a Java library that helps manipulate service descriptions expressed in terms of the Minimal Service Model (MSM). MSM (http://iserve.kmi.open.ac.uk/ns/msm) is a simple RDF(S) integration ontology based on the principle of minimal ontological commitment; it captures the maximum common denominator between existing conceptual models for services. Thus, MSM does not aim to be yet another service model to bring further heterogeneity to the services landscape; it is instead an integration model at the intersection of existing formalisms, able to capture the core semantics of both Web services and Web APIs in a common model, homogeneously supporting publication and discovery.
 
-MSM4J includes facilities for seamlessly parsing and serialising MSM service descriptions in RDF. To this end MSM4J
-relies on the Jena library and can therefore generate descriptions in a vast range of formats (e.g., RDFXML, N3, TTL, etc)
+MSM4J includes facilities for seamlessly parsing and serialising MSM service descriptions in RDF. To this end MSM4J relies on the Jena library and can therefore generate descriptions in a vast range of formats (e.g., RDFXML, N3, TTL, etc) Additionally MSM4J includes a number of transformation mechanisms allowing one to import service descriptions in other formalisms. Notably the current implementation includes support for OWL-S, SAWSDL, hRESTS and the Web Services Contest 2008 format. The import support is provided by means of plugins. It is therefore very easy to include support for other formats without even the need for modifying the source code. Just adding to the classpath the new transformer would do. Export mechanisms are currently not provided by are planned for future releases.
 
-Additionally MSM4J includes a number of transformation mechanisms allowing one to import service descriptions in other
-formalisms. Notably the current implementation includes support for OWL-S, SAWSDL, hRESTS and the Web Services Contest
-2008 format. The import support is provided by means of plugins. It is therefore very easy to include support for other
-formats without even the need for modifying the source code. Just adding to the classpath the new transformer would do.
-Export mechanisms are currently not provided by are planned for future releases.
-
-iServe (see http://kmi.github.io/iserve/latest) is an integrated service discovery and registry that is built on top of
-MSM4J. You can therefore get a dedicated registry to handle your service descriptions out of the box as well.
+iServe (see http://kmi.github.io/iserve/latest) is an integrated service discovery and registry that is built on top of MSM4J. You can therefore get a dedicated registry to handle your service descriptions out of the box as well.
