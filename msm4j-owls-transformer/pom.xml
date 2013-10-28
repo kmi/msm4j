@@ -14,7 +14,8 @@
     <name>OWL-S Transformer</name>
 
     <description>
-        OWL-S Importer transformer support for transforming OWL-S service descriptions into Minimal Service Model.
+        OWL-S Importer transformer support for transforming OWL-S service descriptions into Minimal
+        Service Model.
     </description>
 
     <developers>
@@ -148,7 +149,8 @@
                         <configuration>
                             <includeGroupIds>uk.ac.open.kmi</includeGroupIds>
                             <includeArtifactIds>sws-test-collections</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}/test-classes/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/test-classes/
+                            </outputDirectory>
                             <includes>
                                 OWLS-TC3/htdocs/services/**/*.owls,OWLS-TC3/htdocs/services/**/*.wsdl,OWLS-TC4_PDDL/htdocs/services/**/*.owls,OWLS-TC4_PDDL/htdocs/services/**/*.wsdl
                             </includes>
@@ -175,7 +177,7 @@
                                 -a http://www.daml.org/services/owl-s/1.1/Service.owl# \
                                 -i ${basedir}/src/main/resources/Service.owl \
                                 -e RDF/XML \
-                                --package uk.ac.open.kmi.iserve.importer.owls.vocabulary \
+                                --package uk.ac.open.kmi.msm4j.transformer.owls.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n OWLS_11_SERVICE \
                                 --owl
@@ -195,7 +197,7 @@
                                 -a http://www.daml.org/services/owl-s/1.1/Profile.owl# \
                                 -i ${basedir}/src/main/resources/Profile.owl \
                                 -e RDF/XML \
-                                --package uk.ac.open.kmi.iserve.importer.owls.vocabulary \
+                                --package uk.ac.open.kmi.msm4j.transformer.owls.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n OWLS_11_PROFILE \
                                 --owl
@@ -215,7 +217,7 @@
                                 -a http://www.daml.org/services/owl-s/1.1/Process.owl# \
                                 -i ${basedir}/src/main/resources/Process.owl \
                                 -e RDF/XML \
-                                --package uk.ac.open.kmi.iserve.importer.owls.vocabulary \
+                                --package uk.ac.open.kmi.msm4j.transformer.owls.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n OWLS_11_PROCESS \
                                 --owl
@@ -235,7 +237,7 @@
                                 -a http://www.daml.org/services/owl-s/1.1/Grounding.owl# \
                                 -i ${basedir}/src/main/resources/Grounding.owl \
                                 -e RDF/XML \
-                                --package uk.ac.open.kmi.iserve.importer.owls.vocabulary \
+                                --package uk.ac.open.kmi.msm4j.transformer.owls.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n OWLS_11_GROUNDING \
                                 --owl
@@ -255,7 +257,7 @@
                                 -a http://www.daml.org/services/owl-s/1.1/generic/Expression.owl# \
                                 -i ${basedir}/src/main/resources/Expression.owl \
                                 -e RDF/XML \
-                                --package uk.ac.open.kmi.iserve.importer.owls.vocabulary \
+                                --package uk.ac.open.kmi.msm4j.transformer.owls.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n OWLS_11_EXPRESSION \
                                 --owl

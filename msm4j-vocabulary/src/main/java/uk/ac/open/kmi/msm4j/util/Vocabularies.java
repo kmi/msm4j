@@ -3,7 +3,7 @@ package uk.ac.open.kmi.msm4j.util;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import uk.ac.open.kmi.iserve.commons.vocabulary.*;
+import uk.ac.open.kmi.msm4j.vocabulary.*;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -26,14 +26,14 @@ import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.open.kmi.iserve.commons.vocabulary.MSM;
-import uk.ac.open.kmi.iserve.commons.vocabulary.MSM_WSDL;
-import uk.ac.open.kmi.iserve.commons.vocabulary.SAWSDL;
-import uk.ac.open.kmi.iserve.commons.vocabulary.WSMO_LITE;
 import uk.ac.open.kmi.msm4j.*;
 import uk.ac.open.kmi.msm4j.io.ServiceReader;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.util.FilterByRdfType;
+import uk.ac.open.kmi.msm4j.vocabulary.MSM;
+import uk.ac.open.kmi.msm4j.vocabulary.MSM_WSDL;
+import uk.ac.open.kmi.msm4j.vocabulary.SAWSDL;
+import uk.ac.open.kmi.msm4j.vocabulary.WSMO_LITE;
 
 import java.io.InputStream;
 import java.net.URI;
