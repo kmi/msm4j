@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>msm4j-parent</artifactId>
+        <groupId>uk.ac.open.kmi.msm4j</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>msm4j-io</artifactId>
+
+    <packaging>jar</packaging>
+
+    <name>MSM4J I/O</name>
+    <description>
+        MSM4J I/O provides basic support for reading and writing service descriptions expressed in terms of the
+        Minimal Service Model.
+    </description>
+
+    <developers>
+        <developer>
+            <id>cpedrinaci</id>
+            <name>Carlos Pedrinaci</name>
+            <email>c.pedrinaci-{AT}-open.ac.uk</email>
+            <url>http://people.kmi.open.ac.uk/carlos/</url>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
+        <developer>
+            <id>dong</id>
+            <name>Dong Liu</name>
+            <email>d.liu-{AT}-open.ac.uk</email>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
+        <developer>
+            <id>jkopecky</id>
+            <name>Jacek Kopecky</name>
+            <email>j.kopecky-{AT}-open.ac.uk</email>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
+    </developers>
+    <organization>
+        <name>Knowledge Media Institute - The Open University</name>
+        <url>http://kmi.open.ac.uk</url>
+    </organization>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <version>${jena.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>msm4j-vocabulary</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!--Add Guice for dependency injection -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+        <!-- Use Log4j binding (replaceable) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Include Test Resources -->
+        <dependency>
+            <groupId>uk.ac.open.kmi</groupId>
+            <artifactId>sws-test-collections</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Obtain shared test resources and unpack them -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>resource-dependencies</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>${project.parent.groupId}</includeGroupIds>
+                            <includeArtifactIds>iserve-test-resources</includeArtifactIds>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                            <includes>OWLS-TC3-MSM/*.ttl</includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

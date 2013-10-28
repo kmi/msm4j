@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.open.kmi.msm4j</groupId>
+    <artifactId>msm4j-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>MSM4J</name>
+    <url>http://kmi.github.io/msm4j/</url>
+    <description>
+        MSM4J is a Java library for manipulating service descriptions expressed in terms of the Minimal Service Model
+        vocabulary.
+    </description>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/kmi/msm4j</url>
+        <connection>scm:git:https://github.com/kmi/msm4j.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:kmi/msm4j.git</developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/kmi/msm4j/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>${site.path}</url>
+        </site>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <id>cpedrinaci</id>
+            <name>Carlos Pedrinaci</name>
+            <email>c.pedrinaci-{AT}-open.ac.uk</email>
+            <url>http://people.kmi.open.ac.uk/carlos/</url>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
+        <developer>
+            <id>dong</id>
+            <name>Dong Liu</name>
+            <email>d.liu-{AT}-open.ac.uk</email>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
+        <developer>
+            <id>jkopecky</id>
+            <name>Jacek Kopecky</name>
+            <email>j.kopecky-{AT}-open.ac.uk</email>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
+        <developer>
+            <id>pablo</id>
+            <name>Pablo Rodriguez Mier</name>
+            <email>pablo.rodriguez.mier-{AT}-usc.es</email>
+            <organization>CITIUS - Universidad de Santiago de Compostela</organization>
+            <organizationUrl>http://citius.usc.es</organizationUrl>
+        </developer>
+    </developers>
+
+    <organization>
+        <name>Knowledge Media Institute - The Open University</name>
+        <url>http://kmi.open.ac.uk</url>
+    </organization>
+
+    <properties>
+        <!-- Convenience properties for all subprojects -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <junit.version>4.8.2</junit.version>
+        <jena.version>2.11.0</jena.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <guice.version>3.0</guice.version>
+        <commons-config.version>1.9</commons-config.version>
+
+        <!-- Configuration for GitHub deployment -->
+        <site.path>snapshot/${project.version}</site.path>
+        <github.global.server>github</github.global.server>
+        <repositoryName>msm4j</repositoryName>
+        <repositoryOwner>kmi</repositoryOwner>
+    </properties>
+
+    <modules>
+        <module>msm4j-vocabulary</module>
+        <module>msm4j-io</module>
+        <module>msm4j-hrests-transformer</module>
+        <module>msm4j-owls-transformer</module>
+        <module>msm4j-sawsdl-transformer</module>
+        <module>msm4j-wsc-transformer</module>
+    </modules>
+
+    <dependencies>
+        <!--Test dependencies-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
