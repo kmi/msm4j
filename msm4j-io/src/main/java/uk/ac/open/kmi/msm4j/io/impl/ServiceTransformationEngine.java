@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package uk.ac.open.kmi.msm4j.io;
+package uk.ac.open.kmi.msm4j.io.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import uk.ac.open.kmi.msm4j.Service;
+import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
+import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.util.FilenameFilterForTransformer;
 
 import java.io.*;
@@ -29,14 +31,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Transformer is a Singleton Facade to any registered Service Transformation implementations.
+ * ServiceTransformationEngine is a Singleton Facade to any registered Service Transformation implementations.
  * Transformation implementations are automatically detected and registered at runtime
  *
  * @author <a href="mailto:carlos.pedrinaci@open.ac.uk">Carlos Pedrinaci</a> (KMi - The Open University)
  * @since 18/07/2013
  */
 @Singleton
-public class Transformer {
+public class ServiceTransformationEngine {
     /**
      * Map containing the loaded plugins indexed by media type. This map is automatically populated at runtime
      * based on the detected implementations in the classpath.
@@ -45,12 +47,12 @@ public class Transformer {
     private final Map<String, Provider<ServiceTransformer>> loadedPluginsMap;
 
     @Inject
-    protected Transformer(Map<String, Provider<ServiceTransformer>> transformersMap) {
+    protected ServiceTransformationEngine(Map<String, Provider<ServiceTransformer>> transformersMap) {
         this.loadedPluginsMap = transformersMap;
     }
 
     /**
-     * Checks whether the Transformer has support for a given media type.
+     * Checks whether the ServiceTransformationEngine has support for a given media type.
      *
      * @param mediaType the media type to check for
      * @return true if it can be transformed, false otherwise.
@@ -72,7 +74,7 @@ public class Transformer {
      * Obtains the loaded transformer for a given media type or null if no transformer can deal with this type.
      *
      * @param mediaType the media type we are interested in
-     * @return the corresponding Service Transformer or null if none is adequate.
+     * @return the corresponding Service ServiceTransformationEngine or null if none is adequate.
      */
     public ServiceTransformer getTransformer(String mediaType) {
         return this.loadedPluginsMap.get(mediaType).get();

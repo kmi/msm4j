@@ -4,11 +4,12 @@
  * Date: 31/10/2013
  * Time: 16:52
  */
-package uk.ac.open.kmi.msm4j.io;
+package uk.ac.open.kmi.msm4j.io.impl;
 
 import com.google.inject.AbstractModule;
-import uk.ac.open.kmi.msm4j.io.impl.ServiceReaderImpl;
-import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
+import uk.ac.open.kmi.msm4j.io.ServiceReader;
+import uk.ac.open.kmi.msm4j.io.ServiceWriter;
+import uk.ac.open.kmi.msm4j.io.TransformationPluginModule;
 import uk.ac.open.kmi.msm4j.io.util.PluginModuleLoader;
 
 public class TransformerModule extends AbstractModule {

@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
-import uk.ac.open.kmi.msm4j.io.Transformer;
-import uk.ac.open.kmi.msm4j.io.TransformerModule;
+import uk.ac.open.kmi.msm4j.io.impl.ServiceTransformationEngine;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
+import uk.ac.open.kmi.msm4j.io.impl.TransformerModule;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,7 +103,7 @@ public class SawsdlTransformerTest {
     }
 
     @Test
-    public void testPluginBasedTransformation(Transformer genericTransformer) {
+    public void testPluginBasedTransformation(ServiceTransformationEngine serviceTransformationEngine) {
         // Add all the test collections
         log.info("Transforming test collections");
         for (URI testFolder : testFolders) {
@@ -117,7 +117,7 @@ public class SawsdlTransformerTest {
             for (File file : owlsFiles) {
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
-                    services = genericTransformer.transform(file, null, SawsdlTransformer.mediaType);
+                    services = serviceTransformationEngine.transform(file, null, SawsdlTransformer.mediaType);
                     Assert.assertNotNull("Service collection should not be null", services);
                     Assert.assertEquals(1, services.size());
                 } catch (Exception e) {

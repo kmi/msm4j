@@ -25,8 +25,8 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.Service;
-import uk.ac.open.kmi.msm4j.io.Transformer;
-import uk.ac.open.kmi.msm4j.io.TransformerModule;
+import uk.ac.open.kmi.msm4j.io.impl.ServiceTransformationEngine;
+import uk.ac.open.kmi.msm4j.io.impl.TransformerModule;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -54,7 +54,7 @@ public class WSCTransformerTest {
     }
 
     @Test
-    public void testPluginTransform(Transformer genericTransformer) throws Exception {
+    public void testPluginTransform(ServiceTransformationEngine serviceTransformationEngine) throws Exception {
         // Add all the test collections
         log.info("Transforming test collections");
         // Get base url
@@ -64,7 +64,7 @@ public class WSCTransformerTest {
         URL services = new URL(base.toURI().toASCIIString() + "services.xml");
         InputStream stream = services.openStream();
         Assert.assertNotNull("Cannot open services.xml", stream);
-        List<Service> result = genericTransformer.transform(stream, base.toURI().toASCIIString(), WSCTransformer.mediaType);
+        List<Service> result = serviceTransformationEngine.transform(stream, base.toURI().toASCIIString(), WSCTransformer.mediaType);
         Assert.assertEquals(158, result.size());
 
     }
