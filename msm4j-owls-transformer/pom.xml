@@ -86,6 +86,14 @@
             <version>${guice.version}</version>
         </dependency>
 
+        <!--Tests over Guice-->
+        <dependency>
+            <groupId>org.jukito</groupId>
+            <artifactId>jukito</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Include Test Resources -->
         <dependency>
             <groupId>uk.ac.open.kmi</groupId>

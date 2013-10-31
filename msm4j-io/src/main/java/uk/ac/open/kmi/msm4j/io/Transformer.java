@@ -16,11 +16,17 @@
 
 package uk.ac.open.kmi.msm4j.io;
 
-import com.google.inject.*;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import uk.ac.open.kmi.msm4j.Service;
+import uk.ac.open.kmi.msm4j.io.util.FilenameFilterForTransformer;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Transformer is a Singleton Facade to any registered Service Transformation implementations.
@@ -36,28 +42,11 @@ public class Transformer {
      * based on the detected implementations in the classpath.
      */
     @Inject(optional = true)
-    Map<String, ServiceTransformer> loadedPluginsMap = new HashMap<String, ServiceTransformer>();
+    private final Map<String, Provider<ServiceTransformer>> loadedPluginsMap;
 
-    private static Transformer _instance;
-
-    public Transformer() {
-    }
-
-    public static Transformer getInstance() {
-
-        if (_instance == null) {
-            // Load all implementation plugins available
-            List<Module> modlist = new ArrayList<Module>();
-            ServiceLoader<TransformationPluginModule> extensions = ServiceLoader.load(TransformationPluginModule.class);
-            for (TransformationPluginModule ext : extensions) {
-                modlist.add(ext);         // add each found plugin module
-            }
-
-            Injector inj = Guice.createInjector(modlist);
-            _instance = inj.getInstance(Transformer.class);
-        }
-
-        return _instance;
+    @Inject
+    protected Transformer(Map<String, Provider<ServiceTransformer>> transformersMap) {
+        this.loadedPluginsMap = transformersMap;
     }
 
     /**
@@ -71,13 +60,22 @@ public class Transformer {
     }
 
     /**
+     * Obtains a set with all supported media types based on the loaded plugins
+     *
+     * @return the Set of media types supported.
+     */
+    public Set<String> getSupportedMediaTypes() {
+        return this.loadedPluginsMap.keySet();
+    }
+
+    /**
      * Obtains the loaded transformer for a given media type or null if no transformer can deal with this type.
      *
      * @param mediaType the media type we are interested in
      * @return the corresponding Service Transformer or null if none is adequate.
      */
     public ServiceTransformer getTransformer(String mediaType) {
-        return this.loadedPluginsMap.get(mediaType);
+        return this.loadedPluginsMap.get(mediaType).get();
     }
 
     /**
@@ -88,9 +86,25 @@ public class Transformer {
      *         media type is supported {@see canTransform} .
      */
     public String getFileExtension(String mediaType) {
-        ServiceTransformer transformer = this.loadedPluginsMap.get(mediaType);
+        ServiceTransformer transformer = this.loadedPluginsMap.get(mediaType).get();
         if (transformer != null)
             return transformer.getSupportedFileExtensions().get(0);
+
+        return null;
+    }
+
+    /**
+     * Gets the corresponding filename filter to a given media type by checking with the
+     * appropriate transformer
+     *
+     * @param mediaType the media type for which to obtain the file extension
+     * @return the filename filter or null if it is not supported. Callers are advised to check
+     *         first that the media type is supported {@see canTransform} .
+     */
+    public FilenameFilter getFilenameFilter(String mediaType) {
+        ServiceTransformer transformer = this.loadedPluginsMap.get(mediaType).get();
+        if (transformer != null)
+            return new FilenameFilterForTransformer(transformer);
 
         return null;
     }
@@ -174,9 +188,10 @@ public class Transformer {
                 mediaType = "Unknown";
             }
             // Obtain the appropriate transformer
-            if (this.loadedPluginsMap.containsKey(mediaType)) {
+            if (this.canTransform(mediaType)) {
                 // Invoke it
-                result = this.loadedPluginsMap.get(mediaType).transform(originalDescription, baseUri);
+                ServiceTransformer transformer = this.getTransformer(mediaType);
+                result = transformer.transform(originalDescription, baseUri);
             } else {
                 // No transformer available
                 throw new TransformationException(String.format("There is no available transformer for this media type: %s", mediaType));

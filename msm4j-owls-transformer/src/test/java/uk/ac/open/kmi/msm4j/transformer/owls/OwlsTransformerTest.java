@@ -18,13 +18,17 @@
 package uk.ac.open.kmi.msm4j.transformer.owls;
 
 import junit.framework.Assert;
+import org.jukito.JukitoModule;
+import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.Transformer;
+import uk.ac.open.kmi.msm4j.io.TransformerModule;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 
 import java.io.File;
@@ -43,6 +47,7 @@ import java.util.List;
  * @author <a href="mailto:carlos.pedrinaci@open.ac.uk">Carlos Pedrinaci</a> (KMi - The Open University)
  * @since 18/07/2013
  */
+@RunWith(JukitoRunner.class)
 public class OwlsTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(OwlsTransformerTest.class);
@@ -54,6 +59,18 @@ public class OwlsTransformerTest {
     private ServiceWriter writer;
     private List<URI> testFolders;
     private FilenameFilter owlsFilter;
+
+    /**
+     * JukitoModule.
+     */
+    public static class InnerModule extends JukitoModule {
+        @Override
+        protected void configureTest() {
+
+            // Ensure configuration is loaded
+            install(new TransformerModule());
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -98,7 +115,7 @@ public class OwlsTransformerTest {
     }
 
     @Test
-    public void testPluginBasedTransformation() {
+    public void testPluginBasedTransformation(Transformer genericTransformer) {
         // Add all the test collections
         log.info("Transforming test collections");
         for (URI testFolder : testFolders) {
@@ -112,7 +129,7 @@ public class OwlsTransformerTest {
             for (File file : owlsFiles) {
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
-                    services = Transformer.getInstance().transform(file, null, OwlsTransformer.mediaType);
+                    services = genericTransformer.transform(file, null, OwlsTransformer.mediaType);
                     Assert.assertNotNull("Service collection should not be null", services);
                     Assert.assertEquals(1, services.size());
                 } catch (Exception e) {

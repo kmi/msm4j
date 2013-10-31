@@ -17,14 +17,17 @@
 package uk.ac.open.kmi.msm4j.transformer.sawsdl;
 
 import junit.framework.Assert;
+import org.jukito.JukitoModule;
+import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
-import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.Transformer;
+import uk.ac.open.kmi.msm4j.io.TransformerModule;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 
 import java.io.File;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@RunWith(JukitoRunner.class)
 public class SawsdlTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(SawsdlTransformerTest.class);
@@ -45,11 +49,15 @@ public class SawsdlTransformerTest {
     private List<URI> testFolders;
     private FilenameFilter sawsdlFilter;
 
-    public SawsdlTransformerTest() {
-        try {
-            importer = new SawsdlTransformer();
-        } catch (TransformationException e) {
-            log.error("Unable to initialise SAWSDL importer", e);
+    /**
+     * JukitoModule.
+     */
+    public static class InnerModule extends JukitoModule {
+        @Override
+        protected void configureTest() {
+
+            // Ensure configuration is loaded
+            install(new TransformerModule());
         }
     }
 
@@ -95,7 +103,7 @@ public class SawsdlTransformerTest {
     }
 
     @Test
-    public void testPluginBasedTransformation() {
+    public void testPluginBasedTransformation(Transformer genericTransformer) {
         // Add all the test collections
         log.info("Transforming test collections");
         for (URI testFolder : testFolders) {
@@ -109,7 +117,7 @@ public class SawsdlTransformerTest {
             for (File file : owlsFiles) {
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
-                    services = Transformer.getInstance().transform(file, null, SawsdlTransformer.mediaType);
+                    services = genericTransformer.transform(file, null, SawsdlTransformer.mediaType);
                     Assert.assertNotNull("Service collection should not be null", services);
                     Assert.assertEquals(1, services.size());
                 } catch (Exception e) {

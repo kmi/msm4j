@@ -12,7 +12,8 @@
     <artifactId>msm4j-sawsdl-transformer</artifactId>
     <name>SAWSDL Transformer</name>
     <description>
-        SAWSDL Transformer provides support for transforming SAWSDL service descriptions into Minimal Service Model.
+        SAWSDL Transformer provides support for transforming SAWSDL service descriptions into Minimal Service
+        Model.
     </description>
 
     <developers>
@@ -98,6 +99,14 @@
             <groupId>com.ebmwebsourcing.easywsdl</groupId>
             <artifactId>easywsdl11-impl</artifactId>
             <version>v2013-03-11</version>
+        </dependency>
+
+        <!--Tests over Guice-->
+        <dependency>
+            <groupId>org.jukito</groupId>
+            <artifactId>jukito</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Include Test Resources -->

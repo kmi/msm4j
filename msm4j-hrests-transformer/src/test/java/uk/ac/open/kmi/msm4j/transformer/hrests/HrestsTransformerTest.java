@@ -17,13 +17,17 @@
 package uk.ac.open.kmi.msm4j.transformer.hrests;
 
 import junit.framework.Assert;
+import org.jukito.JukitoModule;
+import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.Transformer;
+import uk.ac.open.kmi.msm4j.io.TransformerModule;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 
 import java.io.File;
@@ -41,6 +45,7 @@ import java.util.List;
  * Date: 14/06/2013
  * Time: 19:29
  */
+@RunWith(JukitoRunner.class)
 public class HrestsTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(HrestsTransformerTest.class);
@@ -50,6 +55,18 @@ public class HrestsTransformerTest {
     private ServiceWriter writer;
     private List<URI> testFolders;
     private FilenameFilter htmlFilter;
+
+    /**
+     * JukitoModule.
+     */
+    public static class InnerModule extends JukitoModule {
+        @Override
+        protected void configureTest() {
+
+            // Ensure configuration is loaded
+            install(new TransformerModule());
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -90,7 +107,7 @@ public class HrestsTransformerTest {
     }
 
     @Test
-    public void testPluginBasedTransformation() {
+    public void testPluginBasedTransformation(Transformer genericTransformer) {
         // Add all the test collections
         log.info("Transforming test collections");
         for (URI testFolder : testFolders) {
@@ -104,7 +121,7 @@ public class HrestsTransformerTest {
             for (File file : owlsFiles) {
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
-                    services = Transformer.getInstance().transform(file, file.toURI().toASCIIString(), HrestsTransformer.mediaType);
+                    services = genericTransformer.transform(file, file.toURI().toASCIIString(), HrestsTransformer.mediaType);
                     Assert.assertNotNull("Service collection should not be null", services);
                     Assert.assertEquals(1, services.size());
                 } catch (Exception e) {

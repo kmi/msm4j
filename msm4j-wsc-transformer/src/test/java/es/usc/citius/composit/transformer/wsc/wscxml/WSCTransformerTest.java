@@ -18,16 +18,21 @@ package es.usc.citius.composit.transformer.wsc.wscxml;
 
 
 import junit.framework.Assert;
+import org.jukito.JukitoModule;
+import org.jukito.JukitoRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.Transformer;
+import uk.ac.open.kmi.msm4j.io.TransformerModule;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+@RunWith(JukitoRunner.class)
 public class WSCTransformerTest {
     private static final Logger log = LoggerFactory.getLogger(WSCTransformerTest.class);
 
@@ -36,8 +41,20 @@ public class WSCTransformerTest {
     private static final String WSC08_01_TAXONOMY = WSC08_01 + "taxonomy.owl";
     private static final String WSC08_01_TAXONOMY_XML = WSC08_01 + "taxonomy.xml";
 
+    /**
+     * JukitoModule.
+     */
+    public static class InnerModule extends JukitoModule {
+        @Override
+        protected void configureTest() {
+
+            // Ensure configuration is loaded
+            install(new TransformerModule());
+        }
+    }
+
     @Test
-    public void testPluginTransform() throws Exception {
+    public void testPluginTransform(Transformer genericTransformer) throws Exception {
         // Add all the test collections
         log.info("Transforming test collections");
         // Get base url
@@ -47,7 +64,7 @@ public class WSCTransformerTest {
         URL services = new URL(base.toURI().toASCIIString() + "services.xml");
         InputStream stream = services.openStream();
         Assert.assertNotNull("Cannot open services.xml", stream);
-        List<Service> result = Transformer.getInstance().transform(stream, base.toURI().toASCIIString(), WSCTransformer.mediaType);
+        List<Service> result = genericTransformer.transform(stream, base.toURI().toASCIIString(), WSCTransformer.mediaType);
         Assert.assertEquals(158, result.size());
 
     }

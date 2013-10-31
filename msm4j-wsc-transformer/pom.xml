@@ -12,7 +12,8 @@
     <artifactId>msm4j-wsc-transformer</artifactId>
     <name>MSM4J WSC 2008 Transformer</name>
     <description>
-        MSM4J WSC 2008 Transformer provides support for transforming service descriptions in terms of the proprietary
+        MSM4J WSC 2008 Transformer provides support for transforming service descriptions in terms of the
+        proprietary
         format of the WSC 2008 contest into Minimal Service Model.
     </description>
 
@@ -65,6 +66,14 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+
+        <!--Tests over Guice-->
+        <dependency>
+            <groupId>org.jukito</groupId>
+            <artifactId>jukito</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Include Test Resources -->
