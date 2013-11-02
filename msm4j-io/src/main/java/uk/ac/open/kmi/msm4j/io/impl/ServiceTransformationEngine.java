@@ -88,9 +88,14 @@ public class ServiceTransformationEngine {
      *         media type is supported {@see canTransform} .
      */
     public String getFileExtension(String mediaType) {
-        ServiceTransformer transformer = this.loadedPluginsMap.get(mediaType).get();
-        if (transformer != null)
-            return transformer.getSupportedFileExtensions().get(0);
+        if (mediaType == null) {
+            return null;
+        }
+
+        Provider<ServiceTransformer> provider = this.loadedPluginsMap.get(mediaType);
+        if (provider != null) {
+            return provider.get().getSupportedFileExtensions().get(0);
+        }
 
         return null;
     }
@@ -104,9 +109,14 @@ public class ServiceTransformationEngine {
      *         first that the media type is supported {@see canTransform} .
      */
     public FilenameFilter getFilenameFilter(String mediaType) {
-        ServiceTransformer transformer = this.loadedPluginsMap.get(mediaType).get();
-        if (transformer != null)
-            return new FilenameFilterForTransformer(transformer);
+        if (mediaType == null) {
+            return null;
+        }
+
+        Provider<ServiceTransformer> provider = this.loadedPluginsMap.get(mediaType);
+        if (provider != null) {
+            return new FilenameFilterForTransformer(provider.get());
+        }
 
         return null;
     }
