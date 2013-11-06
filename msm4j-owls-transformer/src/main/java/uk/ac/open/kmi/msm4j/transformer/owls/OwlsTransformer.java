@@ -28,18 +28,15 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
-import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.*;
 import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
-import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.extensionTypes.PddlType;
-import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 import uk.ac.open.kmi.msm4j.util.Vocabularies;
 
-import java.io.*;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -597,125 +594,5 @@ public class OwlsTransformer implements ServiceTransformer {
 
     private Condition obtainCondition(Model model, QuerySolution querySolution) {
         return (Condition) obtainAxiom(model, querySolution, LogicalAxiom.Type.CONDITION);
-    }
-
-    public static void main(String[] args) {
-
-        Options options = new Options();
-        // automatically generate the help statement
-        HelpFormatter formatter = new HelpFormatter();
-        // create the parser
-        CommandLineParser parser = new GnuParser();
-
-        options.addOption("h", "help", false, "print this message");
-        options.addOption("i", "input", true, "input directory or file to transform");
-        options.addOption("s", "save", false, "save result? (default: false)");
-        options.addOption("f", "format", true, "format to use when serialising. Default: TTL.");
-
-        // parse the command line arguments
-        CommandLine line = null;
-        String input = null;
-        File inputFile;
-        try {
-            line = parser.parse(options, args);
-            input = line.getOptionValue("i");
-            if (line.hasOption("help")) {
-                formatter.printHelp("OwlsImporter", options);
-                return;
-            }
-            if (input == null) {
-                // The input should not be null
-                formatter.printHelp(80, "java " + OwlsTransformer.class.getCanonicalName(), "Options:", options, "You must provide an input", true);
-                return;
-            }
-        } catch (ParseException e) {
-            formatter.printHelp(80, "java " + OwlsTransformer.class.getCanonicalName(), "Options:", options, "Error parsing input", true);
-        }
-
-        inputFile = new File(input);
-        if (inputFile == null || !inputFile.exists()) {
-            formatter.printHelp(80, "java " + OwlsTransformer.class.getCanonicalName(), "Options:", options, "Input not found", true);
-            System.out.println(inputFile.getAbsolutePath());
-            return;
-        }
-
-        // Obtain input for transformation
-        File[] toTransform;
-        if (inputFile.isDirectory()) {
-            // Get potential files to transform based on extension
-            FilenameFilter owlsFilter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (name.endsWith(".owl") || name.endsWith(".owls"));
-                }
-            };
-
-            toTransform = inputFile.listFiles(owlsFilter);
-        } else {
-            toTransform = new File[1];
-            toTransform[0] = inputFile;
-        }
-
-        // Obtain details for saving results
-        File rdfDir = null;
-        boolean save = line.hasOption("s");
-        if (save) {
-            rdfDir = new File(inputFile.getAbsolutePath() + "/RDF");
-            rdfDir.mkdir();
-        }
-
-        // Obtain details for serialisation format
-        String format = line.getOptionValue("f", uk.ac.open.kmi.msm4j.io.Syntax.TTL.getName());
-        uk.ac.open.kmi.msm4j.io.Syntax syntax = uk.ac.open.kmi.msm4j.io.Syntax.valueOf(format);
-
-        OwlsTransformer importer;
-        ServiceWriter writer;
-
-        importer = new OwlsTransformer();
-        writer = new ServiceWriterImpl();
-
-        List<Service> services;
-        log.info("Launching a batch transformation of OWL-S services, parameters {}", line);
-        for (File file : toTransform) {
-            log.info("Transforming file {}", file.getAbsolutePath());
-            try {
-                services = importer.transform(new FileInputStream(file), null);
-
-                if (services != null) {
-                    log.info("Services obtained {}", services);
-
-                    File resultFile = null;
-                    if (rdfDir != null) {
-                        String fileName = file.getName();
-                        String newFileName = fileName.substring(0, fileName.length() - 4) + syntax.getExtension();
-                        resultFile = new File(rdfDir.getAbsolutePath() + "/" + newFileName);
-                    }
-
-                    if (rdfDir != null) {
-                        OutputStream out = null;
-                        try {
-                            out = new FileOutputStream(resultFile);
-                            for (Service service : services) {
-                                if (out != null) {
-                                    writer.serialise(service, out, syntax);
-                                    log.info("Service saved at {}", resultFile.getAbsolutePath());
-                                } else {
-                                    writer.serialise(service, System.out, syntax);
-                                }
-                            }
-                        } finally {
-                            if (out != null)
-                                out.close();
-                        }
-                    }
-
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (TransformationException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
