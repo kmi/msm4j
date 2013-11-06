@@ -249,4 +249,19 @@
         </plugins>
     </reporting>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <site.path>${project.version}</site.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>update-latest</id>
+            <properties>
+                <site.path>latest</site.path>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
