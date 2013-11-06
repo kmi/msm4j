@@ -1,0 +1,116 @@
+            ----------------------
+            Developing Transformers
+            ----------------------
+
+Extending MSM4J
+
+    We have tried to support a certain degree of extensibility for MSM4J by providing a plugin mechanism so
+     that 3rd party developers can provide their own import mechanisms for new formats. The plugin mechanism is
+     based on Java's ServiceLoader combined with {{{http://code.google.com/p/google-guice/} Guice}} to support
+     the automated detection and use of plugin implementations at runtime, and can therefore be exploited simply
+     by dropping a new jar in the classpath.
+
+%{toc|section=1|fromDepth=2|toDepth=3}
+
+* {Developing a new Import Plugin}
+
+    Providing an import plugin requires two main things. First and foremost you must implement the code for transforming
+     service descriptions in the format you want to be able to import, to the ones MSM4J can handle. You should for this
+     simply provide an implementation of the <uk.ac.open.msm4j.io.ServiceTransformer>
+     interface.
+
+    Once implemented you should also provide a Guice module that ensures you declare your new implementation as a
+    binding for ServiceTransformer. Given that many implementations of this method may be available at runtime, we make
+    use of {{{http://code.google.com/p/google-guice/wiki/Multibindings} Guice's multibinding mechanism}} and index each
+    implementation by the media type they support. Note that should there be service formats with the same media type,
+    the engine will have no means to know how to choose the right one so be sure to chose a new one or remove the
+    competing implementation from your classpath. Below you have a simple example on how such a Guice module should look like.
+
++-----------------------------------------------------------------------------------------------------------------------+
+
+public class OwlsTransformationPlugin extends AbstractModule implements TransformationPluginModule {
+
+    @Override
+    protected void configure() {
+        MapBinder<String,ServiceTransformer> binder = MapBinder.newMapBinder(binder(), String.class, ServiceTransformer.class);
+        binder.addBinding(OwlsTransformer.mediaType).to(OwlsTransformer.class);
+    }
+}
+
++-----------------------------------------------------------------------------------------------------------------------+
+
+    The final thing required for the plugin to be automatically picked up by MSM4J is to provide the appropriate
+    information for {{{http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html} Java's ServiceLoader}} to locate
+    your implementation. You should do this creating a file at <META-INF/services/uk.ac.open.kmi.msm4j.io.TransformationPluginModule>.
+    The content of the file should just include a line with the complete name of your plugin implementation, eg., :
+
++-----------------------------------------------------------------------------------------------------------------------+
+uk.ac.open.kmi.msm4j.transformer.OwlsTransformationPlugin
++-----------------------------------------------------------------------------------------------------------------------+
+
+    Developers using Maven can automate this last step easily by using <serviceloader-maven-plugin>. To do
+    so, simply include the following in your plugin's POM file:
+
++-----------------------------------------------------------------------------------------------------------------------+
+<!-- Generate the META-INF/services information for ServiceLoader -->
+<plugin>
+    <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+    <artifactId>serviceloader-maven-plugin</artifactId>
+    <version>1.0.2</version>
+    <configuration>
+        <services>
+            <param>uk.ac.open.kmi.msm4j.io.TransformationPluginModule</param>
+        </services>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
++-----------------------------------------------------------------------------------------------------------------------+
+
+** {Dependencies}
+
+    Given that we use Guice and its multibinding extension for the plugin mechanism, these are also dependencies for
+    your plugin.
+
+    Maven users can include the necessary dependencies by including the following:
+
++-----------------------------------------------------------------------------------------------------------------------+
+<dependency>
+    <groupId>uk.ac.open.kmi.msm4j</groupId>
+    <artifactId>msm4j-io</artifactId>
+    <version>${project.version}</version>
+</dependency>
+
+<!--Add Guice for dependency injection -->
+<dependency>
+    <groupId>com.google.inject</groupId>
+    <artifactId>guice</artifactId>
+    <version>${guice.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>com.google.inject.extensions</groupId>
+    <artifactId>guice-multibindings</artifactId>
+    <version>${guice.version}</version>
+</dependency>
+
++-----------------------------------------------------------------------------------------------------------------------+
+
+** {Testing that the Plugin Mechanism Works}
+
+    Should you wish to ensure that the plugin mechanism works and picks up properly your implementation, you can simply
+    try our generic transformer over the services you wish to transform. Below you have an example on how this can be
+     done.
+
++-----------------------------------------------------------------------------------------------------------------------+
+// Obtain the transformation engine using Guice
+Injector injector = Guice.createInjector(new TransformerModule());
+ServiceTransformationEngine transformationEngine = injector.getInstance(ServiceTransformationEngine.class);
+// Transform services
+List<Services> services = transformationEngine.transform(file, null, OwlsTransformer.mediaType );
++-----------------------------------------------------------------------------------------------------------------------+
