@@ -18,9 +18,12 @@ package uk.ac.open.kmi.msm4j.io.impl;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.vocabulary.DC;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
@@ -37,6 +40,9 @@ import uk.ac.open.kmi.msm4j.vocabulary.WSMO_LITE;
 
 import java.io.OutputStream;
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Service Writer Implementation
@@ -284,33 +290,58 @@ public class ServiceWriterImpl implements ServiceWriter {
 
         com.hp.hpl.jena.rdf.model.Resource current = model.createResource(basicResource.getUri().toASCIIString());
 
+        // Label
         String label = basicResource.getLabel();
         if (label != null) {
             current.addProperty(RDFS.label, label);
         }
 
+        // Comment
         String comment = basicResource.getComment();
         if (comment != null) {
             current.addProperty(RDFS.comment, comment);
         }
 
+        // Creator
         URI creator = basicResource.getCreator();
         if (creator != null) {
-            current.addProperty(DC.creator,
+            current.addProperty(DCTerms.creator,
                     model.createResource(creator.toASCIIString()));
         }
 
+        // seeAlso
         URI seeAlso = basicResource.getSeeAlso();
         if (seeAlso != null) {
             current.addProperty(RDFS.seeAlso,
                     model.createResource(seeAlso.toASCIIString()));
         }
 
+        // Source
         URI source = basicResource.getSource();
         if (source != null) {
-            current.addProperty(DC.source,
+            current.addProperty(DCTerms.source,
                     model.createResource(source.toASCIIString()));
         }
 
+        // Created
+        Date created = basicResource.getCreated();
+        Literal createdLiteral = createDateLiteral(created);
+        if (createdLiteral != null) {
+            current.addProperty(DCTerms.created, createdLiteral);
+        }
     }
+
+    private Literal createDateLiteral(Date date) {
+
+        if (date != null) {
+            // Serialise the simple form
+            DateFormat outputFormatter = new SimpleDateFormat("yyyy-MM-dd");
+            String dateStr = outputFormatter.format(date);
+            return ResourceFactory.createTypedLiteral(dateStr, XSDDatatype.XSDdate);
+        }
+
+        return null;
+
+    }
+
 }

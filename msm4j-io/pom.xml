@@ -78,6 +78,15 @@
             <version>${guice.version}</version>
         </dependency>
 
+        <!--Tests over Guice-->
+        <dependency>
+            <groupId>org.jukito</groupId>
+            <artifactId>jukito</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+
+
         <!-- Include Test Resources -->
         <dependency>
             <groupId>uk.ac.open.kmi</groupId>
@@ -102,10 +111,11 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeGroupIds>${project.parent.groupId}</includeGroupIds>
-                            <includeArtifactIds>iserve-test-resources</includeArtifactIds>
-                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                            <includeGroupIds>uk.ac.open.kmi</includeGroupIds>
+                            <includeArtifactIds>sws-test-collections</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/test-classes/</outputDirectory>
                             <includes>OWLS-TC3-MSM/*.ttl</includes>
+                            <includes>OWLS-TC4_PDDL-MSM/*.ttl</includes>
                         </configuration>
                     </execution>
                 </executions>

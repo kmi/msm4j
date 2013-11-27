@@ -18,6 +18,7 @@ package uk.ac.open.kmi.msm4j;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +35,8 @@ public class Service extends InvocableEntity {
     public Service(URI uri) {
         super(uri);
         this.operations = new ArrayList<Operation>();
+        // By default initialise to now
+        this.setCreated(new Date());
     }
 
     public List<Operation> getOperations() {

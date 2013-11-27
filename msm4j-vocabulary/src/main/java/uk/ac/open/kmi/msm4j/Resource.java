@@ -17,6 +17,7 @@
 package uk.ac.open.kmi.msm4j;
 
 import java.net.URI;
+import java.util.Date;
 
 /**
  * Resources
@@ -43,6 +44,8 @@ public class Resource {
     private URI seeAlso;
 
     private URI source;
+
+    private Date created;
 
     // this is specific to a kind of grounding, may need moving around
     private URI wsdlGrounding;
@@ -107,4 +110,11 @@ public class Resource {
         this.wsdlGrounding = wsdlGrounding;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 }

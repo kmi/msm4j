@@ -16,13 +16,14 @@
 
 package uk.ac.open.kmi.msm4j.io.impl;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.DC;
+import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -417,24 +419,48 @@ public class ServiceReaderImpl implements ServiceReader {
         result.setComment(individual.getComment(null));
         result.setLabel(individual.getLabel(null));
 
+        // seeAlso
         res = individual.getSeeAlso();
         if (res != null) {
             result.setSeeAlso(new URI(res.getURI()));
         }
 
-        res = individual.getPropertyResourceValue(DC.source);
+        // source
+        res = individual.getPropertyResourceValue(DCTerms.source);
         if (res != null) {
             result.setSource(new URI(res.getURI()));
         }
 
-        res = individual.getPropertyResourceValue(DC.creator);
+        // creator
+        res = individual.getPropertyResourceValue(DCTerms.creator);
         if (res != null) {
             result.setCreator(new URI(res.getURI()));
         }
 
+        // groundedIn
         res = individual.getPropertyResourceValue(MSM_WSDL.isGroundedIn);
         if (res != null) {
             result.setWsdlGrounding(new URI(res.getURI()));
         }
+
+        // created
+        Date created = getDate(individual, DCTerms.created);
+        if (created != null) {
+            result.setCreated(created);
+        }
+    }
+
+    private Date getDate(Individual individual, Property property) {
+
+        Statement stmt = individual.getProperty(property);
+        if (stmt != null) {
+            Object obj = stmt.getObject();
+            if (obj instanceof Literal) {
+                Literal lit = (Literal) obj;
+                XSDDateTime d = (XSDDateTime) lit.getValue();
+                return d.asCalendar().getTime();
+            }
+        }
+        return null;
     }
 }
