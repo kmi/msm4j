@@ -1,6 +1,6 @@
 package uk.ac.open.kmi.msm4j.util;
 
-import com.hp.hpl.jena.vocabulary.DC;
+import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import uk.ac.open.kmi.msm4j.vocabulary.*;
@@ -31,7 +31,7 @@ public class Vocabularies {
         aMap.put("hr", HRESTS.NS);
         aMap.put("msm-wsdl", MSM_WSDL.NS);
         aMap.put("foaf", FOAF.NS);
-        aMap.put("dcterms", DC.NS);
+        aMap.put("dcterms", DCTerms.NS);
         prefixes = Collections.unmodifiableMap(aMap);
     }
 
