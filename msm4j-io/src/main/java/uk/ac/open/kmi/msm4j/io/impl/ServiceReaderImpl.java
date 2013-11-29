@@ -31,6 +31,7 @@ import uk.ac.open.kmi.msm4j.*;
 import uk.ac.open.kmi.msm4j.io.ServiceReader;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.util.FilterByRdfType;
+import uk.ac.open.kmi.msm4j.io.util.FilterSomeRDFTypes;
 import uk.ac.open.kmi.msm4j.vocabulary.MSM;
 import uk.ac.open.kmi.msm4j.vocabulary.MSM_WSDL;
 import uk.ac.open.kmi.msm4j.vocabulary.SAWSDL;
@@ -39,9 +40,7 @@ import uk.ac.open.kmi.msm4j.vocabulary.WSMO_LITE;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * ServiceReaderImpl
@@ -297,22 +296,24 @@ public class ServiceReaderImpl implements ServiceReader {
             result = new ArrayList<Condition>();
             resourceType = WSMO_LITE.Condition;
 
-        } else {
+        } else if (axiomClass.equals(Effect.class)) {
             result = new ArrayList<Effect>();
             resourceType = WSMO_LITE.Effect;
+        } else {
+            // We just sent it empty. The type does not matter
+            return new ArrayList<Effect>();
         }
 
         RDFNode node;
         NodeIterator nodeIterator = null;
-        FilterByRdfType myFilter = new FilterByRdfType();
 
         // Process the appropriate model references
         try {
             nodeIterator = individual.listPropertyValues(SAWSDL.modelReference);
-            myFilter.setRdfType(resourceType);
-            nodeIterator.filterKeep(myFilter);
-            while (nodeIterator.hasNext()) {
-                node = nodeIterator.next();
+            FilterByRdfType typeFilter = new FilterByRdfType(resourceType);
+            ExtendedIterator<RDFNode> filteredIter = nodeIterator.filterKeep(typeFilter);
+            while (filteredIter.hasNext()) {
+                node = filteredIter.next();
                 Individual axiomIndiv = node.as(Individual.class); // Should be possible given the filter
                 if (axiomClass.equals(Condition.class)) {
                     Condition cond;
@@ -325,7 +326,7 @@ public class ServiceReaderImpl implements ServiceReader {
                     cond.setTypedValue(getAxiom(axiomIndiv));
                     ((List<Condition>) result).add(cond);
 
-                } else {
+                } else if (axiomClass.equals(Effect.class)) {
                     Effect effect;
                     if (axiomIndiv.isAnon()) {
                         effect = new Effect(null);
@@ -364,30 +365,29 @@ public class ServiceReaderImpl implements ServiceReader {
         setResourceProperties(individual, annotRes);
 
         URI nodeUri = null;
-        FilterByRdfType filter;
         NodeIterator nodeIter = null;
         ExtendedIterator<RDFNode> filteredIter;
         try {
             nodeIter = individual.listPropertyValues(SAWSDL.modelReference);
-            filter = new FilterByRdfType();
             // Process ModelReferences that are have no known type
             // Filter the modelRefs first then
-            filter.setRdfType(WSMO_LITE.Condition);
-            filteredIter = nodeIter.filterDrop(filter);
-            filter.setRdfType(WSMO_LITE.Effect);
-            filteredIter = filteredIter.filterDrop(filter);
-            filter.setRdfType(WSMO_LITE.NonfunctionalParameter);
-            filteredIter = filteredIter.filterDrop(filter);
+            Set<Resource> filterTypes = new HashSet<Resource>();
+            filterTypes.add(WSMO_LITE.Condition);
+            filterTypes.add(WSMO_LITE.Effect);
+            filterTypes.add(WSMO_LITE.NonfunctionalParameter);
+            FilterSomeRDFTypes typesFilter = new FilterSomeRDFTypes(filterTypes);
+            filteredIter = nodeIter.filterDrop(typesFilter);
+
             while (filteredIter.hasNext()) {
                 RDFNode node = filteredIter.next();
                 if (node.isResource()) {
                     if (node.isAnon()) {
-                        nodeUri = null;
+                        log.warn("Unexpected blank node for generic model reference. Ignoring");
                     } else {
                         nodeUri = new URI(node.asResource().getURI());
+                        annotRes.addModelReference(
+                                new uk.ac.open.kmi.msm4j.Resource(nodeUri));
                     }
-                    annotRes.addModelReference(
-                            new uk.ac.open.kmi.msm4j.Resource(nodeUri));
                 }
             }
         } finally {
@@ -398,8 +398,8 @@ public class ServiceReaderImpl implements ServiceReader {
         // Process NFPs
         try {
             nodeIter = individual.listPropertyValues(SAWSDL.modelReference);
-            filter.setRdfType(WSMO_LITE.NonfunctionalParameter);
-            filteredIter = nodeIter.filterKeep(filter);
+            FilterByRdfType typeFilter = new FilterByRdfType(WSMO_LITE.NonfunctionalParameter);
+            filteredIter = nodeIter.filterKeep(typeFilter);
             while (filteredIter.hasNext()) {
                 RDFNode node = filteredIter.next();
                 if (node.isResource()) {

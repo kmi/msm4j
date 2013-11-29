@@ -20,24 +20,22 @@ import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.Filter;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class FilterByRdfType<T extends RDFNode> extends Filter<T> {
+    private final Resource rdfType;
 
-    private Resource rdfType = RDFS.Resource;
-
-    public void setRdfType(Resource rdfType) {
+    public FilterByRdfType(Resource rdfType) {
+        super();
         this.rdfType = rdfType;
     }
 
     @Override
     public boolean accept(T node) {
-
         if (node.canAs(Individual.class)) {
             Individual individual = node.as(Individual.class);
-            if (individual.hasRDFType(rdfType))
+            if (individual.hasRDFType(rdfType)) {
                 return true;
-
+            }
         }
         return false;
     }

@@ -62,7 +62,6 @@ public class ServiceWriterImpl implements ServiceWriter {
     public void serialise(Service service, OutputStream out, Syntax syntax) {
         Model model = generateModel(service);
         model.setNsPrefixes(Vocabularies.prefixes);
-        registerExtensionTypes(model);
 
         try {
             model.write(out, syntax.getName());
@@ -80,6 +79,7 @@ public class ServiceWriterImpl implements ServiceWriter {
     public Model generateModel(Service service) {
 
         Model model = ModelFactory.createDefaultModel();
+        registerExtensionTypes(model);
 
         // Exit early if null
         if (service == null)
@@ -206,15 +206,20 @@ public class ServiceWriterImpl implements ServiceWriter {
 
     private void addModelReferences(Model model, AnnotableResource annotableResource) {
         // Exit early if null
-        if (annotableResource == null)
+        if (annotableResource == null || model == null)
             return;
 
         com.hp.hpl.jena.rdf.model.Resource current = model.createResource(annotableResource.getUri().toASCIIString());
 
         // Process general model references
         for (Resource mr : annotableResource.getModelReferences()) {
-            com.hp.hpl.jena.rdf.model.Resource refResource = model.createResource(mr.getUri().toASCIIString());
-            current.addProperty(SAWSDL.modelReference, refResource);
+            com.hp.hpl.jena.rdf.model.Resource refResource;
+            if (mr.getUri() == null) {
+                log.warn("Not expecting a generic model reference to a blank node. ");
+            } else {
+                refResource = model.createResource(mr.getUri().toASCIIString());
+                current.addProperty(SAWSDL.modelReference, refResource);
+            }
         }
 
         // Process NFPs
@@ -242,8 +247,6 @@ public class ServiceWriterImpl implements ServiceWriter {
                 refResource.addLiteral(RDF.value, effect.getTypedValue());
             }
         }
-
-
     }
 
     /**
