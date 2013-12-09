@@ -92,6 +92,7 @@
         <guice.version>3.0</guice.version>
         <guava.version>14.0</guava.version>
         <commons-config.version>1.9</commons-config.version>
+        <sws-test-collections.version>1.0</sws-test-collections.version>
 
         <!-- Configuration for GitHub deployment -->
         <site.path>snapshot/${project.version}</site.path>
