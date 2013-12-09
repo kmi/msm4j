@@ -27,8 +27,8 @@
 
     <scm>
         <url>https://github.com/kmi/msm4j</url>
-        <connection>scm:git:git://git@github.com:kmi/msm4j.git</connection>
-        <developerConnection>scm:git:git://git@github.com:kmi/msm4j.git</developerConnection>
+        <connection>scm:git:git@github.com:kmi/msm4j.git</connection>
+        <developerConnection>scm:git:git@github.com:kmi/msm4j.git</developerConnection>
     </scm>
 
     <issueManagement>
