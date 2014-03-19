@@ -83,7 +83,20 @@ public class WSCTransformer implements ServiceTransformer {
         log.info("Ontology file name {}", this.ontologyFile);
     }
 
+    private MessageContent generateMessageContent(ArrayList<XMLInstance> instances, String fieldName, URL ontologyOwlUrl, InstanceResolver resolver) throws URISyntaxException {
+        URI uri = URI.create(this.fakeURL + "#MessageContent_" + fieldName);
+        MessageContent msg = new MessageContent(uri);
+        for (XMLInstance instance : instances) {
+            String concept = resolver.resolveToConcept(instance.getName());
+            URI partURI = URI.create(this.fakeURL + "#MessagePart_" + concept);
+            MessagePart part = new MessagePart(partURI);
+            part.addModelReference(new Resource(new URI(ontologyOwlUrl.toString() + "#" + concept)));
+            msg.addMandatoryPart(part);
+        }
+        return msg;
+    }
 
+    /*
     private MessageContent generateMessageContent(ArrayList<XMLInstance> instances, String fieldName, URL ontologyOwlUrl, WSCXMLSemanticReasoner reasoner) throws URISyntaxException {
         URI uri = URI.create(this.fakeURL + "#MessageContent_" + fieldName);
         MessageContent msg = new MessageContent(uri);
@@ -95,7 +108,7 @@ public class WSCTransformer implements ServiceTransformer {
             msg.addMandatoryPart(part);
         }
         return msg;
-    }
+    }*/
 
     /**
      * Transforms a datasets, defined by the XML description file of the services,
@@ -115,15 +128,12 @@ public class WSCTransformer implements ServiceTransformer {
         return transform(servicesXml, ontologyBaseUri, reasoner);
     }
 
-
-    private List<Service> transform(InputStream originalDescription, URL modelReferenceOntoUrl, WSCXMLSemanticReasoner reasoner) throws URISyntaxException {
+    public List<Service> transform(InputStream originalDescription, URL modelReferenceOntoUrl, InstanceResolver resolver) throws URISyntaxException {
         // De-serialize from XML
-
         XMLServices services = JAXB.unmarshal(originalDescription, XMLServices.class);
         List<Service> listServices = new ArrayList<Service>(services.getServices().size());
 
-
-        // Create the services following the iserve-commons-vocabulary model
+        // Create service models
         for (XMLService service : services.getServices()) {
             URI srvURI = URI.create(fakeURL + "#" + service.getName());
             URI opURI = URI.create(fakeURL + "/" + service.getName() + "#Operation");
@@ -134,8 +144,8 @@ public class WSCTransformer implements ServiceTransformer {
             Operation operation = new Operation(opURI);
 
             // The modelReferenceOntoUrl must point to a valid url where the original ontology is
-            operation.addInput(generateMessageContent(service.getInputs().getInstances(), "input", modelReferenceOntoUrl, reasoner));
-            operation.addOutput(generateMessageContent(service.getOutputs().getInstances(), "output", modelReferenceOntoUrl, reasoner));
+            operation.addInput(generateMessageContent(service.getInputs().getInstances(), "input", modelReferenceOntoUrl, resolver));
+            operation.addOutput(generateMessageContent(service.getOutputs().getInstances(), "output", modelReferenceOntoUrl, resolver));
             operation.setLabel(service.getName() + "_op");
 
 
@@ -144,6 +154,18 @@ public class WSCTransformer implements ServiceTransformer {
             listServices.add(modelService);
         }
         return listServices;
+    }
+
+
+    private List<Service> transform(InputStream originalDescription, URL modelReferenceOntoUrl, final WSCXMLSemanticReasoner reasoner) throws URISyntaxException {
+        // De-serialize from XML
+        InstanceResolver resolver = new InstanceResolver() {
+            @Override
+            public String resolveToConcept(String instance) {
+                return reasoner.getConceptInstance(instance);
+            }
+        };
+        return transform(originalDescription, modelReferenceOntoUrl, resolver);
     }
 
     /**
