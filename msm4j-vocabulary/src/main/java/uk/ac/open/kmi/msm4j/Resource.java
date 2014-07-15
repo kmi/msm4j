@@ -17,7 +17,9 @@
 package uk.ac.open.kmi.msm4j;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Resources
@@ -46,6 +48,8 @@ public class Resource {
     private URI source;
 
     private Date created;
+
+    private List<URI> licenses = new ArrayList<URI>();
 
     // this is specific to a kind of grounding, may need moving around
     private URI wsdlGrounding;
@@ -116,5 +120,44 @@ public class Resource {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public boolean addLicense(URI license) {
+        if (license != null) {
+            return this.licenses.add(license);
+        }
+        return false;
+    }
+
+    public boolean removeLicense(URI license) {
+        if (license != null) {
+            return this.licenses.remove(license);
+        }
+        return false;
+    }
+
+    public void setLicenses(List<URI> licenses) {
+        this.licenses = licenses;
+    }
+
+    public List<URI> getLicenses() {
+        return licenses;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Resource resource = (Resource) o;
+
+        if (!uri.equals(resource.uri)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return uri.hashCode();
     }
 }

@@ -32,14 +32,16 @@ import uk.ac.open.kmi.msm4j.io.ServiceReader;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.util.FilterByRdfType;
 import uk.ac.open.kmi.msm4j.io.util.FilterSomeRDFTypes;
-import uk.ac.open.kmi.msm4j.vocabulary.MSM;
-import uk.ac.open.kmi.msm4j.vocabulary.MSM_WSDL;
-import uk.ac.open.kmi.msm4j.vocabulary.SAWSDL;
-import uk.ac.open.kmi.msm4j.vocabulary.WSMO_LITE;
+import uk.ac.open.kmi.msm4j.nfp.Forum;
+import uk.ac.open.kmi.msm4j.nfp.Provider;
+import uk.ac.open.kmi.msm4j.nfp.TwitterAccount;
+import uk.ac.open.kmi.msm4j.vocabulary.*;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -122,8 +124,56 @@ public class ServiceReaderImpl implements ServiceReader {
                 hasOpValues.close();
         }
 
+        // NFP parsing
+
+        if(individual.hasProperty(MSM_NFP.hasTotalMashups)){
+            service.setTotalMashups(individual.getProperty(MSM_NFP.hasTotalMashups).getInt());
+        }
+
+        if(individual.hasProperty(MSM_NFP.hasRecentMashups)){
+            service.setRecentMashups(individual.getProperty(MSM_NFP.hasRecentMashups).getInt());
+        }
+
+        // Forum
+        Resource forumValue = individual.getPropertyResourceValue(MSM_NFP.hasForum);
+        if(forumValue != null){
+            Forum forum = new Forum(new URI(forumValue.getURI()));
+            setResourceProperties(forumValue.as(Individual.class),forum);
+
+            if(forumValue.hasProperty(MSM_NFP.hasVitality)){
+                forum.setVitality(forumValue.getProperty(MSM_NFP.hasVitality).getDouble());
+            }
+            if(forumValue.hasProperty(SIOC.has_host)){
+                try {
+                    forum.setSite(new URL(forumValue.getProperty(SIOC.has_host).getString()));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+            service.setForum(forum);
+        }
+        // Twitter account
+        Resource twitterAccountValue = individual.getPropertyResourceValue(MSM_NFP.hasTwitterAccount);
+        if(twitterAccountValue != null){
+            TwitterAccount twitterAccount = new TwitterAccount(new URI(twitterAccountValue.getURI()));
+            setResourceProperties(twitterAccountValue.as(Individual.class),twitterAccount);
+            service.setTwitterAccount(twitterAccount);
+        }
+        // Provider
+        Resource providerValue = individual.getPropertyResourceValue(SCHEMA.provider);
+        if(providerValue != null){
+            Provider provider = new Provider(new URI(providerValue.getURI()));
+            setResourceProperties(providerValue.as(Individual.class),provider);
+            if(providerValue.hasProperty(MSM_NFP.hasPopularity)){
+                provider.setPopularity(providerValue.getProperty(MSM_NFP.hasPopularity).getDouble());
+            }
+            service.setProvider(provider);
+        }
+
         return service;
     }
+
+
 
     private List<Operation> obtainOperations(NodeIterator hasOpValues) throws URISyntaxException {
 
@@ -448,6 +498,13 @@ public class ServiceReaderImpl implements ServiceReader {
         if (created != null) {
             result.setCreated(created);
         }
+
+        //licenses
+        NodeIterator nodeIterator = individual.listPropertyValues(DCTerms.license);
+        for(RDFNode licenseValue:nodeIterator.toList()){
+            result.addLicense(new URI(licenseValue.asResource().getURI()));
+        }
+
     }
 
     private Date getDate(Individual individual, Property property) {

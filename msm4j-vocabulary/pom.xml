@@ -3,7 +3,7 @@
     <parent>
         <artifactId>msm4j-parent</artifactId>
         <groupId>uk.ac.open.kmi.msm4j</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -163,6 +163,27 @@
                             </commandlineArgs>
                         </configuration>
                     </execution>
+                    <!-- Automated File Generation with Schemagen: MSM_NFP -->
+                    <execution>
+                        <id>MSM_NFP</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://iserve.kmi.open.ac.uk/ns/msm-nfp# \
+                                -i ${basedir}/src/main/resources/msm-nfp-2014-07-10.ttl \
+                                -e TTL \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n MSM_NFP \
+                                --owl \
+                                --inference
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
                     <!-- Automated File Generation with Schemagen: FOAF -->
                     <execution>
                         <id>FOAF</id>
@@ -180,6 +201,68 @@
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n FOAF \
                                 --rdfs \
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <!-- Automated File Generation with Schemagen: SIOC -->
+                    <execution>
+                        <id>SIOC</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://rdfs.org/sioc/ns# \
+                                -i ${basedir}/src/main/resources/sioc-2010-03-25.rdf \
+                                -e RDF/XML \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n SIOC \
+                                --owl \
+                                --inference
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <!-- Automated File Generation with Schemagen: CC licenses -->
+                    <execution>
+                        <id>CC</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://creativecommons.org/ns# \
+                                -i ${basedir}/src/main/resources/cc-2013-12-11.rdf \
+                                -e RDF/XML \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n CC \
+                                --owl \
+                                --inference
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <!-- Automated File Generation with Schemagen: schema.org -->
+                    <execution>
+                        <id>SCHEMA</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://schema.org/ \
+                                -i ${basedir}/src/main/resources/schema-dot-org-2014-04-03.rdf \
+                                -e RDF/XML \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n SCHEMA \
+                                --owl
                             </commandlineArgs>
                         </configuration>
                     </execution>

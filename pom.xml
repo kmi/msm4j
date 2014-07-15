@@ -5,7 +5,7 @@
     <groupId>uk.ac.open.kmi.msm4j</groupId>
     <artifactId>msm4j-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <name>MSM4J</name>
     <url>http://kmi.github.io/msm4j/</url>
@@ -184,10 +184,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.2</version>
+                <version>2.5</version>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <!-- During release:perform, enable the "release" profile -->
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>ghSite:site</goals>
                 </configuration>
             </plugin>
         </plugins>

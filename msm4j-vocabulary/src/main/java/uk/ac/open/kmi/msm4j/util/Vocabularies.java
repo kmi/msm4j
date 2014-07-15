@@ -30,8 +30,13 @@ public class Vocabularies {
         aMap.put("wl", WSMO_LITE.NS);
         aMap.put("hr", HRESTS.NS);
         aMap.put("msm-wsdl", MSM_WSDL.NS);
+        aMap.put("msm-nfp", MSM_NFP.NS);
         aMap.put("foaf", FOAF.NS);
         aMap.put("dcterms", DCTerms.NS);
+        aMap.put("cc", CC.NS);
+        aMap.put("sioc", SIOC.NS);
+        aMap.put("schema", SCHEMA.NS);
+
         prefixes = Collections.unmodifiableMap(aMap);
     }
 

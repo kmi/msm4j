@@ -32,11 +32,11 @@ import uk.ac.open.kmi.msm4j.*;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.extensionTypes.PddlType;
+import uk.ac.open.kmi.msm4j.nfp.Forum;
+import uk.ac.open.kmi.msm4j.nfp.Provider;
+import uk.ac.open.kmi.msm4j.nfp.TwitterAccount;
 import uk.ac.open.kmi.msm4j.util.Vocabularies;
-import uk.ac.open.kmi.msm4j.vocabulary.MSM;
-import uk.ac.open.kmi.msm4j.vocabulary.MSM_WSDL;
-import uk.ac.open.kmi.msm4j.vocabulary.SAWSDL;
-import uk.ac.open.kmi.msm4j.vocabulary.WSMO_LITE;
+import uk.ac.open.kmi.msm4j.vocabulary.*;
 
 import java.io.OutputStream;
 import java.net.URI;
@@ -103,7 +103,96 @@ public class ServiceWriterImpl implements ServiceWriter {
             addOperationToModel(model, op);
         }
 
+        // MSM-NFP extension
+        addForum(model, service);
+        addTwitterAccount(model, service);
+        addProvider(model, service);
+
+        addTotalMashups(model, service);
+        addRecentMashups(model, service);
+
         return model;
+    }
+
+    private void addTotalMashups(Model model, Service service) {
+        // Create Total Mashups Value
+        if(service.getTotalMashups() != null){
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            Literal totalMashups = model.createTypedLiteral(service.getTotalMashups());
+            current.addProperty(MSM_NFP.hasTotalMashups,totalMashups);
+        }
+    }
+
+    private void addRecentMashups(Model model, Service service) {
+        // Create Recent Mashups Value
+        if(service.getRecentMashups() != null){
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            Literal recentMashups = model.createTypedLiteral(service.getRecentMashups());
+            current.addProperty(MSM_NFP.hasRecentMashups,recentMashups);
+        }
+    }
+
+    private void addProvider(Model model, Service service) {
+        // Exit early if null
+        if (service == null)
+            return;
+
+        // Add provider if present
+        Provider provider = service.getProvider();
+        if (provider != null) {
+            // Create the resource
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            com.hp.hpl.jena.rdf.model.Resource providerRes = model.createResource(provider.getUri().toASCIIString());
+            current.addProperty(SCHEMA.provider, providerRes);
+            addResourceMetadata(model,provider);
+            // Create Popularity Value
+            if(provider.getPopularity() != null){
+                Literal popularity = model.createTypedLiteral(provider.getPopularity());
+                providerRes.addProperty(MSM_NFP.hasPopularity,popularity);
+            }
+
+        }
+    }
+
+    private void addTwitterAccount(Model model, Service service) {
+        // Exit early if null
+        if (service == null)
+            return;
+
+        // Add Twitter Account if present
+        TwitterAccount twitterAccount = service.getTwitterAccount();
+        if (twitterAccount != null) {
+            // Create the resource
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            com.hp.hpl.jena.rdf.model.Resource twitterAccountRes = model.createResource(twitterAccount.getUri().toASCIIString());
+            twitterAccountRes.addProperty(RDF.type,MSM_NFP.TwitterAccount);
+            current.addProperty(MSM_NFP.hasTwitterAccount, twitterAccountRes);
+            addResourceMetadata(model,twitterAccount);
+        }
+    }
+
+    private void addForum(Model model, Service service) {
+        // Exit early if null
+        if (service == null)
+            return;
+
+        // Add Forum if present
+        Forum forum = service.getForum();
+        if (forum != null) {
+            // Create the resource
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            com.hp.hpl.jena.rdf.model.Resource forumRes = model.createResource(forum.getUri().toASCIIString());
+            forumRes.addProperty(RDF.type, SIOC.Forum);
+            current.addProperty(MSM_NFP.hasForum, forumRes);
+            addResourceMetadata(model,forum);
+            if(forum.getSite() != null){
+                forumRes.addProperty(SIOC.has_host,forum.getSite().toString());
+            }
+            if(forum.getVitality() != null){
+                Literal vitality = model.createTypedLiteral(forum.getVitality());
+                forumRes.addProperty(MSM_NFP.hasVitality,vitality);
+            }
+        }
     }
 
 
@@ -332,6 +421,14 @@ public class ServiceWriterImpl implements ServiceWriter {
         if (createdLiteral != null) {
             current.addProperty(DCTerms.created, createdLiteral);
         }
+
+        // Licenses
+        if(basicResource.getLicenses() != null){
+            for(URI license:basicResource.getLicenses()){
+                current.addProperty(DCTerms.license, model.createResource(license.toASCIIString()));
+            }
+        }
+
     }
 
     private Literal createDateLiteral(Date date) {
