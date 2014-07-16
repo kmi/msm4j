@@ -55,6 +55,8 @@
             <item name="About" href="index.html"/>
             <item name="Overview" href="overview.html"/>
             <item name="Data Model" href="data-model.html"/>
+            <item name="Compiling MSM4J" href="compiling.html"/>
+            <item name="Using MSM4J" href="usage.html"/>
             <item name="Transformers" href="transformers.html"/>
             <!--<item name="FAQ" href="faq.html"/>-->
         </menu>

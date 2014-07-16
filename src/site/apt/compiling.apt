@@ -1,0 +1,49 @@
+            -----------
+            Compiling MSM4J
+            -----------
+
+Compiling MSM4J
+
+    MSM4J is developed in Java and is entirely managed by Maven both for compilation and testing.
+    Below you have a quick reference on how to compile it.
+
+* Requirements
+
+    * Maven 3+.
+
+    * SWS Test Collections for testing (dependency will soon be dropped).
+
+
+* Obtaining the code
+
++----------------------------------------------------------------------------------+
+ git clone https://github.com/kmi/msm4j.git
++----------------------------------------------------------------------------------+
+
+* Compiling
+
+    Compiling will require having a local installed version of {{{https://github.com/kmi/sws-test-collections}SWS-Test-Collections}} (for testing). Since we currently do not publish this jar on public registries, you will have to compile and install it manually.
+    We certainly plan to simplify this process but until then, do not fear, it is fairly easy.
+
+    Once you have this locally you will be able to ensure that all the tests of MSM4J can run. If you wish to skip these tests you can always use '-DskipTests=true' when compiling.
+
++----------------------------------------------------------------------------------+
+ mvn clean install
++----------------------------------------------------------------------------------+
+
+
+* Generating the Documentation
+
+    The source code of MSM4J also includes this documentation so you may keep it handy locally. To generate it:
+
++----------------------------------------------------------------------------------+
+ mvn site:site
++----------------------------------------------------------------------------------+
+
+    To view the resulting documentation:
+
++----------------------------------------------------------------------------------+
+ mvn site:run
++----------------------------------------------------------------------------------+
+
+    The documentation will be available at {{{http://localhost:10000} http://localhost:10000}}
