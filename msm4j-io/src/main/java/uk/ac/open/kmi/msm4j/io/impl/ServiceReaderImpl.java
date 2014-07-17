@@ -25,6 +25,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.*;
@@ -470,9 +471,9 @@ public class ServiceReaderImpl implements ServiceReader {
         result.setLabel(individual.getLabel(null));
 
         // seeAlso
-        res = individual.getSeeAlso();
-        if (res != null) {
-            result.setSeeAlso(new URI(res.getURI()));
+        NodeIterator seeAlsoIterator = individual.listPropertyValues(RDFS.seeAlso);
+        for(RDFNode seeAlsoValue:seeAlsoIterator.toList()){
+            result.addSeeAlso(new URI(seeAlsoValue.asResource().getURI()));
         }
 
         // source
@@ -500,8 +501,8 @@ public class ServiceReaderImpl implements ServiceReader {
         }
 
         //licenses
-        NodeIterator nodeIterator = individual.listPropertyValues(DCTerms.license);
-        for(RDFNode licenseValue:nodeIterator.toList()){
+        NodeIterator licenseIterator = individual.listPropertyValues(DCTerms.license);
+        for(RDFNode licenseValue:licenseIterator.toList()){
             result.addLicense(new URI(licenseValue.asResource().getURI()));
         }
 

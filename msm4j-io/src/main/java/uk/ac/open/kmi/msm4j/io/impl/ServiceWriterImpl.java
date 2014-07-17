@@ -402,10 +402,11 @@ public class ServiceWriterImpl implements ServiceWriter {
         }
 
         // seeAlso
-        URI seeAlso = basicResource.getSeeAlso();
-        if (seeAlso != null) {
-            current.addProperty(RDFS.seeAlso,
-                    model.createResource(seeAlso.toASCIIString()));
+        if(basicResource.getSeeAlsos() != null){
+            for(URI seeAlso:basicResource.getSeeAlsos()){
+                current.addProperty(RDFS.seeAlso,
+                        model.createResource(seeAlso.toASCIIString()));
+            }
         }
 
         // Source

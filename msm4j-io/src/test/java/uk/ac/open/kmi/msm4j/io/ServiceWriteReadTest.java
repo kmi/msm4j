@@ -49,6 +49,14 @@ public class ServiceWriteReadTest {
         FileInputStream fis = new FileInputStream(ServiceWriteReadTest.class.getResource("/twitter.n3").getFile());
         List<Service> services = reader.parse(fis,"http://iserve.kmi.open.ac.uk/iserve/id/services/ec6f7ee4-bbbe-4463-9cfa-3b5f54b6cc99/twitter",Syntax.N3);
         for(Service service:services){
+            //seeAlso test
+            Assert.assertTrue(service.getSeeAlsos().size() == 1);
+            service.getSeeAlsos().remove(URI.create("http://www.programmableweb.com/api/twitter"));
+            Assert.assertTrue(service.getSeeAlsos().size() == 0);
+            service.addSeeAlso(URI.create("http://www.programmableweb.com/api/twitter"));
+            service.addSeeAlso(URI.create("https://dev.twitter.com/docs/api/1.1"));
+
+            //enrich the service description
             Provider provider = new Provider(URI.create("http://www.freebase.com/m/0289n8t"));
             provider.setLabel("Twitter");
             provider.setPopularity(3.5);
@@ -63,12 +71,18 @@ public class ServiceWriteReadTest {
             service.addLicense(URI.create(CC.ShareAlike.getURI()));
             service.addLicense(URI.create(CC.Attribution.getURI()));
             service.setLabel("Twitter API");
+
+            //write the service description
             File ontoFile = new File("temp.n3");
             FileOutputStream fos = new FileOutputStream(ontoFile);
             writer.serialise(service,fos,Syntax.N3);
             fos.flush();
             fos.close();
+
+            //read the service description
             List<Service> servicesNt = reader.parse(new FileInputStream(ontoFile), "http://iserve.kmi.open.ac.uk/iserve/id/services/ec6f7ee4-bbbe-4463-9cfa-3b5f54b6cc99/twitter", Syntax.N3);
+
+            // match if the service is equal
             Assert.assertTrue(service.equals(servicesNt.get(0)));
             ontoFile.delete();
         }

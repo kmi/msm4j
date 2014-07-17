@@ -17,9 +17,9 @@
 package uk.ac.open.kmi.msm4j;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Resources
@@ -43,13 +43,13 @@ public class Resource {
 
     private URI creator;
 
-    private URI seeAlso;
+    private Set<URI> seeAlsos = new HashSet<URI>();
 
     private URI source;
 
     private Date created;
 
-    private List<URI> licenses = new ArrayList<URI>();
+    private Set<URI> licenses = new HashSet<URI>();
 
     // this is specific to a kind of grounding, may need moving around
     private URI wsdlGrounding;
@@ -90,14 +90,6 @@ public class Resource {
         this.creator = creator;
     }
 
-    public URI getSeeAlso() {
-        return seeAlso;
-    }
-
-    public void setSeeAlso(URI seeAlso) {
-        this.seeAlso = seeAlso;
-    }
-
     public URI getSource() {
         return source;
     }
@@ -136,13 +128,28 @@ public class Resource {
         return false;
     }
 
-    public void setLicenses(List<URI> licenses) {
+    public void setLicenses(Set<URI> licenses) {
         this.licenses = licenses;
     }
 
-    public List<URI> getLicenses() {
+    public Set<URI> getLicenses() {
         return licenses;
     }
+
+    public boolean addSeeAlso(URI license) {
+        if (license != null) {
+            return this.seeAlsos.add(license);
+        }
+        return false;
+    }
+
+    public boolean removeSeeAlso(URI license) {
+        if (license != null) {
+            return this.seeAlsos.remove(license);
+        }
+        return false;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -159,5 +166,13 @@ public class Resource {
     @Override
     public int hashCode() {
         return uri.hashCode();
+    }
+
+    public Set<URI> getSeeAlsos() {
+        return seeAlsos;
+    }
+
+    public void setSeeAlsos(Set<URI> seeAlsos) {
+        this.seeAlsos = seeAlsos;
     }
 }
