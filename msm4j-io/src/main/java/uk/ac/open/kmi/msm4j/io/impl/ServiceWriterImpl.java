@@ -424,7 +424,7 @@ public class ServiceWriterImpl implements ServiceWriter {
         }
 
         // Issued
-        Date issued = basicResource.getCreated();
+        Date issued = basicResource.getIssued();
         Literal issuedLiteral = createDateLiteral(issued);
         if (issuedLiteral != null) {
             current.addProperty(DCTerms.issued, issuedLiteral);

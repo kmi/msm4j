@@ -72,7 +72,9 @@ public class ServiceWriteReadTest {
             service.addLicense(URI.create(CC.ShareAlike.getURI()));
             service.addLicense(URI.create(CC.Attribution.getURI()));
             service.setLabel("Twitter API");
-            service.setIssued(new Date());
+            Date date = new Date();
+            date.setTime(123456789);
+            service.setIssued(date);
 
             //write the service description
             File ontoFile = new File("temp.n3");
