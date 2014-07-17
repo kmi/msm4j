@@ -500,6 +500,12 @@ public class ServiceReaderImpl implements ServiceReader {
             result.setCreated(created);
         }
 
+        // issued
+        Date issued = getDate(individual, DCTerms.issued);
+        if (issued != null) {
+            result.setIssued(issued);
+        }
+
         //licenses
         NodeIterator licenseIterator = individual.listPropertyValues(DCTerms.license);
         for(RDFNode licenseValue:licenseIterator.toList()){

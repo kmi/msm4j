@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,6 +72,7 @@ public class ServiceWriteReadTest {
             service.addLicense(URI.create(CC.ShareAlike.getURI()));
             service.addLicense(URI.create(CC.Attribution.getURI()));
             service.setLabel("Twitter API");
+            service.setIssued(new Date());
 
             //write the service description
             File ontoFile = new File("temp.n3");

@@ -49,6 +49,8 @@ public class Resource {
 
     private Date created;
 
+    private Date issued;
+
     private Set<URI> licenses = new HashSet<URI>();
 
     // this is specific to a kind of grounding, may need moving around
@@ -174,5 +176,13 @@ public class Resource {
 
     public void setSeeAlsos(Set<URI> seeAlsos) {
         this.seeAlsos = seeAlsos;
+    }
+
+    public Date getIssued() {
+        return issued;
+    }
+
+    public void setIssued(Date issued) {
+        this.issued = issued;
     }
 }

@@ -423,6 +423,13 @@ public class ServiceWriterImpl implements ServiceWriter {
             current.addProperty(DCTerms.created, createdLiteral);
         }
 
+        // Issued
+        Date issued = basicResource.getCreated();
+        Literal issuedLiteral = createDateLiteral(issued);
+        if (issuedLiteral != null) {
+            current.addProperty(DCTerms.issued, issuedLiteral);
+        }
+
         // Licenses
         if(basicResource.getLicenses() != null){
             for(URI license:basicResource.getLicenses()){
