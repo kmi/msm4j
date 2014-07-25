@@ -144,6 +144,7 @@ public class ServiceWriterImpl implements ServiceWriter {
             com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
             com.hp.hpl.jena.rdf.model.Resource providerRes = model.createResource(provider.getUri().toASCIIString());
             current.addProperty(SCHEMA.provider, providerRes);
+            providerRes.addProperty(RDF.type,SCHEMA.Organization);
             addResourceMetadata(model,provider);
             // Create Popularity Value
             if(provider.getPopularity() != null){
