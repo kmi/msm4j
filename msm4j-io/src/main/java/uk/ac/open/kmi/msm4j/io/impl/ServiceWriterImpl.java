@@ -24,6 +24,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.DCTerms;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
@@ -145,7 +146,7 @@ public class ServiceWriterImpl implements ServiceWriter {
             com.hp.hpl.jena.rdf.model.Resource providerRes = model.createResource(provider.getUri().toASCIIString());
             current.addProperty(SCHEMA.provider, providerRes);
             providerRes.addProperty(RDF.type,SCHEMA.Organization);
-            addResourceMetadata(model,provider);
+            addResourceMetadata(model, provider);
             // Create Popularity Value
             if(provider.getPopularity() != null){
                 Literal popularity = model.createTypedLiteral(provider.getPopularity());
@@ -435,6 +436,13 @@ public class ServiceWriterImpl implements ServiceWriter {
         if(basicResource.getLicenses() != null){
             for(URI license:basicResource.getLicenses()){
                 current.addProperty(DCTerms.license, model.createResource(license.toASCIIString()));
+            }
+        }
+
+        // owl:sameAs
+        if(basicResource.getSameAsIndividuals() != null){
+            for(URI sameAs:basicResource.getSameAsIndividuals()){
+                current.addProperty(OWL2.sameAs, model.createResource(sameAs.toASCIIString()));
             }
         }
 

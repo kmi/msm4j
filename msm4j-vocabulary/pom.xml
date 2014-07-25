@@ -262,7 +262,8 @@
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n SCHEMA \
-                                --owl
+                                --rdfs \
+                                --inference
                             </commandlineArgs>
                         </configuration>
                     </execution>

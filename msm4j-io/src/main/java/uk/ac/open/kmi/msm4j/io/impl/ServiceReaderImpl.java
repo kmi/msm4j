@@ -24,6 +24,7 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.DCTerms;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
@@ -510,6 +511,12 @@ public class ServiceReaderImpl implements ServiceReader {
         NodeIterator licenseIterator = individual.listPropertyValues(DCTerms.license);
         for(RDFNode licenseValue:licenseIterator.toList()){
             result.addLicense(new URI(licenseValue.asResource().getURI()));
+        }
+
+        //owl:sameAs
+        NodeIterator sameAsIterator = individual.listPropertyValues(OWL2.sameAs);
+        for(RDFNode sameAsValue:sameAsIterator.toList()){
+            result.addSameAs(new URI(sameAsValue.asResource().getURI()));
         }
 
     }

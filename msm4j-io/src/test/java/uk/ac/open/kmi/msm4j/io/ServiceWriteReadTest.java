@@ -58,9 +58,11 @@ public class ServiceWriteReadTest {
             service.addSeeAlso(URI.create("https://dev.twitter.com/docs/api/1.1"));
 
             //enrich the service description
-            Provider provider = new Provider(URI.create("http://www.freebase.com/m/0289n8t"));
+            Provider provider = new Provider(URI.create("http://iserve.open.ac.uk/iserve/id/providers/twitter"));
             provider.setLabel("Twitter");
             provider.setPopularity(3.5);
+            provider.addSameAs(URI.create("http://www.freebase.com/m/0289n8t"));
+            provider.addSameAs(URI.create("http://dbpedia.org/resource/Twitter"));
             service.setProvider(provider);
             service.setRecentMashups(3);
             service.setTotalMashups(254);

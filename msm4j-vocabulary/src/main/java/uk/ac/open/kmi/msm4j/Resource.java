@@ -53,6 +53,8 @@ public class Resource {
 
     private Set<URI> licenses = new HashSet<URI>();
 
+    private Set<URI> sameAsIndividuals = new HashSet<URI>();
+
     // this is specific to a kind of grounding, may need moving around
     private URI wsdlGrounding;
 
@@ -138,16 +140,30 @@ public class Resource {
         return licenses;
     }
 
-    public boolean addSeeAlso(URI license) {
-        if (license != null) {
-            return this.seeAlsos.add(license);
+    public boolean addSeeAlso(URI seeAlso) {
+        if (seeAlso != null) {
+            return this.seeAlsos.add(seeAlso);
         }
         return false;
     }
 
-    public boolean removeSeeAlso(URI license) {
-        if (license != null) {
-            return this.seeAlsos.remove(license);
+    public boolean removeSeeAlso(URI seeAlso) {
+        if (seeAlso != null) {
+            return this.seeAlsos.remove(seeAlso);
+        }
+        return false;
+    }
+
+    public boolean addSameAs(URI individual) {
+        if (individual != null){
+            return this.sameAsIndividuals.add(individual);
+        }
+        return false;
+    }
+
+    public boolean removeSameAs(URI individual) {
+        if (individual != null){
+            return this.sameAsIndividuals.remove(individual);
         }
         return false;
     }
@@ -184,5 +200,13 @@ public class Resource {
 
     public void setIssued(Date issued) {
         this.issued = issued;
+    }
+
+    public Set<URI> getSameAsIndividuals() {
+        return sameAsIndividuals;
+    }
+
+    public void setSameAsIndividuals(Set<URI> sameAsIndividuals) {
+        this.sameAsIndividuals = sameAsIndividuals;
     }
 }
