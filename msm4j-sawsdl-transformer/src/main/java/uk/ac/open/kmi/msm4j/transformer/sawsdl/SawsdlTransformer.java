@@ -27,7 +27,6 @@ import com.ebmwebsourcing.easywsdl11.api.type.TDocumented;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 import uk.ac.open.kmi.msm4j.AnnotableResource;
 import uk.ac.open.kmi.msm4j.MessageContent;
 import uk.ac.open.kmi.msm4j.MessagePart;
@@ -106,273 +105,6 @@ public class SawsdlTransformer implements ServiceTransformer {
         log.debug(this.getJaxpImplementationInfo("TransformerFactory", TransformerFactory.newInstance().getClass()));
         log.debug(this.getJaxpImplementationInfo("SAXParserFactory", SAXParserFactory.newInstance().getClass()));
     }
-
-    public void setProxy(String proxyHost, String proxyPort) {
-        if (proxyHost != null && proxyPort != null) {
-            Properties prop = System.getProperties();
-            prop.put("http.proxyHost", proxyHost);
-            prop.put("http.proxyPort", proxyPort);
-        }
-    }
-
-    private String getJaxpImplementationInfo(String componentName, Class componentClass) {
-        CodeSource source = componentClass.getProtectionDomain().getCodeSource();
-        return MessageFormat.format(
-                "{0} implementation: {1} loaded from: {2}",
-                componentName,
-                componentClass.getCanonicalName(),
-                source == null ? "Java Runtime" : source.getLocation());
-    }
-
-    /**
-     * Obtains the Media Type this plugin supports for transformation.
-     * Although registered Media Types do not necessarily identify uniquely
-     * a given semantic service description format it is used for identification
-     * for now.
-     *
-     * @return the media type covered
-     */
-    @Override
-    public String getSupportedMediaType() {
-        return mediaType;
-    }
-
-    /**
-     * Obtains the different file extensions that this plugin can be applied to.
-     * Again this does not necessarily uniquely identify a format but helps filter the filesystem
-     * when doing batch transformation and may also be used as final solution in cases where we fail
-     * to identify a format.
-     *
-     * @return a List of file extensions supported
-     */
-    @Override
-    public List<String> getSupportedFileExtensions() {
-        return fileExtensions;
-    }
-
-    /**
-     * Obtains the version of the plugin used. Relevant as this is based on plugins and 3rd party may
-     * provide their own implementations. Having the version is useful for provenance information and debuggin
-     * purposes.
-     *
-     * @return a String with the version of the plugin.
-     */
-    @Override
-    public String getVersion() {
-        return this.version;
-    }
-
-    /**
-     * Parses and transforms a stream with service description(s), e.g. SAWSDL, OWL-S, hRESTS, etc., and
-     * returns a list of Service objects defined in the stream.
-     *
-     * @param originalDescription The semantic Web service description(s)
-     * @param baseUri             The base URI to use while transforming the service description
-     * @return A List with the services transformed conforming to MSM model
-     */
-    @Override
-    public List<uk.ac.open.kmi.msm4j.Service> transform(InputStream originalDescription, String baseUri) throws TransformationException {
-
-        List<uk.ac.open.kmi.msm4j.Service> msmServices = new ArrayList<uk.ac.open.kmi.msm4j.Service>();
-        if (originalDescription == null)
-            return msmServices;
-
-        Definitions definitions;
-        try {
-            InputSource is = new InputSource(originalDescription);
-            definitions = reader.readDocument(originalDescription, Definitions.class);
-            if (definitions == null)
-                return msmServices;
-
-            uk.ac.open.kmi.msm4j.Service msmSvc;
-            com.ebmwebsourcing.easywsdl11.api.element.Service[] wsdlServices = definitions.getServices();
-            for (com.ebmwebsourcing.easywsdl11.api.element.Service wsdlSvc : wsdlServices) {
-                msmSvc = transform(wsdlSvc);
-                if (msmSvc != null)
-                    msmServices.add(msmSvc);
-            }
-
-            return msmServices;
-        } catch (XmlObjectReadException e) {
-            log.error("Problems reading XML Object exception while parsing service", e);
-            throw new TransformationException("Problems reading XML Object exception while parsing service", e);
-        }
-
-    }
-
-    private uk.ac.open.kmi.msm4j.Service transform(com.ebmwebsourcing.easywsdl11.api.element.Service wsdlSvc) {
-
-        uk.ac.open.kmi.msm4j.Service msmSvc = null;
-        if (wsdlSvc == null)
-            return msmSvc;
-
-        QName qname = wsdlSvc.inferQName();
-        try {
-            // Use WSDL 2.0 naming http://www.w3.org/TR/wsdl20/#wsdl-iri-references
-            StringBuilder builder = new StringBuilder().
-                    append(qname.getNamespaceURI()).append("#").
-                    append("wsdl.service").append("(").append(qname.getLocalPart()).append(")");
-            URI svcUri = new URI(builder.toString());
-            msmSvc = new uk.ac.open.kmi.msm4j.Service(svcUri);
-            msmSvc.setSource(svcUri);
-            msmSvc.setWsdlGrounding(svcUri);
-            msmSvc.setLabel(qname.getLocalPart());
-
-            // Add documentation
-            addComment(wsdlSvc, msmSvc);
-
-            addModelReferences(wsdlSvc, msmSvc);
-
-            // Process Operations
-            URI baseUri;
-            uk.ac.open.kmi.msm4j.Operation msmOp;
-            Port[] ports = wsdlSvc.getPorts();
-            for (Port port : ports) {
-                if (port.hasBinding()) {
-                    BindingOperation[] operations = port.findBinding().getOperations();
-                    for (BindingOperation operation : operations) {
-                        msmOp = transform(operation, URIUtil.getNameSpace(svcUri), port.getName());
-                        msmSvc.addOperation(msmOp);
-                    }
-
-                }
-            }
-
-
-        } catch (URISyntaxException e) {
-            log.error("Syntax exception while generating service URI", e);
-        }
-
-        return msmSvc;
-    }
-
-    private uk.ac.open.kmi.msm4j.Operation transform(BindingOperation wsdlOp, URI namespace, String portName) {
-
-        uk.ac.open.kmi.msm4j.Operation msmOp = null;
-        if (wsdlOp == null)
-            return msmOp;
-
-        StringBuilder builder = new StringBuilder(namespace.toASCIIString()).append("#").
-                append("wsdl.interfaceOperation").
-                append("(").append(portName).append("/").append(wsdlOp.getName()).append(")");
-
-        URI opUri = null;
-        try {
-            opUri = new URI(builder.toString());
-            msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
-            msmOp.setSource(opUri);
-            msmOp.setWsdlGrounding(opUri);
-            msmOp.setLabel(wsdlOp.getName());
-
-            // Add documentation
-            addComment(wsdlOp, msmOp);
-
-            // Add model references
-            addModelReferences(wsdlOp, msmOp);
-
-            // Process Inputs, Outputs and Faults
-            BindingOperationInput input = wsdlOp.getInput();
-            MessageContent mcIn = transform(input, namespace, portName, wsdlOp.getName());
-            msmOp.addInput(mcIn);
-            addModelReferences(input, mcIn);
-//            addSchemaMappings(input, mcIn);
-
-            BindingOperationOutput output = wsdlOp.getOutput();
-            MessageContent mcOut = transform(output, namespace, portName, wsdlOp.getName());
-            msmOp.addOutput(mcOut);
-            addModelReferences(output, mcOut);
-//            addSchemaMappings(output, mcOut);
-
-            // TODO: Process faults
-
-        } catch (URISyntaxException e) {
-            log.error("Syntax exception while generating operation URI", e);
-        }
-
-
-        return msmOp;
-    }
-
-    private MessageContent transform(TBindingOperationMessage message, URI namespace, String portName, String opName) {
-
-        MessageContent mc = null;
-        if (message == null)
-            return mc;
-
-        String direction = (message instanceof BindingOperationInput) ? "In" : "Out";
-
-        StringBuilder builder = new StringBuilder(namespace.toASCIIString()).append("#").
-                append("wsdl.interfaceMessageReference").
-                append("(").append(portName).append("/").append(opName).append("/").append(direction).append(")");
-
-        URI mcUri = null;
-        try {
-            mcUri = new URI(builder.toString());
-            mc = new MessageContent(mcUri);
-            mc.setSource(mcUri);
-            mc.setWsdlGrounding(mcUri);
-
-            mc.setLabel(message.getName());
-            addComment(message, mc);
-
-            // Process parts
-//            List<Part> parts = message.getParts();
-//            for (Part part : parts) {
-//                mc.addMandatoryPart(transform(part));
-//            }
-        } catch (URISyntaxException e) {
-            log.error("Syntax exception while generating message URI", e);
-        }
-
-        return mc;
-    }
-
-    private void addComment(TDocumented element, Resource resource) {
-        Documentation doc = element.getDocumentation();
-        if (doc != null && doc.getContent() != null && !doc.getContent().isEmpty())
-            resource.setComment(doc.getContent());
-    }
-
-    private MessagePart transform(Part part) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    private void addModelReferences(XmlObject object, AnnotableResource annotableResource) {
-
-        URI[] modelRefs = SawsdlHelper.getModelReference(object);
-        for (URI modelRef : modelRefs) {
-            annotableResource.addModelReference(new Resource(modelRef));
-        }
-
-    }
-
-    private void addSchemaMappings(SchemaXmlObject object, MessagePart message) {
-
-        // Handle liftingSchemaMappings (only on elements or types)
-        if (object == null)
-            return;
-
-        URI[] liftList = null;
-        URI[] lowerList = null;
-
-        if (object instanceof Type) {
-            liftList = SawsdlHelper.getLiftingSchemaMapping((Type) object);
-            lowerList = SawsdlHelper.getLoweringSchemaMapping((Type) object);
-        } else if (object instanceof Element) {
-            liftList = SawsdlHelper.getLiftingSchemaMapping((Element) object);
-            lowerList = SawsdlHelper.getLoweringSchemaMapping((Element) object);
-        }
-
-        for (URI liftUri : liftList) {
-            message.addLiftingSchemaMapping(liftUri);
-        }
-
-        for (URI lowerUri : lowerList) {
-            message.addLiftingSchemaMapping(lowerUri);
-        }
-
-    }
-
 
     public static void main(String[] args) throws TransformationException {
 
@@ -491,6 +223,280 @@ public class SawsdlTransformer implements ServiceTransformer {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setProxy(String proxyHost, String proxyPort) {
+        if (proxyHost != null && proxyPort != null) {
+            Properties prop = System.getProperties();
+            prop.put("http.proxyHost", proxyHost);
+            prop.put("http.proxyPort", proxyPort);
+        }
+    }
+
+    private String getJaxpImplementationInfo(String componentName, Class componentClass) {
+        CodeSource source = componentClass.getProtectionDomain().getCodeSource();
+        return MessageFormat.format(
+                "{0} implementation: {1} loaded from: {2}",
+                componentName,
+                componentClass.getCanonicalName(),
+                source == null ? "Java Runtime" : source.getLocation());
+    }
+
+    /**
+     * Obtains the Media Type this plugin supports for transformation.
+     * Although registered Media Types do not necessarily identify uniquely
+     * a given semantic service description format it is used for identification
+     * for now.
+     *
+     * @return the media type covered
+     */
+    @Override
+    public String getSupportedMediaType() {
+        return mediaType;
+    }
+
+    /**
+     * Obtains the different file extensions that this plugin can be applied to.
+     * Again this does not necessarily uniquely identify a format but helps filter the filesystem
+     * when doing batch transformation and may also be used as final solution in cases where we fail
+     * to identify a format.
+     *
+     * @return a List of file extensions supported
+     */
+    @Override
+    public List<String> getSupportedFileExtensions() {
+        return fileExtensions;
+    }
+
+    /**
+     * Obtains the version of the plugin used. Relevant as this is based on plugins and 3rd party may
+     * provide their own implementations. Having the version is useful for provenance information and debuggin
+     * purposes.
+     *
+     * @return a String with the version of the plugin.
+     */
+    @Override
+    public String getVersion() {
+        return this.version;
+    }
+
+    /**
+     * Parses and transforms a stream with service description(s), e.g. SAWSDL, OWL-S, hRESTS, etc., and
+     * returns a list of Service objects defined in the stream.
+     *
+     * @param originalDescription The semantic Web service description(s)
+     * @param baseUri             The base URI to use while transforming the service description
+     * @return A List with the services transformed conforming to MSM model
+     */
+    @Override
+    public List<uk.ac.open.kmi.msm4j.Service> transform(InputStream originalDescription, String baseUri) throws TransformationException {
+
+        List<uk.ac.open.kmi.msm4j.Service> msmServices = new ArrayList<uk.ac.open.kmi.msm4j.Service>();
+        if (originalDescription == null)
+            return msmServices;
+
+        Definitions definitions;
+        try {
+
+            definitions = reader.readDocument(originalDescription, Definitions.class);
+            if (definitions == null)
+                return msmServices;
+
+            uk.ac.open.kmi.msm4j.Service msmSvc;
+            com.ebmwebsourcing.easywsdl11.api.element.Service[] wsdlServices = definitions.getServices();
+            for (com.ebmwebsourcing.easywsdl11.api.element.Service wsdlSvc : wsdlServices) {
+                msmSvc = transform(wsdlSvc, baseUri);
+                if (msmSvc != null)
+                    msmServices.add(msmSvc);
+            }
+
+            return msmServices;
+        } catch (XmlObjectReadException e) {
+            log.error("Problems reading XML Object exception while parsing service", e);
+            throw new TransformationException("Problems reading XML Object exception while parsing service", e);
+        }
+
+    }
+
+    private uk.ac.open.kmi.msm4j.Service transform(Service wsdlSvc, String baseUri) {
+
+        uk.ac.open.kmi.msm4j.Service msmSvc = null;
+        if (wsdlSvc == null)
+            return msmSvc;
+
+        QName qname = wsdlSvc.inferQName();
+
+        if (baseUri == null) {
+            baseUri = qname.getNamespaceURI();
+        }
+
+        try {
+            // Use WSDL 2.0 naming http://www.w3.org/TR/wsdl20/#wsdl-iri-references
+            StringBuilder builder = new StringBuilder().
+                    append(baseUri).append("#").
+                    append("wsdl.service").append("(").append(qname.getLocalPart()).append(")");
+
+            StringBuilder serviceUriBuilder = new StringBuilder().append(baseUri).append("/").append(qname.getLocalPart());
+            URI svcUri = new URI(serviceUriBuilder.toString());
+            msmSvc = new uk.ac.open.kmi.msm4j.Service(svcUri);
+            msmSvc.setSource(URI.create(baseUri));
+            msmSvc.setWsdlGrounding(svcUri);
+            msmSvc.setLabel(qname.getLocalPart());
+
+            // Add documentation
+            addComment(wsdlSvc, msmSvc);
+
+            addModelReferences(wsdlSvc, msmSvc);
+
+            // Process Operations
+
+            uk.ac.open.kmi.msm4j.Operation msmOp;
+            Port[] ports = wsdlSvc.getPorts();
+            for (Port port : ports) {
+                if (port.hasBinding()) {
+                    BindingOperation[] operations = port.findBinding().getOperations();
+                    for (BindingOperation operation : operations) {
+                        msmOp = transform(operation, URIUtil.getNameSpace(svcUri), port.getName());
+                        msmSvc.addOperation(msmOp);
+                    }
+
+                }
+            }
+
+
+        } catch (URISyntaxException e) {
+            log.error("Syntax exception while generating service URI", e);
+        }
+
+        return msmSvc;
+    }
+
+    private uk.ac.open.kmi.msm4j.Operation transform(BindingOperation wsdlOp, URI namespace, String portName) {
+
+        uk.ac.open.kmi.msm4j.Operation msmOp = null;
+        if (wsdlOp == null)
+            return msmOp;
+
+        StringBuilder builder = new StringBuilder(namespace.toASCIIString()).append("#").
+                append("wsdl.interfaceOperation").
+                append("(").append(portName).append("/").append(wsdlOp.getName()).append(")");
+
+        try {
+            URI opWsdlUri = new URI(builder.toString());
+            URI opUri = new URI(new StringBuilder().append(namespace).append("/").append(portName).append("-").append(wsdlOp.getName()).toString());
+            msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
+            msmOp.setSource(namespace);
+            msmOp.setWsdlGrounding(opWsdlUri);
+            msmOp.setLabel(wsdlOp.getName());
+
+            // Add documentation
+            addComment(wsdlOp, msmOp);
+
+            // Add model references
+            addModelReferences(wsdlOp, msmOp);
+
+            // Process Inputs, Outputs and Faults
+            BindingOperationInput input = wsdlOp.getInput();
+            MessageContent mcIn = transform(input, namespace, portName, wsdlOp.getName());
+            msmOp.addInput(mcIn);
+            addModelReferences(input, mcIn);
+//            addSchemaMappings(input, mcIn);
+
+            BindingOperationOutput output = wsdlOp.getOutput();
+            MessageContent mcOut = transform(output, namespace, portName, wsdlOp.getName());
+            msmOp.addOutput(mcOut);
+            addModelReferences(output, mcOut);
+//            addSchemaMappings(output, mcOut);
+
+            // TODO: Process faults
+
+        } catch (URISyntaxException e) {
+            log.error("Syntax exception while generating operation URI", e);
+        }
+
+
+        return msmOp;
+    }
+
+    private MessageContent transform(TBindingOperationMessage message, URI namespace, String portName, String opName) {
+
+        MessageContent mc = null;
+        if (message == null)
+            return mc;
+
+        String direction = (message instanceof BindingOperationInput) ? "In" : "Out";
+
+        StringBuilder builder = new StringBuilder(namespace.toASCIIString()).append("#").
+                append("wsdl.interfaceMessageReference").
+                append("(").append(portName).append("/").append(opName).append("/").append(direction).append(")");
+
+
+        try {
+            URI mcWsdlUri = new URI(builder.toString());
+            URI mcUri = new URI(new StringBuilder().append(namespace).append("/").append(portName).append("-").append(opName).append("-").append(direction).toString());
+            mc = new MessageContent(mcUri);
+            mc.setSource(namespace);
+            mc.setWsdlGrounding(mcWsdlUri);
+
+            mc.setLabel(message.getName());
+            addComment(message, mc);
+
+            // Process parts
+//            List<Part> parts = message.getParts();
+//            for (Part part : parts) {
+//                mc.addMandatoryPart(transform(part));
+//            }
+        } catch (URISyntaxException e) {
+            log.error("Syntax exception while generating message URI", e);
+        }
+
+        return mc;
+    }
+
+    private void addComment(TDocumented element, Resource resource) {
+        Documentation doc = element.getDocumentation();
+        if (doc != null && doc.getContent() != null && !doc.getContent().isEmpty())
+            resource.setComment(doc.getContent());
+    }
+
+    private MessagePart transform(Part part) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    private void addModelReferences(XmlObject object, AnnotableResource annotableResource) {
+
+        URI[] modelRefs = SawsdlHelper.getModelReference(object);
+        for (URI modelRef : modelRefs) {
+            annotableResource.addModelReference(new Resource(modelRef));
+        }
+
+    }
+
+    private void addSchemaMappings(SchemaXmlObject object, MessagePart message) {
+
+        // Handle liftingSchemaMappings (only on elements or types)
+        if (object == null)
+            return;
+
+        URI[] liftList = null;
+        URI[] lowerList = null;
+
+        if (object instanceof Type) {
+            liftList = SawsdlHelper.getLiftingSchemaMapping((Type) object);
+            lowerList = SawsdlHelper.getLoweringSchemaMapping((Type) object);
+        } else if (object instanceof Element) {
+            liftList = SawsdlHelper.getLiftingSchemaMapping((Element) object);
+            lowerList = SawsdlHelper.getLoweringSchemaMapping((Element) object);
+        }
+
+        for (URI liftUri : liftList) {
+            message.addLiftingSchemaMapping(liftUri);
+        }
+
+        for (URI lowerUri : lowerList) {
+            message.addLiftingSchemaMapping(lowerUri);
+        }
+
     }
 
 }
