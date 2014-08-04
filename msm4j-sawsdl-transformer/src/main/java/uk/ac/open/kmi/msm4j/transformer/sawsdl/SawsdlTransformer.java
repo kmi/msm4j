@@ -305,7 +305,7 @@ public class SawsdlTransformer implements ServiceTransformer {
             uk.ac.open.kmi.msm4j.Service msmSvc;
             com.ebmwebsourcing.easywsdl11.api.element.Service[] wsdlServices = definitions.getServices();
             for (com.ebmwebsourcing.easywsdl11.api.element.Service wsdlSvc : wsdlServices) {
-                msmSvc = transform(wsdlSvc, baseUri);
+                msmSvc = transform(wsdlSvc, baseUri, definitions);
                 if (msmSvc != null)
                     msmServices.add(msmSvc);
             }
@@ -318,7 +318,7 @@ public class SawsdlTransformer implements ServiceTransformer {
 
     }
 
-    private uk.ac.open.kmi.msm4j.Service transform(Service wsdlSvc, String baseUri) {
+    private uk.ac.open.kmi.msm4j.Service transform(Service wsdlSvc, String baseUri, Definitions definitions) {
 
         uk.ac.open.kmi.msm4j.Service msmSvc = null;
         if (wsdlSvc == null)
@@ -338,9 +338,10 @@ public class SawsdlTransformer implements ServiceTransformer {
 
             StringBuilder serviceUriBuilder = new StringBuilder().append(baseUri).append("/").append(qname.getLocalPart());
             URI svcUri = new URI(serviceUriBuilder.toString());
+            URI svcWsdlUri = new URI(builder.toString());
             msmSvc = new uk.ac.open.kmi.msm4j.Service(svcUri);
             msmSvc.setSource(URI.create(baseUri));
-            msmSvc.setWsdlGrounding(svcUri);
+            msmSvc.setWsdlGrounding(svcWsdlUri);
             msmSvc.setLabel(qname.getLocalPart());
 
             // Add documentation
@@ -350,13 +351,14 @@ public class SawsdlTransformer implements ServiceTransformer {
 
             // Process Operations
 
+
             uk.ac.open.kmi.msm4j.Operation msmOp;
             Port[] ports = wsdlSvc.getPorts();
             for (Port port : ports) {
                 if (port.hasBinding()) {
                     BindingOperation[] operations = port.findBinding().getOperations();
                     for (BindingOperation operation : operations) {
-                        msmOp = transform(operation, URIUtil.getNameSpace(svcUri), port.getName());
+                        msmOp = transform(operation, URIUtil.getNameSpace(svcUri), port.getName(), definitions);
                         msmSvc.addOperation(msmOp);
                     }
 
@@ -371,7 +373,7 @@ public class SawsdlTransformer implements ServiceTransformer {
         return msmSvc;
     }
 
-    private uk.ac.open.kmi.msm4j.Operation transform(BindingOperation wsdlOp, URI namespace, String portName) {
+    private uk.ac.open.kmi.msm4j.Operation transform(BindingOperation wsdlOp, URI namespace, String portName, Definitions definitions) {
 
         uk.ac.open.kmi.msm4j.Operation msmOp = null;
         if (wsdlOp == null)
@@ -391,6 +393,16 @@ public class SawsdlTransformer implements ServiceTransformer {
 
             // Add documentation
             addComment(wsdlOp, msmOp);
+
+            if (msmOp.getComment() == null) {
+                //Extract WSDL description from abstract part
+                for (PortType portType : definitions.getPortTypes()) {
+                    Operation abWsdlOp = portType.getOperationByName(wsdlOp.getName());
+                    if (abWsdlOp != null) {
+                        addComment(abWsdlOp, msmOp);
+                    }
+                }
+            }
 
             // Add model references
             addModelReferences(wsdlOp, msmOp);
