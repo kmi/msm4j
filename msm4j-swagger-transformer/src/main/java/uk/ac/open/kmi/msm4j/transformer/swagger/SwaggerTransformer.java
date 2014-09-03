@@ -1,6 +1,8 @@
 
 package uk.ac.open.kmi.msm4j.transformer.swagger;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.smartbear.swagger4j.*;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -33,10 +35,8 @@ public class SwaggerTransformer implements ServiceTransformer {
     private static final String VERSION_PROP = "swagger-transformer.version";
     private static final String VERSION_UNKNOWN = "Unknown";
     private String version = VERSION_UNKNOWN;
-
     // Supported Media Type
     public static String mediaType = "application/json";
-
     // Supported File Extensions
     private static List<String> fileExtensions = new ArrayList<String>();
 
@@ -44,9 +44,13 @@ public class SwaggerTransformer implements ServiceTransformer {
         fileExtensions.add("json");
     }
 
+    private Model httpStatusCodeModel;
+
 
     public SwaggerTransformer() throws TransformationException {
-
+        httpStatusCodeModel = ModelFactory.createDefaultModel();
+        String file = this.getClass().getResource("/").getFile();
+        httpStatusCodeModel.read(this.getClass().getResource("/http-statusCodes-2014-09-03.rdf").getFile());
     }
 
     public static void main(String[] args) throws TransformationException {
@@ -83,9 +87,9 @@ public class SwaggerTransformer implements ServiceTransformer {
         }
 
         SwaggerTransformer importer = new SwaggerTransformer();
-        ;
+
         ServiceWriter writer = new ServiceWriterImpl();
-        ;
+
         File rdfDir = null;
         boolean save = line.hasOption("s");
         if (save) {
@@ -425,7 +429,7 @@ public class SwaggerTransformer implements ServiceTransformer {
                 MessagePart httpStatus = new MessagePart(new URI(new StringBuilder(mc.getUri().toASCIIString()).append("/httpStatus").toString()));
                 mc.addMandatoryPart(httpStatus);
 
-                MessagePart code = new MessagePart(new URI(new StringBuilder(httpStatus.getUri().toASCIIString()).append("/code").toString()));
+                MessagePart code = new MessagePart(new URI(getHttpStatusCodeUri(responseMessage.getCode())));
                 code.setLabel(Integer.toString(responseMessage.getCode()));
                 code.setHrestsGrounding(new StringBuilder(operationGrounding).append(".responseMessages.code.[?(@ == ").append(responseMessage.getCode()).append(")]").toString());
 
@@ -447,6 +451,13 @@ public class SwaggerTransformer implements ServiceTransformer {
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    private String getHttpStatusCodeUri(int code) {
+        if (httpStatusCodeModel.listStatements(null, null, Integer.toString(code)).hasNext()) {
+            return httpStatusCodeModel.listStatements(null, null, Integer.toString(code)).next().getSubject().getURI();
         }
         return null;
     }
