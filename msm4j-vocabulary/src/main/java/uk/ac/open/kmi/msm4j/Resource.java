@@ -58,6 +58,8 @@ public class Resource {
     // this is specific to a kind of grounding, may need moving around
     private URI wsdlGrounding;
 
+    private String hrestsGrounding;
+
     public Resource(URI uri) {
         this.uri = uri;
     }
@@ -132,12 +134,12 @@ public class Resource {
         return false;
     }
 
-    public void setLicenses(Set<URI> licenses) {
-        this.licenses = licenses;
-    }
-
     public Set<URI> getLicenses() {
         return licenses;
+    }
+
+    public void setLicenses(Set<URI> licenses) {
+        this.licenses = licenses;
     }
 
     public boolean addSeeAlso(URI seeAlso) {
@@ -208,5 +210,13 @@ public class Resource {
 
     public void setSameAsIndividuals(Set<URI> sameAsIndividuals) {
         this.sameAsIndividuals = sameAsIndividuals;
+    }
+
+    public String getHrestsGrounding() {
+        return hrestsGrounding;
+    }
+
+    public void setHrestsGrounding(String hrestsGrounding) {
+        this.hrestsGrounding = hrestsGrounding;
     }
 }

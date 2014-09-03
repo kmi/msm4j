@@ -126,26 +126,32 @@ public class ServiceReaderImpl implements ServiceReader {
                 hasOpValues.close();
         }
 
+        // Address
+        if (individual.hasProperty(HRESTS.hasAddress)) {
+            service.setAddress(individual.getProperty(HRESTS.hasAddress).getString());
+        }
+
+
         // NFP parsing
 
-        if(individual.hasProperty(MSM_NFP.hasTotalMashups)){
+        if (individual.hasProperty(MSM_NFP.hasTotalMashups)) {
             service.setTotalMashups(individual.getProperty(MSM_NFP.hasTotalMashups).getInt());
         }
 
-        if(individual.hasProperty(MSM_NFP.hasRecentMashups)){
+        if (individual.hasProperty(MSM_NFP.hasRecentMashups)) {
             service.setRecentMashups(individual.getProperty(MSM_NFP.hasRecentMashups).getInt());
         }
 
         // Forum
         Resource forumValue = individual.getPropertyResourceValue(MSM_NFP.hasForum);
-        if(forumValue != null){
+        if (forumValue != null) {
             Forum forum = new Forum(new URI(forumValue.getURI()));
-            setResourceProperties(forumValue.as(Individual.class),forum);
+            setResourceProperties(forumValue.as(Individual.class), forum);
 
-            if(forumValue.hasProperty(MSM_NFP.hasVitality)){
+            if (forumValue.hasProperty(MSM_NFP.hasVitality)) {
                 forum.setVitality(forumValue.getProperty(MSM_NFP.hasVitality).getDouble());
             }
-            if(forumValue.hasProperty(SIOC.has_host)){
+            if (forumValue.hasProperty(SIOC.has_host)) {
                 try {
                     forum.setSite(new URL(forumValue.getProperty(SIOC.has_host).getString()));
                 } catch (MalformedURLException e) {
@@ -156,17 +162,17 @@ public class ServiceReaderImpl implements ServiceReader {
         }
         // Twitter account
         Resource twitterAccountValue = individual.getPropertyResourceValue(MSM_NFP.hasTwitterAccount);
-        if(twitterAccountValue != null){
+        if (twitterAccountValue != null) {
             TwitterAccount twitterAccount = new TwitterAccount(new URI(twitterAccountValue.getURI()));
-            setResourceProperties(twitterAccountValue.as(Individual.class),twitterAccount);
+            setResourceProperties(twitterAccountValue.as(Individual.class), twitterAccount);
             service.setTwitterAccount(twitterAccount);
         }
         // Provider
         Resource providerValue = individual.getPropertyResourceValue(SCHEMA.provider);
-        if(providerValue != null){
+        if (providerValue != null) {
             Provider provider = new Provider(new URI(providerValue.getURI()));
-            setResourceProperties(providerValue.as(Individual.class),provider);
-            if(providerValue.hasProperty(MSM_NFP.hasPopularity)){
+            setResourceProperties(providerValue.as(Individual.class), provider);
+            if (providerValue.hasProperty(MSM_NFP.hasPopularity)) {
                 provider.setPopularity(providerValue.getProperty(MSM_NFP.hasPopularity).getDouble());
             }
             service.setProvider(provider);
@@ -174,7 +180,6 @@ public class ServiceReaderImpl implements ServiceReader {
 
         return service;
     }
-
 
 
     private List<Operation> obtainOperations(NodeIterator hasOpValues) throws URISyntaxException {
@@ -216,6 +221,36 @@ public class ServiceReaderImpl implements ServiceReader {
                 mc = obtainMessageContent(rdfNode);
                 if (mc != null)
                     operation.addOutputFault(mc);
+
+                // Address
+                if (individual.hasProperty(HRESTS.hasAddress)) {
+                    // Address
+                    if (individual.hasProperty(HRESTS.hasAddress)) {
+                        operation.setAddress(individual.getProperty(HRESTS.hasAddress).getString());
+                    }
+                }
+
+                // Method
+                if (individual.hasProperty(HRESTS.hasMethod)) {
+                    operation.setMethod(new URI(individual.getProperty(HRESTS.hasMethod).getString()));
+                }
+
+                // ProducesContentTypes
+                NodeIterator producesContentTypes = individual.listPropertyValues(HRESTS.producesContentType);
+                while (producesContentTypes.hasNext()) {
+                    RDFNode contentTypeNode = producesContentTypes.next();
+                    if (contentTypeNode.isResource()) {
+                        operation.addProducesContentType(new URI(contentTypeNode.asResource().getURI()));
+                    }
+                }
+
+                NodeIterator acceptsContentTypes = individual.listPropertyValues(HRESTS.acceptsContentType);
+                while (acceptsContentTypes.hasNext()) {
+                    RDFNode contentTypeNode = acceptsContentTypes.next();
+                    if (contentTypeNode.isResource()) {
+                        operation.addAcceptsContentType(new URI(contentTypeNode.asResource().getURI()));
+                    }
+                }
 
                 operations.add(operation);
             }
@@ -473,7 +508,7 @@ public class ServiceReaderImpl implements ServiceReader {
 
         // seeAlso
         NodeIterator seeAlsoIterator = individual.listPropertyValues(RDFS.seeAlso);
-        for(RDFNode seeAlsoValue:seeAlsoIterator.toList()){
+        for (RDFNode seeAlsoValue : seeAlsoIterator.toList()) {
             result.addSeeAlso(new URI(seeAlsoValue.asResource().getURI()));
         }
 
@@ -509,14 +544,19 @@ public class ServiceReaderImpl implements ServiceReader {
 
         //licenses
         NodeIterator licenseIterator = individual.listPropertyValues(DCTerms.license);
-        for(RDFNode licenseValue:licenseIterator.toList()){
+        for (RDFNode licenseValue : licenseIterator.toList()) {
             result.addLicense(new URI(licenseValue.asResource().getURI()));
         }
 
         //owl:sameAs
         NodeIterator sameAsIterator = individual.listPropertyValues(OWL2.sameAs);
-        for(RDFNode sameAsValue:sameAsIterator.toList()){
+        for (RDFNode sameAsValue : sameAsIterator.toList()) {
             result.addSameAs(new URI(sameAsValue.asResource().getURI()));
+        }
+
+        // hRESTS grounding
+        if (individual.getProperty(HRESTS.isGroundedIn).getString() != null) {
+            result.setHrestsGrounding(individual.getProperty(HRESTS.isGroundedIn).getString());
         }
 
     }

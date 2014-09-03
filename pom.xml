@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.open.kmi.msm4j</groupId>
@@ -27,8 +28,8 @@
         <url>https://github.com/kmi/msm4j</url>
         <connection>scm:git:git@github.com:kmi/msm4j.git</connection>
         <developerConnection>scm:git:git@github.com:kmi/msm4j.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
@@ -73,6 +74,13 @@
             <organization>CITIUS - Universidad de Santiago de Compostela</organization>
             <organizationUrl>http://citius.usc.es</organizationUrl>
         </developer>
+        <developer>
+            <id>izzyblues</id>
+            <name>Luca Panziera</name>
+            <email>luca.panziera-{AT}-open.ac.uk</email>
+            <organization>Knowledge Media Institute - The Open University</organization>
+            <organizationUrl>http://kmi.open.ac.uk</organizationUrl>
+        </developer>
     </developers>
 
     <organization>
@@ -107,6 +115,7 @@
         <module>msm4j-owls-transformer</module>
         <module>msm4j-sawsdl-transformer</module>
         <module>msm4j-wsc-transformer</module>
+        <module>msm4j-swagger-transformer</module>
     </modules>
 
     <dependencies>
@@ -134,6 +143,12 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>${shared.resources.dir}</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <!-- Configure Maven site plugin for Reflow skin and Markdown support -->

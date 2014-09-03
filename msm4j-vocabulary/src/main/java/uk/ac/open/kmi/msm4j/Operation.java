@@ -18,7 +18,9 @@ package uk.ac.open.kmi.msm4j;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Operations
@@ -34,12 +36,19 @@ public class Operation extends InvocableEntity {
     private List<MessageContent> inputFaults;
     private List<MessageContent> outputFaults;
 
+    private Set<URI> producesContentTypes;
+    private Set<URI> acceptsContentTypes;
+    private URI method;
+    private String address;
+
     public Operation(URI uri) {
         super(uri);
         this.inputs = new ArrayList<MessageContent>();
         this.outputs = new ArrayList<MessageContent>();
         this.inputFaults = new ArrayList<MessageContent>();
         this.outputFaults = new ArrayList<MessageContent>();
+        this.producesContentTypes = new HashSet<URI>();
+        this.acceptsContentTypes = new HashSet<URI>();
     }
 
     public List<MessageContent> getInputs() {
@@ -130,4 +139,72 @@ public class Operation extends InvocableEntity {
         return false;
     }
 
+    public Set<URI> getProducesContentTypes() {
+        return producesContentTypes;
+    }
+
+    public void setProducesContentTypes(Set<URI> producesContentTypes) {
+        this.producesContentTypes = producesContentTypes;
+    }
+
+    public boolean addProducesContentType(URI mediaType) {
+        return this.producesContentTypes.add(mediaType);
+    }
+
+    public boolean removeProducesContentType(URI mediaType) {
+        return this.producesContentTypes.remove(mediaType);
+    }
+
+    public Set<URI> getAcceptsContentTypes() {
+        return acceptsContentTypes;
+    }
+
+    public void setAcceptsContentTypes(Set<URI> acceptsContentTypes) {
+        this.acceptsContentTypes = acceptsContentTypes;
+    }
+
+    public boolean addAcceptsContentType(URI mediaType) {
+        return this.acceptsContentTypes.add(mediaType);
+    }
+
+    public boolean removeAcceptsContentType(URI mediaType) {
+        return this.acceptsContentTypes.remove(mediaType);
+    }
+
+    public boolean addProducesContentType(String mediaType) {
+        return this.producesContentTypes.add(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+    }
+
+    public boolean addAcceptsContentType(String mediaType) {
+        return this.acceptsContentTypes.add(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+    }
+
+    public boolean removeProducesContentType(String mediaType) {
+        return this.producesContentTypes.remove(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+    }
+
+    public boolean removeAcceptsContentType(String mediaType) {
+        return this.acceptsContentTypes.remove(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+    }
+
+
+    public URI getMethod() {
+        return method;
+    }
+
+    public void setMethod(URI method) {
+        this.method = method;
+    }
+
+    public void setMethod(String method) {
+        this.method = URI.create(new StringBuilder("http://www.w3.org/2011/http-methods#").append(method.toUpperCase()).toString());
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

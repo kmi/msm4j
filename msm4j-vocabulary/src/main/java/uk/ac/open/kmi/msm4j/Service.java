@@ -35,6 +35,7 @@ import java.util.List;
 public class Service extends InvocableEntity {
 
     private List<Operation> operations;
+    private String address;
 
     // MSM-NFP extension
     private Forum forum;
@@ -146,5 +147,13 @@ public class Service extends InvocableEntity {
         result = 31 * result + (totalMashups != null ? totalMashups.hashCode() : 0);
         result = 31 * result + (recentMashups != null ? recentMashups.hashCode() : 0);
         return result;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

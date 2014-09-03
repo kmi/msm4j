@@ -97,6 +97,10 @@ public class ServiceWriterImpl implements ServiceWriter {
         // Add the grounding
         addGrounding(model, service);
 
+        // Add address
+        addAddress(model, service);
+
+
         // Process Operations
         for (Operation op : service.getOperations()) {
             current.addProperty(MSM.hasOperation,
@@ -115,21 +119,37 @@ public class ServiceWriterImpl implements ServiceWriter {
         return model;
     }
 
+    private void addAddress(Model model, Service service) {
+        if (service.getAddress() != null) {
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            Literal address = model.createTypedLiteral(service.getAddress(), HRESTS.URITemplate.getURI());
+            current.addProperty(HRESTS.hasAddress, address);
+        }
+    }
+
+    private void addAddress(Model model, Operation operation) {
+        if (operation.getAddress() != null) {
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(operation.getUri().toASCIIString());
+            Literal address = model.createTypedLiteral(operation.getAddress(), HRESTS.URITemplate.getURI());
+            current.addProperty(HRESTS.hasAddress, address);
+        }
+    }
+
     private void addTotalMashups(Model model, Service service) {
         // Create Total Mashups Value
-        if(service.getTotalMashups() != null){
+        if (service.getTotalMashups() != null) {
             com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
             Literal totalMashups = model.createTypedLiteral(service.getTotalMashups());
-            current.addProperty(MSM_NFP.hasTotalMashups,totalMashups);
+            current.addProperty(MSM_NFP.hasTotalMashups, totalMashups);
         }
     }
 
     private void addRecentMashups(Model model, Service service) {
         // Create Recent Mashups Value
-        if(service.getRecentMashups() != null){
+        if (service.getRecentMashups() != null) {
             com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
             Literal recentMashups = model.createTypedLiteral(service.getRecentMashups());
-            current.addProperty(MSM_NFP.hasRecentMashups,recentMashups);
+            current.addProperty(MSM_NFP.hasRecentMashups, recentMashups);
         }
     }
 
@@ -145,12 +165,12 @@ public class ServiceWriterImpl implements ServiceWriter {
             com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
             com.hp.hpl.jena.rdf.model.Resource providerRes = model.createResource(provider.getUri().toASCIIString());
             current.addProperty(SCHEMA.provider, providerRes);
-            providerRes.addProperty(RDF.type,SCHEMA.Organization);
+            providerRes.addProperty(RDF.type, SCHEMA.Organization);
             addResourceMetadata(model, provider);
             // Create Popularity Value
-            if(provider.getPopularity() != null){
+            if (provider.getPopularity() != null) {
                 Literal popularity = model.createTypedLiteral(provider.getPopularity());
-                providerRes.addProperty(MSM_NFP.hasPopularity,popularity);
+                providerRes.addProperty(MSM_NFP.hasPopularity, popularity);
             }
 
         }
@@ -167,9 +187,9 @@ public class ServiceWriterImpl implements ServiceWriter {
             // Create the resource
             com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
             com.hp.hpl.jena.rdf.model.Resource twitterAccountRes = model.createResource(twitterAccount.getUri().toASCIIString());
-            twitterAccountRes.addProperty(RDF.type,MSM_NFP.TwitterAccount);
+            twitterAccountRes.addProperty(RDF.type, MSM_NFP.TwitterAccount);
             current.addProperty(MSM_NFP.hasTwitterAccount, twitterAccountRes);
-            addResourceMetadata(model,twitterAccount);
+            addResourceMetadata(model, twitterAccount);
         }
     }
 
@@ -186,13 +206,13 @@ public class ServiceWriterImpl implements ServiceWriter {
             com.hp.hpl.jena.rdf.model.Resource forumRes = model.createResource(forum.getUri().toASCIIString());
             forumRes.addProperty(RDF.type, SIOC.Forum);
             current.addProperty(MSM_NFP.hasForum, forumRes);
-            addResourceMetadata(model,forum);
-            if(forum.getSite() != null){
-                forumRes.addProperty(SIOC.has_host,forum.getSite().toString());
+            addResourceMetadata(model, forum);
+            if (forum.getSite() != null) {
+                forumRes.addProperty(SIOC.has_host, forum.getSite().toString());
             }
-            if(forum.getVitality() != null){
+            if (forum.getVitality() != null) {
                 Literal vitality = model.createTypedLiteral(forum.getVitality());
-                forumRes.addProperty(MSM_NFP.hasVitality,vitality);
+                forumRes.addProperty(MSM_NFP.hasVitality, vitality);
             }
         }
     }
@@ -212,6 +232,12 @@ public class ServiceWriterImpl implements ServiceWriter {
         addModelReferences(model, op);
         // Add the grounding
         addGrounding(model, op);
+
+        addAddress(model, op);
+        addProducesContentTypes(model, op);
+        addAcceptsContentTypes(model, op);
+        addMethod(model, op);
+
 
         // Process inputs
         for (MessageContent input : op.getInputs()) {
@@ -241,6 +267,31 @@ public class ServiceWriterImpl implements ServiceWriter {
             addMessageContent(model, fault);
         }
 
+    }
+
+    private void addMethod(Model model, Operation op) {
+        com.hp.hpl.jena.rdf.model.Resource current = model.createResource(op.getUri().toASCIIString());
+        if (op.getMethod() != null) {
+            current.addProperty(HRESTS.hasMethod, model.createResource(op.getMethod().toASCIIString()));
+        }
+    }
+
+    private void addProducesContentTypes(Model model, Operation op) {
+        com.hp.hpl.jena.rdf.model.Resource current = model.createResource(op.getUri().toASCIIString());
+        if (op.getProducesContentTypes() != null) {
+            for (URI mediaType : op.getProducesContentTypes()) {
+                current.addProperty(HRESTS.producesContentType, model.createResource(mediaType.toASCIIString()));
+            }
+        }
+    }
+
+    private void addAcceptsContentTypes(Model model, Operation op) {
+        com.hp.hpl.jena.rdf.model.Resource current = model.createResource(op.getUri().toASCIIString());
+        if (op.getAcceptsContentTypes() != null) {
+            for (URI mediaType : op.getAcceptsContentTypes()) {
+                current.addProperty(HRESTS.acceptsContentType, model.createResource(mediaType.toASCIIString()));
+            }
+        }
     }
 
     private void addMessageContent(Model model, MessageContent messageContent) {
@@ -404,8 +455,8 @@ public class ServiceWriterImpl implements ServiceWriter {
         }
 
         // seeAlso
-        if(basicResource.getSeeAlsos() != null){
-            for(URI seeAlso:basicResource.getSeeAlsos()){
+        if (basicResource.getSeeAlsos() != null) {
+            for (URI seeAlso : basicResource.getSeeAlsos()) {
                 current.addProperty(RDFS.seeAlso,
                         model.createResource(seeAlso.toASCIIString()));
             }
@@ -433,18 +484,26 @@ public class ServiceWriterImpl implements ServiceWriter {
         }
 
         // Licenses
-        if(basicResource.getLicenses() != null){
-            for(URI license:basicResource.getLicenses()){
+        if (basicResource.getLicenses() != null) {
+            for (URI license : basicResource.getLicenses()) {
                 current.addProperty(DCTerms.license, model.createResource(license.toASCIIString()));
             }
         }
 
         // owl:sameAs
-        if(basicResource.getSameAsIndividuals() != null){
-            for(URI sameAs:basicResource.getSameAsIndividuals()){
+        if (basicResource.getSameAsIndividuals() != null) {
+            for (URI sameAs : basicResource.getSameAsIndividuals()) {
                 current.addProperty(OWL2.sameAs, model.createResource(sameAs.toASCIIString()));
             }
         }
+
+        //hRESTS grounding
+        String hrestsGrounding = basicResource.getHrestsGrounding();
+        if (hrestsGrounding != null) {
+            current.addProperty(HRESTS.isGroundedIn,
+                    model.createLiteral(hrestsGrounding));
+        }
+
 
     }
 
