@@ -555,7 +555,7 @@ public class ServiceReaderImpl implements ServiceReader {
         }
 
         // hRESTS grounding
-        if (individual.getProperty(HRESTS.isGroundedIn).getString() != null) {
+        if (individual.getProperty(HRESTS.isGroundedIn) != null) {
             result.setHrestsGrounding(individual.getProperty(HRESTS.isGroundedIn).getString());
         }
 
