@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>msm4j-parent</artifactId>
         <groupId>uk.ac.open.kmi.msm4j</groupId>
@@ -262,6 +263,27 @@
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n SCHEMA \
+                                --rdfs \
+                                --inference
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <!-- Automated File Generation with Schemagen: schema.org -->
+                    <execution>
+                        <id>HTTP_STATUS_CODES</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://www.w3.org/2011/http-statusCodes \
+                                -i ${basedir}/src/main/resources/http-statusCodes-2014-09-03.rdf \
+                                -e RDF/XML \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n HTTP_STATUS_CODES \
                                 --rdfs \
                                 --inference
                             </commandlineArgs>
