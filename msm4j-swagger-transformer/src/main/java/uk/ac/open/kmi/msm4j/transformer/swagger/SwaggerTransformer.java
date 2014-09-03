@@ -342,9 +342,13 @@ public class SwaggerTransformer implements ServiceTransformer {
             msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
             msmOp.setLabel(swaggerOperation.getNickName());
             msmOp.setComment(swaggerOperation.getSummary());
+
+
             msmOp.setAddress(address + buildParametersTemplate(swaggerOperation.getParameters()));
             msmOp.setMethod(swaggerOperation.getMethod().name());
-            msmOp.setHrestsGrounding(new StringBuilder("$.apis.operations.[?(@.nickname == '").append(swaggerOperation.getNickName()).append("')]").toString());
+            String resourcePath = swaggerOperation.getApi().getApiDeclaration().getResourcePath();
+            msmOp.setHrestsGrounding(new StringBuilder("$[?(@.resourcePath == '").append(resourcePath).append("')].apis.operations.[?(@.nickname == '").append(swaggerOperation.getNickName()).append("')]").toString());
+            msmOp.setSource(new URI(new StringBuilder(baseUri).append(resourcePath).toString()));
             for (String mediaType : swaggerOperation.getConsumes()) {
                 msmOp.addAcceptsContentType(mediaType);
             }
