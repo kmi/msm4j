@@ -303,7 +303,13 @@ public class SwaggerTransformer implements ServiceTransformer {
         }
 
         try {
-            msmSvc = new Service(new URI(baseUri));
+
+            if (resourceListing.getBasePath() != null) {
+                msmSvc = new Service(new URI(resourceListing.getBasePath()));
+            } else {
+                msmSvc = new Service(new URI(resourceListing.getApis().get(0).getDeclaration().getBasePath()));
+            }
+
             msmSvc.setLabel(resourceListing.getInfo().getTitle());
             msmSvc.setComment(resourceListing.getInfo().getDescription());
             msmSvc.setSource(new URI(baseUri));
@@ -338,7 +344,7 @@ public class SwaggerTransformer implements ServiceTransformer {
             return msmOp;
 
         try {
-            URI opUri = new URI(new StringBuilder().append(baseUri).append("/").append(swaggerOperation.getNickName()).toString());
+            URI opUri = new URI(new StringBuilder().append(swaggerOperation.getApi().getApiDeclaration().getBasePath()).append("/").append(swaggerOperation.getNickName()).toString());
             msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
             msmOp.setLabel(swaggerOperation.getNickName());
             msmOp.setComment(swaggerOperation.getSummary());
