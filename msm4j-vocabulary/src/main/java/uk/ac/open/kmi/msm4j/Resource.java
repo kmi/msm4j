@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,11 +55,6 @@ public class Resource {
 
     private Set<URI> sameAsIndividuals = new HashSet<URI>();
 
-    // this is specific to a kind of grounding, may need moving around
-    private URI wsdlGrounding;
-
-    private String hrestsGrounding;
-
     public Resource(URI uri) {
         this.uri = uri;
     }
@@ -102,14 +97,6 @@ public class Resource {
 
     public void setSource(URI source) {
         this.source = source;
-    }
-
-    public URI getWsdlGrounding() {
-        return wsdlGrounding;
-    }
-
-    public void setWsdlGrounding(URI wsdlGrounding) {
-        this.wsdlGrounding = wsdlGrounding;
     }
 
     public Date getCreated() {
@@ -157,14 +144,14 @@ public class Resource {
     }
 
     public boolean addSameAs(URI individual) {
-        if (individual != null){
+        if (individual != null) {
             return this.sameAsIndividuals.add(individual);
         }
         return false;
     }
 
     public boolean removeSameAs(URI individual) {
-        if (individual != null){
+        if (individual != null) {
             return this.sameAsIndividuals.remove(individual);
         }
         return false;
@@ -212,11 +199,4 @@ public class Resource {
         this.sameAsIndividuals = sameAsIndividuals;
     }
 
-    public String getHrestsGrounding() {
-        return hrestsGrounding;
-    }
-
-    public void setHrestsGrounding(String hrestsGrounding) {
-        this.hrestsGrounding = hrestsGrounding;
-    }
 }
