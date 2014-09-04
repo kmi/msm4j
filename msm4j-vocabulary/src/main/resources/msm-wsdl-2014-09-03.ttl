@@ -1,0 +1,34 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix msm-wsdl: <http://iserve.kmi.open.ac.uk/ns/msm-wsdl#> .
+@prefix msm: <http://iserve.kmi.open.ac.uk/ns/msm#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+
+<http://iserve.kmi.open.ac.uk/ns/msm-wsdl>
+    dc:created "2013-05-30"^^xsd:date ;
+    dc:issued "2013-05-30"^^xsd:date ;
+    dc:description "This is a simple ontology that provides means to point to WSDL groundings"@en ;
+    dc:modified "2014-09-03"^^xsd:date ;
+    dc:creator <http://kmi.open.ac.uk/>, <http://identifiers.kmi.open.ac.uk/people/carlos-pedrinaci/>, <http://jacek.cz/#me>, <http://kmi.open.ac.uk/people/member/luca-panziera> ;
+    a owl:Ontology ;
+    rdfs:label "Minimal Service Model WSDL Grounding"@en ;
+    owl:imports <http://iserve.kmi.open.ac.uk/ns/msm> ;
+    owl:versionInfo "0.2" .
+
+msm-wsdl:isGroundedIn
+    rdfs:subPropertyOf msm:isGroundedIn ;
+    rdfs:range msm-wsdl:XPointer ;
+    rdfs:isDefinedBy msm-wsdl: ;
+    rdfs:label "is Grounded In"@en ;
+	rdfs:description "Pointer to the grounding of the service into WSDL. This should point to the corresponding WSDL element, possibly following a WSDL IRI-references syntax."@en ;
+	vs:term_status "testing" .
+
+msm-wsdl:XPointer
+    a rdfs:Datatype ;
+    rdfs:label "XPointer"@en ;
+    rdfs:description "a data type for literals that specify a XPointer expression (for details: http://www.w3.org/TR/xptr-framework/)"@en ;
+    rdfs:isDefinedBy msm-wsdl: ;
+    vs:term_status "testing" .

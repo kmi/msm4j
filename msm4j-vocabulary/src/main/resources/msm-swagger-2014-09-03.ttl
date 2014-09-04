@@ -1,0 +1,34 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix msm-swagger: <http://iserve.kmi.open.ac.uk/ns/msm-swagger#> .
+@prefix msm: <http://iserve.kmi.open.ac.uk/ns/msm#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+
+
+<http://iserve.kmi.open.ac.uk/ns/msm-swagger>
+    dc:created "2014-09-03"^^xsd:date ;
+    dc:issued "2014-09-03"^^xsd:date ;
+    dc:description "This is a simple ontology that provides means to point to Swagger groundings"@en ;
+    dc:creator <http://kmi.open.ac.uk/>, <http://identifiers.kmi.open.ac.uk/people/carlos-pedrinaci/>, <http://kmi.open.ac.uk/people/member/luca-panziera>;
+    a owl:Ontology ;
+    rdfs:label "Minimal Service Model Swagger Grounding"@en ;
+    owl:imports <http://iserve.kmi.open.ac.uk/ns/msm> ;
+    owl:versionInfo "0.1" .
+
+msm-swagger:isGroundedIn
+    rdfs:subPropertyOf msm:isGroundedIn ;
+    rdfs:range msm-swagger:JSONPath ;
+    rdfs:isDefinedBy msm-swagger: ;
+    rdfs:label "is Grounded In"@en ;
+	rdfs:description "Pointer to the grounding of the service into Swagger descriptions. This should point to the corresponding Swagger element, possibly through a JSONPath expression."@en ;
+	vs:term_status "testing" .
+
+msm-swagger:JSONPath
+    a rdfs:Datatype ;
+    rdfs:label "JSONPath"@en ;
+    rdfs:description "a data type for literals that specify a JSONPath expression (for details: http://goessner.net/articles/JsonPath/)"@en ;
+    rdfs:isDefinedBy msm-swagger: ;
+    vs:term_status "testing" .

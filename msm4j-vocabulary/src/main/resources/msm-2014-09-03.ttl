@@ -4,103 +4,133 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
 
 <http://iserve.kmi.open.ac.uk/ns/msm>
     a owl:Ontology ;
     dc:created "2010-03-10"^^xsd:date ;
     dc:issued "2010-03-10"^^xsd:date ;
     dc:description "This is a simple ontology that provides the core vocabulary for capturing service properties"@en ;
-    dc:modified "2011-12-03"^^xsd:date, "2012-03-14"^^xsd:date, "2013-05-03"^^xsd:date, "2013-11-21"^^xsd:date ;
-    dc:creator <http://kmi.open.ac.uk/>, <http://identifiers.kmi.open.ac.uk/people/carlos-pedrinaci/> , <http://jacek.cz/#me>;
+    dc:modified "2011-12-03"^^xsd:date, "2012-03-14"^^xsd:date, "2013-05-03"^^xsd:date, "2013-11-21"^^xsd:date, "2014-09-03"^^xsd:date ;
+    dc:creator <http://kmi.open.ac.uk/>, <http://identifiers.kmi.open.ac.uk/people/carlos-pedrinaci/>, <http://jacek.cz/#me>, <http://kmi.open.ac.uk/people/member/luca-panziera> ;
     rdfs:label "Minimal Service Model"@en ;
     owl:imports <http://www.w3.org/ns/sawsdl>, <http://www.wsmo.org/ns/wsmo-lite> ;
-    owl:versionInfo "1.2" .
+    owl:versionInfo "1.3" .
 
 msm:MessageContent
     a rdfs:Class ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:label "Message Content"@en ;
-    rdfs:subClassOf msm:MessagePart .
+    rdfs:subClassOf msm:MessagePart ;
+    vs:term_status "stable" .
 
 msm:MessagePart
     a rdfs:Class ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
-    rdfs:label "Message Part"@en .
+    rdfs:label "Message Part"@en ;
+    vs:term_status "stable" .
 
 msm:Operation
     a rdfs:Class ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
-    rdfs:label "Operation"@en .
+    rdfs:label "Operation"@en ;
+    vs:term_status "stable" .
 
 msm:Service
     a rdfs:Class ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
-    rdfs:label "Service"@en .
+    rdfs:label "Service"@en ;
+    vs:term_status "stable" .
 
 msm:hasInput
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:domain msm:Operation ;
     rdfs:label "has Input"@en ;
-    rdfs:range msm:MessageContent .
-
-msm:hasInputFault
-    a rdf:Property ;
-    rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
-    rdfs:domain msm:Operation ;
-    rdfs:label "has Input Fault"@en ;
-    rdfs:range msm:MessageContent .
+    rdfs:range msm:MessageContent ;
+    vs:term_status "stable" .
 
 msm:hasMandatoryPart
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:label "has Mandatory Part"@en ;
-    rdfs:subPropertyOf msm:hasPart .
+    rdfs:subPropertyOf msm:hasPart ;
+    vs:term_status "stable" .
 
 msm:hasName
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:domain msm:MessagePart ;
     rdfs:label "has Name"@en ;
-    rdfs:range rdfs:Literal .
+    rdfs:range rdfs:Literal ;
+    vs:term_status "stable" .
 
 msm:hasOperation
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:domain msm:Service ;
     rdfs:label "has Operation"@en ;
-    rdfs:range msm:Operation .
+    rdfs:range msm:Operation ;
+    vs:term_status "stable" .
 
 msm:hasOptionalPart
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:label "has Optional Part"@en ;
-    rdfs:subPropertyOf msm:hasPart .
+    rdfs:subPropertyOf msm:hasPart ;
+    vs:term_status "stable" .
 
 msm:hasOutput
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:domain msm:Operation ;
     rdfs:label "has Output"@en ;
-    rdfs:range msm:MessageContent .
+    rdfs:range msm:MessageContent ;
+    vs:term_status "stable" .
 
-msm:hasOutputFault
+msm:hasFault
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:domain msm:Operation ;
+    rdfs:label "has Fault"@en ;
+    rdfs:range msm:MessageContent ;
+    vs:term_status "stable" .
+
+msm:hasInputFault
+    rdfs:subPropertyOf msm:hasFault ;
+    rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
+    rdfs:domain msm:Operation ;
+    rdfs:label "has Input Fault"@en ;
+    rdfs:range msm:MessageContent ;
+    vs:term_status "archaic" .
+
+msm:hasOutputFault
+    rdfs:subPropertyOf msm:hasFault ;
+    rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
+    rdfs:domain msm:Operation ;
     rdfs:label "has Output Fault"@en ;
-    rdfs:range msm:MessageContent .
+    rdfs:range msm:MessageContent ;
+    vs:term_status "archaic" .
 
 msm:hasPart
     a rdf:Property ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:label "has Part"@en ;
-    rdfs:subPropertyOf msm:hasPartTransitive .
+    rdfs:subPropertyOf msm:hasPartTransitive ;
+    vs:term_status "stable" .
+
 
 msm:hasPartTransitive
     a owl:TransitiveProperty ;
     rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
     rdfs:domain msm:MessagePart ;
     rdfs:label "has Part Transitive"@en ;
-    rdfs:range msm:MessagePart .
+    rdfs:range msm:MessagePart ;
+    vs:term_status "stable" .
 
+msm:isGroundedIn
+    a rdf:Property ;
+    rdfs:isDefinedBy <http://iserve.kmi.open.ac.uk/ns/msm> ;
+    rdfs:domain msm:Service, msm:Operation, msm:MessagePart ;
+    rdfs:label "is grounded in"@en ;
+    vs:term_status "testing" .

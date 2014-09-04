@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2014. Knowledge Media Institute - The Open University
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
@@ -73,7 +89,7 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://iserve.kmi.open.ac.uk/ns/msm# \
-                                -i ${basedir}/src/main/resources/msm-2013-05-03.ttl \
+                                -i ${basedir}/src/main/resources/msm-2014-09-03.ttl \
                                 -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
@@ -155,11 +171,32 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://iserve.kmi.open.ac.uk/ns/msm-wsdl# \
-                                -i ${basedir}/src/main/resources/msm-wsdl-2013-05-30.ttl \
+                                -i ${basedir}/src/main/resources/msm-wsdl-2014-09-03.ttl \
                                 -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n MSM_WSDL \
+                                --inference \
+                                --rdfs
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>MSM_SWAGGER</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://iserve.kmi.open.ac.uk/ns/msm-swagger# \
+                                -i ${basedir}/src/main/resources/msm-swagger-2014-09-03.ttl \
+                                -e TTL \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n MSM_SWAGGER \
+                                --inference \
                                 --rdfs
                             </commandlineArgs>
                         </configuration>
@@ -284,7 +321,7 @@
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n HTTP_STATUS_CODES \
-                                --rdfs \
+                                --owl \
                                 --inference
                             </commandlineArgs>
                         </configuration>
