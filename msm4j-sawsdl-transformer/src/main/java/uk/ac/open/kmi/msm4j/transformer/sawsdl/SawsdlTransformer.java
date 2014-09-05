@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ import com.ebmwebsourcing.easyschema10.api.SchemaXmlObject;
 import com.ebmwebsourcing.easyschema10.api.element.Element;
 import com.ebmwebsourcing.easyschema10.api.type.Type;
 import com.ebmwebsourcing.easywsdl11.api.element.*;
+import com.ebmwebsourcing.easywsdl11.api.element.Operation;
+import com.ebmwebsourcing.easywsdl11.api.element.Service;
 import com.ebmwebsourcing.easywsdl11.api.type.TBindingOperationMessage;
 import com.ebmwebsourcing.easywsdl11.api.type.TDocumented;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.open.kmi.msm4j.AnnotableResource;
-import uk.ac.open.kmi.msm4j.MessageContent;
-import uk.ac.open.kmi.msm4j.MessagePart;
-import uk.ac.open.kmi.msm4j.Resource;
+import uk.ac.open.kmi.msm4j.*;
 import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 import uk.ac.open.kmi.msm4j.io.util.URIUtil;
+import uk.ac.open.kmi.msm4j.vocabulary.MSM_WSDL;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -338,10 +338,9 @@ public class SawsdlTransformer implements ServiceTransformer {
 
             StringBuilder serviceUriBuilder = new StringBuilder().append(baseUri).append("/").append(qname.getLocalPart());
             URI svcUri = new URI(serviceUriBuilder.toString());
-            URI svcWsdlUri = new URI(builder.toString());
             msmSvc = new uk.ac.open.kmi.msm4j.Service(svcUri);
             msmSvc.setSource(URI.create(baseUri));
-            msmSvc.setWsdlGrounding(svcWsdlUri);
+            msmSvc.setGrounding(new LiteralGrounding(builder.toString(), new URI(MSM_WSDL.XPointer.getURI()), new URI(MSM_WSDL.isGroundedIn.getURI())));
             msmSvc.setLabel(qname.getLocalPart());
 
             // Add documentation
@@ -384,11 +383,10 @@ public class SawsdlTransformer implements ServiceTransformer {
                 append("(").append(portName).append("/").append(wsdlOp.getName()).append(")");
 
         try {
-            URI opWsdlUri = new URI(builder.toString());
             URI opUri = new URI(new StringBuilder().append(namespace).append("/").append(portName).append("-").append(wsdlOp.getName()).toString());
             msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
             msmOp.setSource(namespace);
-            msmOp.setWsdlGrounding(opWsdlUri);
+            msmOp.setGrounding(new LiteralGrounding(builder.toString(), new URI(MSM_WSDL.XPointer.getURI()), new URI(MSM_WSDL.isGroundedIn.getURI())));
             msmOp.setLabel(wsdlOp.getName());
 
             // Add documentation
@@ -444,11 +442,10 @@ public class SawsdlTransformer implements ServiceTransformer {
 
 
         try {
-            URI mcWsdlUri = new URI(builder.toString());
             URI mcUri = new URI(new StringBuilder().append(namespace).append("/").append(portName).append("-").append(opName).append("-").append(direction).toString());
             mc = new MessageContent(mcUri);
             mc.setSource(namespace);
-            mc.setWsdlGrounding(mcWsdlUri);
+            mc.setGrounding(new LiteralGrounding(builder.toString(), new URI(MSM_WSDL.XPointer.getURI()), new URI(MSM_WSDL.isGroundedIn.getURI())));
 
             mc.setLabel(message.getName());
             addComment(message, mc);

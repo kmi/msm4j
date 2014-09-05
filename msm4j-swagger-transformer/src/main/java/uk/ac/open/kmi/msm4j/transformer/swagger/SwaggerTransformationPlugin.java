@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * SawsdlTransformationPlugin is a Guice module providing support for transforming SAWSDL services into MSM
+ * SwaggerTransformationPlugin is a Guice module providing support for transforming Swagger services into MSM
  *
  * @author <a href="mailto:carlos.pedrinaci@open.ac.uk">Carlos Pedrinaci</a> (KMi - The Open University)
  * @since 19/07/2013

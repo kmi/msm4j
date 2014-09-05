@@ -25,8 +25,13 @@ import java.net.URI;
  */
 
 // Implementation of the
-public class ConceptGrounding implements Grounding {
+public class ConceptGrounding extends Grounding {
     private URI uri;
+
+    public ConceptGrounding(URI uri, URI groundingType) {
+        super(groundingType);
+        this.uri = uri;
+    }
 
     public ConceptGrounding(URI uri) {
         this.uri = uri;

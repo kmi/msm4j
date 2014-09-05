@@ -315,7 +315,7 @@
                         <configuration>
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
-                                -a http://www.w3.org/2011/http-statusCodes \
+                                -a http://www.w3.org/2011/http-statusCodes#ß \
                                 -i ${basedir}/src/main/resources/http-statusCodes-2014-09-03.rdf \
                                 -e RDF/XML \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
@@ -323,6 +323,45 @@
                                 -n HTTP_STATUS_CODES \
                                 --owl \
                                 --inference
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>HTTP_METHODS</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://www.w3.org/2011/http-methods# \
+                                -i ${basedir}/src/main/resources/http-Methods-2011-04-29.ttl \
+                                -e TTL \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n HTTP_METHODS \
+                                --owl \
+                                --inference
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>MEDIA_TYPES</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jena.schemagen</mainClass>
+                            <commandlineArgs>
+                                -a http://purl.org/NET/mediatypes/ \
+                                -i ${basedir}/src/main/resources/media-types-2014-09-03.rdf \
+                                -e RDF/XML \
+                                --package uk.ac.open.kmi.msm4j.vocabulary \
+                                -o ${project.build.directory}/generated-sources/java \
+                                -n MEDIA_TYPES \
+                                --rdf
                             </commandlineArgs>
                         </configuration>
                     </execution>

@@ -32,7 +32,7 @@ public class InvocableEntity extends AnnotableResource {
 
     private List<Condition> conditions;
     private List<Effect> effects;
-    private Grounding grounding;
+
 
     public InvocableEntity(URI uri) {
         super(uri);
@@ -71,4 +71,5 @@ public class InvocableEntity extends AnnotableResource {
     public boolean removeEffect(Effect effect) {
         return effects.remove(effect);
     }
+
 }

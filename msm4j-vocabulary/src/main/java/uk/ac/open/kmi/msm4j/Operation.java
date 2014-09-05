@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.open.kmi.msm4j;
+
+import uk.ac.open.kmi.msm4j.vocabulary.MEDIA_TYPES;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -172,19 +174,19 @@ public class Operation extends InvocableEntity {
     }
 
     public boolean addProducesContentType(String mediaType) {
-        return this.producesContentTypes.add(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+        return this.producesContentTypes.add(URI.create(new StringBuilder(MEDIA_TYPES.NS).append(mediaType).toString()));
     }
 
     public boolean addAcceptsContentType(String mediaType) {
-        return this.acceptsContentTypes.add(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+        return this.acceptsContentTypes.add(URI.create(new StringBuilder(MEDIA_TYPES.NS).append(mediaType).toString()));
     }
 
     public boolean removeProducesContentType(String mediaType) {
-        return this.producesContentTypes.remove(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+        return this.producesContentTypes.remove(URI.create(new StringBuilder(MEDIA_TYPES.NS).append(mediaType).toString()));
     }
 
     public boolean removeAcceptsContentType(String mediaType) {
-        return this.acceptsContentTypes.remove(URI.create(new StringBuilder("http://purl.org/NET/mediatypes/").append(mediaType).toString()));
+        return this.acceptsContentTypes.remove(URI.create(new StringBuilder(MEDIA_TYPES.NS).append(mediaType).toString()));
     }
 
 
@@ -192,12 +194,12 @@ public class Operation extends InvocableEntity {
         return method;
     }
 
-    public void setMethod(URI method) {
-        this.method = method;
-    }
-
     public void setMethod(String method) {
         this.method = URI.create(new StringBuilder("http://www.w3.org/2011/http-methods#").append(method.toUpperCase()).toString());
+    }
+
+    public void setMethod(URI method) {
+        this.method = method;
     }
 
     public String getAddress() {

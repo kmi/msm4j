@@ -23,6 +23,7 @@ import com.smartbear.swagger4j.*;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.open.kmi.msm4j.LiteralGrounding;
 import uk.ac.open.kmi.msm4j.MessageContent;
 import uk.ac.open.kmi.msm4j.MessagePart;
 import uk.ac.open.kmi.msm4j.Service;
@@ -31,6 +32,7 @@ import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
+import uk.ac.open.kmi.msm4j.vocabulary.MSM_SWAGGER;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -65,7 +67,6 @@ public class SwaggerTransformer implements ServiceTransformer {
 
     public SwaggerTransformer() throws TransformationException {
         httpStatusCodeModel = ModelFactory.createDefaultModel();
-        String file = this.getClass().getResource("/").getFile();
         httpStatusCodeModel.read(this.getClass().getResource("/http-statusCodes-2014-09-03.rdf").getFile());
     }
 
@@ -295,12 +296,12 @@ public class SwaggerTransformer implements ServiceTransformer {
                 ResourceListing resourceListing = Swagger.readSwagger(new URI(baseUri));
                 msmServices.add(transform(resourceListing, baseUri));
             } catch (IOException e) {
-                log.info("Unable to retrieve the swagger description from the Web");
+                log.info("Unable to retrieve the swagger description from the Web: {}", e.getMessage());
             } catch (URISyntaxException e) {
                 log.error("Provided wrong URI");
             }
 
-            if (msmServices == null) {
+            if (msmServices == null || msmServices.size() == 0) {
                 try {
                     log.info("Trying to parse the description from the provided InputStream...");
                     ResourceListing resourceListing = Swagger.createReader().readResourceListing(new InputStreamSwaggerSource(originalDescription, base));
@@ -333,11 +334,12 @@ public class SwaggerTransformer implements ServiceTransformer {
             msmSvc.setLabel(resourceListing.getInfo().getTitle());
             msmSvc.setComment(resourceListing.getInfo().getDescription());
             msmSvc.setSource(new URI(baseUri));
+            if (resourceListing.getInfo().getLicenseUrl() != null)
             msmSvc.addLicense(new URI(resourceListing.getInfo().getLicenseUrl()));
             if (resourceListing.getBasePath() != null) {
                 msmSvc.setAddress(resourceListing.getBasePath());
             }
-            msmSvc.setHrestsGrounding("$");
+            msmSvc.setGrounding(new LiteralGrounding("$", new URI(MSM_SWAGGER.JSONPath.getURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
 
             for (ResourceListing.ResourceListingApi apiRef : resourceListing.getApis()) {
                 ApiDeclaration apiDeclaration = apiRef.getDeclaration();
@@ -373,7 +375,8 @@ public class SwaggerTransformer implements ServiceTransformer {
             msmOp.setAddress(address + buildParametersTemplate(swaggerOperation.getParameters()));
             msmOp.setMethod(swaggerOperation.getMethod().name());
             String resourcePath = swaggerOperation.getApi().getApiDeclaration().getResourcePath();
-            msmOp.setHrestsGrounding(new StringBuilder("$[?(@.resourcePath == '").append(resourcePath).append("')].apis.operations.[?(@.nickname == '").append(swaggerOperation.getNickName()).append("')]").toString());
+            String groundingValue = new StringBuilder("$[?(@.resourcePath == '").append(resourcePath).append("')].apis.operations.[?(@.nickname == '").append(swaggerOperation.getNickName()).append("')]").toString();
+            msmOp.setGrounding(new LiteralGrounding(groundingValue, new URI(MSM_SWAGGER.JSONPath.getURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
             msmOp.setSource(new URI(new StringBuilder(baseUri).append(resourcePath).toString()));
             for (String mediaType : swaggerOperation.getConsumes()) {
                 msmOp.addAcceptsContentType(mediaType);
@@ -382,9 +385,9 @@ public class SwaggerTransformer implements ServiceTransformer {
                 msmOp.addProducesContentType(mediaType);
             }
 
-            msmOp.addInput(transform(swaggerOperation.getParameters(), opUri, msmOp.getHrestsGrounding()));
-            msmOp.setOutputs(transformOutputs(swaggerOperation.getResponseMessages(), opUri, msmOp.getHrestsGrounding()));
-            msmOp.setOutputFaults(transformOutputFaults(swaggerOperation.getResponseMessages(), opUri, msmOp.getHrestsGrounding()));
+            msmOp.addInput(transform(swaggerOperation.getParameters(), opUri, groundingValue));
+            msmOp.setOutputs(transformOutputs(swaggerOperation.getResponseMessages(), opUri, groundingValue));
+            msmOp.setOutputFaults(transformOutputFaults(swaggerOperation.getResponseMessages(), opUri, groundingValue));
 
         } catch (URISyntaxException e) {
             log.error("Syntax exception while generating operation URI", e);
@@ -445,21 +448,29 @@ public class SwaggerTransformer implements ServiceTransformer {
                 MessagePart httpStatus = new MessagePart(new URI(new StringBuilder(mc.getUri().toASCIIString()).append("/httpStatus").toString()));
                 mc.addMandatoryPart(httpStatus);
 
-                MessagePart code = new MessagePart(new URI(getHttpStatusCodeUri(responseMessage.getCode())));
+                String codeUri = getHttpStatusCodeUri(responseMessage.getCode());
+                MessagePart code;
+                if (codeUri == null) {
+                    codeUri = new StringBuilder(httpStatus.getUri().toASCIIString()).append("/code").toString();
+                }
+                code = new MessagePart(new URI(codeUri));
                 code.setLabel(Integer.toString(responseMessage.getCode()));
-                code.setHrestsGrounding(new StringBuilder(operationGrounding).append(".responseMessages.code.[?(@ == ").append(responseMessage.getCode()).append(")]").toString());
+                String groundingValue = new StringBuilder(operationGrounding).append(".responseMessages.code.[?(@ == ").append(responseMessage.getCode()).append(")]").toString();
+                code.setGrounding(new LiteralGrounding(groundingValue, new URI(MSM_SWAGGER.JSONPath.getURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
 
                 MessagePart message = new MessagePart(new URI(new StringBuilder(httpStatus.getUri().toASCIIString()).append("/message").toString()));
                 message.setLabel("Explanation of the HTTP status " + responseMessage.getCode());
                 message.setComment(responseMessage.getMessage());
-                message.setHrestsGrounding(new StringBuilder(operationGrounding).append(".responseMessages.[?(@.code == ").append(responseMessage.getCode()).append(")].message").toString());
+                groundingValue = new StringBuilder(operationGrounding).append(".responseMessages.[?(@.code == ").append(responseMessage.getCode()).append(")].message").toString();
+                message.setGrounding(new LiteralGrounding(groundingValue, new URI(MSM_SWAGGER.JSONPath.getURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
 
                 httpStatus.addMandatoryPart(code);
                 httpStatus.addMandatoryPart(message);
                 if (responseMessage.getResponseModel() != null) {
                     MessagePart responseModel = new MessagePart(new URI(new StringBuilder(mc.getUri().toASCIIString()).append("/").append(responseMessage.getResponseModel()).toString()));
                     responseModel.setLabel(responseMessage.getResponseModel());
-                    responseModel.setHrestsGrounding(new StringBuilder(operationGrounding).append(".responseMessages.[?(@.code == ").append(responseMessage.getCode()).append(")].responseModel").toString());
+                    groundingValue = new StringBuilder(operationGrounding).append(".responseMessages.[?(@.code == ").append(responseMessage.getCode()).append(")].responseModel").toString();
+                    responseModel.setGrounding(new LiteralGrounding(groundingValue, new URI(MSM_SWAGGER.JSONPath.getURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
                     mc.addMandatoryPart(responseModel);
                 }
 
@@ -490,7 +501,8 @@ public class SwaggerTransformer implements ServiceTransformer {
                 MessagePart mp = new MessagePart(new URI(new StringBuilder(mc.getUri().toASCIIString()).append("/").append(parameter.getName()).toString()));
                 mp.setLabel(parameter.getName());
                 mp.setComment(parameter.getDescription());
-                mp.setHrestsGrounding(new StringBuilder(operationGrounding).append(".parameters.[?(@.name == '").append(parameter.getName()).append("')]").toString());
+                String groundingValue = new StringBuilder(operationGrounding).append(".parameters.[?(@.name == '").append(parameter.getName()).append("')]").toString();
+                mp.setGrounding(new LiteralGrounding(groundingValue, new URI(MSM_SWAGGER.JSONPath.getURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
 
                 if (parameter.isRequired()) {
                     mc.addMandatoryPart(mp);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,24 +81,36 @@ public class OwlsTransformer implements ServiceTransformer {
     private static final String TRANSFORM_VAR = "transform";
 
     private static final String TYPE_OF_MESSAGE_VAR = "messageType";
+    private static final String QUERY_IO =
+            "SELECT DISTINCT * WHERE {\n"
+                    + "  {\n"
+                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlInputMessage ?" + WSDL_MESSAGE_VAR + " .\n"
+                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlInput ?" + MAP_VAR + " .\n"
+                    + "   BIND (\"input\" AS ?" + TYPE_OF_MESSAGE_VAR + ") .\n"
+                    + "  }\n"
+                    + " UNION \n"
+                    + "  {\n"
+                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlOutputMessage ?" + WSDL_MESSAGE_VAR + " .\n"
+                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlOutput ?" + MAP_VAR + " .\n"
+                    + "   BIND (\"output\" AS ?" + TYPE_OF_MESSAGE_VAR + ") .\n"
+                    + "  }\n"
+                    + "   ?" + MAP_VAR + " grounding:wsdlMessagePart ?" + WSDL_PART_VAR + " .\n"
+                    + "   ?" + MAP_VAR + " grounding:owlsParameter ?" + MESSAGE_PART_VAR + " .\n"
+                    + "   ?" + MESSAGE_PART_VAR + " process:parameterType ?" + MESSAGE_PART_TYPE_VAR + " .\n"
+                    + "   OPTIONAL {?" + MAP_VAR + " grounding:xsltTransformationString ?" + TRANSFORM_VAR + " . }\n"
+                    + "}";
     private static final String INPUT_PARAMETER_VAR = "inputParameter";
     private static final String INPUT_PARAMETER_TYPE_VAR = INPUT_PARAMETER_VAR + "Type";
+    private static final String INPUT_PARAMETER2_TYPE_VAR = INPUT_PARAMETER_TYPE_VAR + "2";
+    private static final String INPUT_PARAMETER2_VAR = INPUT_PARAMETER_VAR + "2";
     private static final String INPUT_MESSAGE_VAR = "inputMessage";
     private static final String INPUT_MAP_VAR = "inputMap";
     private static final String INPUT_TRANSFORM_VAR = "inputTransform";
     private static final String OUTPUT_PARAMETER_VAR = "outputParameter";
     private static final String OUTPUT_PARAMETER_TYPE_VAR = OUTPUT_PARAMETER_VAR + "Type";
-    private static final String OUTPUT_MESSAGE_VAR = "outputMessage";
-    private static final String OUTPUT_MAP_VAR = "outputMap";
-    private static final String OUTPUT_PART_VAR = "outputPart";
-    private static final String OUTPUT_TRANSFORM_VAR = "outputTransform";
-    private static final String INPUT_PART_VAR = "inputPart";
-    private static final String INPUT_PARAMETER2_VAR = INPUT_PARAMETER_VAR + "2";
-    private static final String INPUT_PARAMETER2_TYPE_VAR = INPUT_PARAMETER_TYPE_VAR + "2";
-    private static final String OUTPUT_PARAMETER2_VAR = OUTPUT_PARAMETER_VAR + "2";
     private static final String OUTPUT_PARAMETER2_TYPE_VAR = OUTPUT_PARAMETER_TYPE_VAR + "2";
-
-
+    private static final String OUTPUT_PARAMETER2_VAR = OUTPUT_PARAMETER_VAR + "2";
+    private static final String OUTPUT_MESSAGE_VAR = "outputMessage";
     // TODO: Use the constants automatically generated for resources
     private static final String QUERY_GLOBAL =
             "SELECT DISTINCT * WHERE {\n"
@@ -161,42 +173,24 @@ public class OwlsTransformer implements ServiceTransformer {
                     + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlOutputMessage ?" + OUTPUT_MESSAGE_VAR + " .\n"
                     + "  }\n"
                     + "}";
-
-    private static final String QUERY_IO =
-            "SELECT DISTINCT * WHERE {\n"
-                    + "  {\n"
-                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlInputMessage ?" + WSDL_MESSAGE_VAR + " .\n"
-                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlInput ?" + MAP_VAR + " .\n"
-                    + "   BIND (\"input\" AS ?" + TYPE_OF_MESSAGE_VAR + ") .\n"
-                    + "  }\n"
-                    + " UNION \n"
-                    + "  {\n"
-                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlOutputMessage ?" + WSDL_MESSAGE_VAR + " .\n"
-                    + "   ?" + PROCESS_GROUNDING_VAR + " grounding:wsdlOutput ?" + MAP_VAR + " .\n"
-                    + "   BIND (\"output\" AS ?" + TYPE_OF_MESSAGE_VAR + ") .\n"
-                    + "  }\n"
-                    + "   ?" + MAP_VAR + " grounding:wsdlMessagePart ?" + WSDL_PART_VAR + " .\n"
-                    + "   ?" + MAP_VAR + " grounding:owlsParameter ?" + MESSAGE_PART_VAR + " .\n"
-                    + "   ?" + MESSAGE_PART_VAR + " process:parameterType ?" + MESSAGE_PART_TYPE_VAR + " .\n"
-                    + "   OPTIONAL {?" + MAP_VAR + " grounding:xsltTransformationString ?" + TRANSFORM_VAR + " . }\n"
-                    + "}";
-
+    private static final String OUTPUT_MAP_VAR = "outputMap";
+    private static final String OUTPUT_PART_VAR = "outputPart";
+    private static final String OUTPUT_TRANSFORM_VAR = "outputTransform";
+    private static final String INPUT_PART_VAR = "inputPart";
     // Include information about the software version
     private static final String VERSION_PROP_FILE = "owls-transformer.properties";
     private static final String VERSION_PROP = "owls-transformer.version";
     private static final String VERSION_UNKNOWN = "Unknown";
-    private static final String OWL_S_11_SERVICE = "http://www.daml.org/services/owl-s/1.1/Service.owl#";
-    private static final String OWL_S_11_PROFILE = "http://www.daml.org/services/owl-s/1.1/Profile.owl#";
-    private static final String OWL_S_11_PROCESS = "http://www.daml.org/services/owl-s/1.1/Process.owl#";
-    private static final String OWL_S_11_GROUNDING = "http://www.daml.org/services/owl-s/1.1/Grounding.owl#";
-    private static final String OWL_S_11_EXPRESSION = "http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#";
-
     // Injection of the version
     private
     @Inject(optional = true)
     @Named(VERSION_PROP)
     String version = VERSION_UNKNOWN;
-
+    private static final String OWL_S_11_SERVICE = "http://www.daml.org/services/owl-s/1.1/Service.owl#";
+    private static final String OWL_S_11_PROFILE = "http://www.daml.org/services/owl-s/1.1/Profile.owl#";
+    private static final String OWL_S_11_PROCESS = "http://www.daml.org/services/owl-s/1.1/Process.owl#";
+    private static final String OWL_S_11_GROUNDING = "http://www.daml.org/services/owl-s/1.1/Grounding.owl#";
+    private static final String OWL_S_11_EXPRESSION = "http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#";
     // Supported Media Type
     public static String mediaType = "application/owl+xml";
 
@@ -395,7 +389,7 @@ public class OwlsTransformer implements ServiceTransformer {
         // Add the grounding doc
         Literal lit = querySolution.getLiteral(WSDL_DOC_VAR);
         if (lit != null) {
-            result.setWsdlGrounding(new URI(lit.getString()));
+            result.setGrounding(new URI(lit.getString()));
         }
 
         // Add model references
@@ -451,7 +445,7 @@ public class OwlsTransformer implements ServiceTransformer {
         // Add the grounding
         lit = querySolution.getLiteral(INPUT_MESSAGE_VAR);
         if (lit != null) {
-            inputMc.setWsdlGrounding(new URI(lit.getString()));
+            inputMc.setGrounding(new URI(lit.getString()));
         }
 
         // Define a default node for the top level Output Message Content
@@ -460,7 +454,7 @@ public class OwlsTransformer implements ServiceTransformer {
         // Add the grounding
         lit = querySolution.getLiteral(OUTPUT_MESSAGE_VAR);
         if (lit != null) {
-            outputMc.setWsdlGrounding(new URI(lit.getString()));
+            outputMc.setGrounding(new URI(lit.getString()));
         }
 
         populateMessageParts(model, inputMc, outputMc);
@@ -518,7 +512,7 @@ public class OwlsTransformer implements ServiceTransformer {
                 Literal lit = querySolution.getLiteral(WSDL_PART_VAR);
                 if (lit != null) {
                     URI wsdlGrounding = new URI(lit.getString());
-                    result.setWsdlGrounding(wsdlGrounding);
+                    result.setGrounding(wsdlGrounding);
                     // Get the type
                     lit = querySolution.getLiteral(MESSAGE_PART_TYPE_VAR);
                     if (lit != null) {

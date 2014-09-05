@@ -23,14 +23,24 @@ import java.net.URI;
  * <p/>
  * Implementation of a grounding as a literal
  */
-public class LiteralGrounding {
+public class LiteralGrounding extends Grounding {
 
     private String value;
     private URI dataType;
 
-    public LiteralGrounding(String value, URI dataType) {
+    public LiteralGrounding(String value, URI dataType, URI groundingType) {
+        super(groundingType);
         this.value = value;
         this.dataType = dataType;
+    }
+
+    public LiteralGrounding(String value, URI groundingType) {
+        super(groundingType);
+        this.value = value;
+    }
+
+    public LiteralGrounding(String value) {
+        this.value = value;
     }
 
     public String getValue() {

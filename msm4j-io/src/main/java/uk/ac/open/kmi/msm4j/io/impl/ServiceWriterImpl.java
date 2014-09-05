@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ package uk.ac.open.kmi.msm4j.io.impl;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -30,6 +27,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.*;
+import uk.ac.open.kmi.msm4j.Resource;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.extensionTypes.PddlType;
@@ -331,6 +329,8 @@ public class ServiceWriterImpl implements ServiceWriter {
         // Add the modelReferences
         addModelReferences(model, messagePart);
 
+        addGrounding(model, messagePart);
+
         // Process mandatory parts
         for (MessagePart part : messagePart.getMandatoryParts()) {
             current.addProperty(MSM.hasMandatoryPart,
@@ -412,18 +412,28 @@ public class ServiceWriterImpl implements ServiceWriter {
         return result;
     }
 
-    private void addGrounding(Model model, Resource resource) {
+    private void addGrounding(Model model, AnnotableResource resource) {
         // Exit early if null
         if (resource == null)
             return;
 
         // Add WSDL grounding if present
-        URI grounding = resource.getWsdlGrounding();
+        Grounding grounding = resource.getGrounding();
         if (grounding != null) {
-            // Create the resource
-            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(resource.getUri().toASCIIString());
-            com.hp.hpl.jena.rdf.model.Resource gdgRes = model.createResource(grounding.toASCIIString());
-            current.addProperty(MSM_WSDL.isGroundedIn, gdgRes);
+            if (grounding instanceof ConceptGrounding) {
+                // Create the resource
+                com.hp.hpl.jena.rdf.model.Resource current = model.createResource(resource.getUri().toASCIIString());
+                com.hp.hpl.jena.rdf.model.Resource gdgRes = model.createResource(((ConceptGrounding) grounding).getUri().toASCIIString());
+                Property groundingType = model.createProperty(grounding.getGroundingType().toASCIIString());
+                current.addProperty(groundingType, gdgRes);
+            }
+            if (grounding instanceof LiteralGrounding) {
+                // Create the Literal
+                com.hp.hpl.jena.rdf.model.Resource current = model.createResource(resource.getUri().toASCIIString());
+                Literal groundingLiteral = model.createTypedLiteral(((LiteralGrounding) grounding).getValue(), ((LiteralGrounding) grounding).getDataType().toASCIIString());
+                Property groundingType = model.createProperty(grounding.getGroundingType().toASCIIString());
+                current.addProperty(groundingType, groundingLiteral);
+            }
         }
 
     }
@@ -496,14 +506,6 @@ public class ServiceWriterImpl implements ServiceWriter {
                 current.addProperty(OWL2.sameAs, model.createResource(sameAs.toASCIIString()));
             }
         }
-
-        //hRESTS grounding
-        String hrestsGrounding = basicResource.getHrestsGrounding();
-        if (hrestsGrounding != null) {
-            current.addProperty(HRESTS.isGroundedIn,
-                    model.createLiteral(hrestsGrounding));
-        }
-
 
     }
 

@@ -16,10 +16,32 @@
 
 package uk.ac.open.kmi.msm4j;
 
+import uk.ac.open.kmi.msm4j.vocabulary.MSM;
+
+import java.net.URI;
+
 /**
  * Created by Luca Panziera on 04/09/2014.
  * <p/>
  * Generic definition of grounding
  */
-public interface Grounding {
+public abstract class Grounding {
+
+    // Default grounding type
+    private URI groundingType = URI.create(MSM.isGroundedIn.getURI());
+
+    public Grounding() {
+    }
+
+    public Grounding(URI groundingType) {
+        this.groundingType = groundingType;
+    }
+
+    public URI getGroundingType() {
+        return groundingType;
+    }
+
+    public void setGroundingType(URI groundingType) {
+        this.groundingType = groundingType;
+    }
 }

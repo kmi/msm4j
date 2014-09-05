@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,6 @@ public class ServiceReaderImpl implements ServiceReader {
             service.setAddress(individual.getProperty(HRESTS.hasAddress).getString());
         }
 
-
         // NFP parsing
 
         if (individual.hasProperty(MSM_NFP.hasTotalMashups)) {
@@ -181,6 +180,50 @@ public class ServiceReaderImpl implements ServiceReader {
         return service;
     }
 
+    private void obtainGrounding(Individual individual, AnnotableResource resource) throws URISyntaxException {
+
+
+        // generic grounding
+        RDFNode rdfGrounding = individual.getPropertyValue(MSM.isGroundedIn);
+        if (rdfGrounding != null) {
+            if (rdfGrounding.isResource()) {
+                resource.setGrounding(new ConceptGrounding(new URI(rdfGrounding.asResource().getURI()), new URI(MSM.isGroundedIn.getURI())));
+            }
+            if (rdfGrounding.isLiteral()) {
+                if (rdfGrounding.asLiteral().getDatatypeURI() != null) {
+                    resource.setGrounding(new LiteralGrounding(rdfGrounding.asLiteral().getString(), new URI(rdfGrounding.asLiteral().getDatatypeURI()), new URI(MSM.isGroundedIn.getURI())));
+                } else {
+                    resource.setGrounding(new LiteralGrounding(rdfGrounding.asLiteral().getString(), new URI(MSM.isGroundedIn.getURI())));
+                }
+            }
+        }
+
+        // WSDL grounding
+        rdfGrounding = individual.getPropertyValue(MSM_WSDL.isGroundedIn);
+        if (rdfGrounding != null) {
+            if (rdfGrounding.isLiteral()) {
+                if (rdfGrounding.asLiteral().getDatatypeURI() != null) {
+                    resource.setGrounding(new LiteralGrounding(rdfGrounding.asLiteral().getString(), new URI(rdfGrounding.asLiteral().getDatatypeURI()), new URI(MSM_WSDL.isGroundedIn.getURI())));
+                } else {
+                    resource.setGrounding(new LiteralGrounding(rdfGrounding.asLiteral().getString(), new URI(MSM_WSDL.isGroundedIn.getURI())));
+                }
+            }
+        }
+
+        //Swagger grounding
+        rdfGrounding = individual.getPropertyValue(MSM_WSDL.isGroundedIn);
+        if (rdfGrounding != null) {
+            if (rdfGrounding.isLiteral()) {
+                if (rdfGrounding.asLiteral().getDatatypeURI() != null) {
+                    resource.setGrounding(new LiteralGrounding(rdfGrounding.asLiteral().getString(), new URI(rdfGrounding.asLiteral().getDatatypeURI()), new URI(MSM_SWAGGER.isGroundedIn.getURI())));
+                } else {
+                    resource.setGrounding(new LiteralGrounding(rdfGrounding.asLiteral().getString(), new URI(MSM.isGroundedIn.getURI())));
+                }
+            }
+        }
+
+    }
+
 
     private List<Operation> obtainOperations(NodeIterator hasOpValues) throws URISyntaxException {
 
@@ -198,6 +241,7 @@ public class ServiceReaderImpl implements ServiceReader {
                 individual = value.as(Individual.class);
                 operation = new Operation(new URI(individual.getURI()));
                 setInvocableEntityProperties(individual, operation);
+
 
                 // Process Message Contents
                 MessageContent mc;
@@ -451,6 +495,9 @@ public class ServiceReaderImpl implements ServiceReader {
 
         setResourceProperties(individual, annotRes);
 
+        // Grounding
+        obtainGrounding(individual, annotRes);
+
         URI nodeUri = null;
         NodeIterator nodeIter = null;
         ExtendedIterator<RDFNode> filteredIter;
@@ -524,12 +571,6 @@ public class ServiceReaderImpl implements ServiceReader {
             result.setCreator(new URI(res.getURI()));
         }
 
-        // groundedIn
-        res = individual.getPropertyResourceValue(MSM_WSDL.isGroundedIn);
-        if (res != null) {
-            result.setWsdlGrounding(new URI(res.getURI()));
-        }
-
         // created
         Date created = getDate(individual, DCTerms.created);
         if (created != null) {
@@ -552,11 +593,6 @@ public class ServiceReaderImpl implements ServiceReader {
         NodeIterator sameAsIterator = individual.listPropertyValues(OWL2.sameAs);
         for (RDFNode sameAsValue : sameAsIterator.toList()) {
             result.addSameAs(new URI(sameAsValue.asResource().getURI()));
-        }
-
-        // hRESTS grounding
-        if (individual.getProperty(HRESTS.isGroundedIn) != null) {
-            result.setHrestsGrounding(individual.getProperty(HRESTS.isGroundedIn).getString());
         }
 
     }

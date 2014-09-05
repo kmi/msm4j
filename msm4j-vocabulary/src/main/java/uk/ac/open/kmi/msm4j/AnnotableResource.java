@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2014. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class AnnotableResource extends Resource {
      */
     private List<Resource> modelReferences;
     private List<NonFunctionalProperty> nfps;
+    private Grounding grounding;
 
     public AnnotableResource(URI uri) {
         super(uri);
@@ -78,4 +79,21 @@ public class AnnotableResource extends Resource {
     public boolean removeNonFunctionalProperty(NonFunctionalProperty nfp) {
         return nfps.remove(nfp);
     }
+
+    public Grounding getGrounding() {
+        return grounding;
+    }
+
+    public void setGrounding(String value) {
+        this.grounding = new LiteralGrounding(value);
+    }
+
+    public void setGrounding(Grounding grounding) {
+        this.grounding = grounding;
+    }
+
+    public void setGrounding(URI uri) {
+        this.grounding = new ConceptGrounding(uri);
+    }
+
 }
