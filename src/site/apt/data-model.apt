@@ -94,16 +94,6 @@ Vocabularies Used by MSM4J
 
 [images/data-model-wsdl-grounding.png] <MSM-WSDL> extension to cover grounding for WSDL services.
 
-
-* {MSM-Swagger}
-
-    {{{https://github.com/wordnik/swagger-spec}Swagger}} is a JSON-based model for REST APIs descriptions which its popularity is recently growing.
-    {{{http://iserve.kmi.open.ac.uk/ns/msm-swagger}MSM-Swagger}} provides grounding to Swagger descriptions
-    through the <<<msm-swagger:isGroundedIn>>> property.
-    Swagger elements, which are defined as JSON portion, should be specified through {{{http://goessner.net/articles/JsonPath/}JSONPath}} expressions.
-
-[images/data-model-swagger-grounding.png] <MSM-Swagger> extension to cover grounding for Swagger REST APIs.
-
 * {MSM-NPF}
 
     {{{http://iserve.kmi.open.ac.uk/ns/msm-nfp}MSM-NFP}} is a <MSM> extension that aims to support the description of basic NFPs.
@@ -155,8 +145,6 @@ Vocabularies Used by MSM4J
 | hRESTS                | <<<hr>>>             | {{http://iserve.kmi.open.ac.uk/ns/hrests}}                                   |
 *-----------------------*----------------------+------------------------------------------------------------------------------+
 | MSM-WSDL              | <<<msm-wsdl>>>       | {{http://iserve.kmi.open.ac.uk/ns/msm-wsdl}}                                 |
-*-----------------------*----------------------+------------------------------------------------------------------------------+
-| MSM-Swagger           | <<<msm-swagger>>>    | {{http://iserve.kmi.open.ac.uk/ns/msm-swagger}}                              |
 *-----------------------*----------------------+------------------------------------------------------------------------------+
 | MSM-NFP               | <<<msm-nfp>>>        | {{http://iserve.kmi.open.ac.uk/ns/msm-nfp}}                                  |
 *-----------------------*----------------------+------------------------------------------------------------------------------+
