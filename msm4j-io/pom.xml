@@ -3,7 +3,7 @@
     <parent>
         <artifactId>msm4j-parent</artifactId>
         <groupId>uk.ac.open.kmi.msm4j</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,8 +14,7 @@
     <name>MSM4J I/O</name>
     <description>
         MSM4J I/O provides basic support for reading and writing service descriptions expressed in terms of
-        the
-        Minimal Service Model.
+        the Minimal Service Model.
     </description>
 
     <developers>
@@ -87,7 +86,7 @@
 
         <!-- Include Test Resources -->
         <dependency>
-            <groupId>uk.ac.open.kmi</groupId>
+            <groupId>uk.ac.open.kmi.test-collections</groupId>
             <artifactId>sws-test-collections</artifactId>
             <version>${sws-test-collections.version}</version>
             <scope>test</scope>
@@ -114,11 +113,10 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeGroupIds>uk.ac.open.kmi</includeGroupIds>
+                            <includeGroupIds>uk.ac.open.kmi.test-collections</includeGroupIds>
                             <includeArtifactIds>sws-test-collections</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}/test-classes/</outputDirectory>
-                            <includes>OWLS-TC3-MSM/*.ttl</includes>
-                            <includes>OWLS-TC4_PDDL-MSM/*.ttl</includes>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                            <includes>services/OWLS-1.1-MSM/*.ttl</includes>
                         </configuration>
                     </execution>
                 </executions>

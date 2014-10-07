@@ -22,7 +22,7 @@
     <groupId>uk.ac.open.kmi.msm4j</groupId>
     <artifactId>msm4j-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
 
     <name>MSM4J</name>
     <url>http://kmi.github.io/msm4j/</url>
@@ -36,7 +36,7 @@
         <license>
             <name>The Apache Software License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>manual</distribution>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
@@ -115,7 +115,7 @@
         <guice.version>3.0</guice.version>
         <guava.version>14.0</guava.version>
         <commons-config.version>1.9</commons-config.version>
-        <sws-test-collections.version>1.0</sws-test-collections.version>
+        <sws-test-collections.version>1.0.0-SNAPSHOT</sws-test-collections.version>
 
         <!-- Configuration for GitHub deployment -->
         <site.path>snapshot/${project.version}</site.path>
@@ -288,12 +288,38 @@
     </reporting>
 
     <profiles>
+        <!-- Activate PGP signing only when performing a release -->
         <profile>
-            <id>release</id>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <properties>
                 <site.path>${project.version}</site.path>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
+
         <profile>
             <id>update-latest</id>
             <properties>

@@ -3,13 +3,13 @@
     <parent>
         <artifactId>msm4j-parent</artifactId>
         <groupId>uk.ac.open.kmi.msm4j</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>msm4j-hrests-transformer</artifactId>
 
-    <name>hRESTS Transformer</name>
+    <name>MSM4J hRESTS Transformer</name>
     <description>
         hRESTS Transformer provides support for transforming hRESTS service descriptions into MSM.
     </description>
@@ -84,7 +84,7 @@
 
         <!-- Include Test Resources -->
         <dependency>
-            <groupId>uk.ac.open.kmi</groupId>
+            <groupId>uk.ac.open.kmi.test-collections</groupId>
             <artifactId>sws-test-collections</artifactId>
             <version>${sws-test-collections.version}</version>
             <scope>test</scope>
@@ -152,10 +152,10 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeGroupIds>uk.ac.open.kmi</includeGroupIds>
+                            <includeGroupIds>uk.ac.open.kmi.test-collections</includeGroupIds>
                             <includeArtifactIds>sws-test-collections</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}/test-classes/</outputDirectory>
-                            <includes>jgd-services/*.html</includes>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                            <includes>services/jgd/*.html</includes>
                         </configuration>
                     </execution>
                 </executions>

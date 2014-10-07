@@ -42,7 +42,7 @@ import java.util.List;
 public class SawsdlTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(SawsdlTransformerTest.class);
-    private static final String SAWSDL_TC3_SERVICES = "/SAWSDL-TC3_WSDL11/htdocs/services/sawsdl_wsdl11/";
+    private static final String SAWSDL_TC3_SERVICES = "/services/sawsdl_wsdl11/";
 
     private SawsdlTransformer importer;
     private ServiceWriter writer;

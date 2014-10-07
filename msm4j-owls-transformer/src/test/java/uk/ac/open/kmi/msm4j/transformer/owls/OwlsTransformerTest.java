@@ -51,9 +51,7 @@ import java.util.List;
 public class OwlsTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(OwlsTransformerTest.class);
-    private static final String OWLS_TC4_PDDL = "/OWLS-TC4_PDDL/htdocs/services/1.1/";
-    private static final String OWLS_TC3_SERVICES_1_1 = "/OWLS-TC3/htdocs/services/1.1/";
-    private static final String OWLS_TC3_SERVICES_1_0 = "/OWLS-TC3/htdocs/services/1.0/";
+    private static final String OWLS_TC4 = "/services/OWLS-1.1/";
 
     private OwlsTransformer importer;
     private ServiceWriter writer;
@@ -78,7 +76,7 @@ public class OwlsTransformerTest {
         importer = new OwlsTransformer();
         writer = new ServiceWriterImpl();
         testFolders = new ArrayList<URI>();
-        testFolders.add(OwlsTransformerTest.class.getResource(OWLS_TC3_SERVICES_1_1).toURI());
+        testFolders.add(OwlsTransformerTest.class.getResource(OWLS_TC4).toURI());
 
         owlsFilter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -93,8 +91,11 @@ public class OwlsTransformerTest {
         // Add all the test collections
         log.info("Transforming test collections");
         for (URI testFolder : testFolders) {
-            File dir = new File(testFolder);
+
+            System.out.println(testFolder);
+
             log.info("Test collection: {} ", testFolder);
+            File dir = new File(testFolder);
 
             // Test services
             Collection<Service> services;
@@ -119,8 +120,8 @@ public class OwlsTransformerTest {
         // Add all the test collections
         log.info("Transforming test collections");
         for (URI testFolder : testFolders) {
-            File dir = new File(testFolder);
             log.info("Test collection: {} ", testFolder);
+            File dir = new File(testFolder);
 
             // Test services
             Collection<Service> services;

@@ -29,7 +29,7 @@ import java.util.List;
 public class ServiceReaderTest {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceReaderTest.class);
-    private static final String OWLS_TC4_MSM = "/OWLS-TC4_PDDL-MSM/";
+    private static final String OWLS_TC4_MSM = "/services/OWLS-1.1-MSM/";
 
     private static final String[] fileNames = new String[]{"1personbicycle4wheeledcar_price_service.ttl", "AcceptCostAndHealingPlan_service.ttl"};
 
