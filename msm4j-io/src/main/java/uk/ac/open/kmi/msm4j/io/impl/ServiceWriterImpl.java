@@ -251,6 +251,13 @@ public class ServiceWriterImpl implements ServiceWriter {
             addMessageContent(model, output);
         }
 
+        // Process Faults
+        for (MessageContent fault : op.getFaults()) {
+            current.addProperty(MSM.hasFault,
+                    model.createResource(fault.getUri().toASCIIString()));
+            addMessageContent(model, fault);
+        }
+
         // Process Input Faults
         for (MessageContent fault : op.getInputFaults()) {
             current.addProperty(MSM.hasInputFault,

@@ -256,6 +256,11 @@ public class ServiceReaderImpl implements ServiceReader {
                 if (mc != null)
                     operation.addOutput(mc);
 
+                rdfNode = individual.getPropertyValue(MSM.hasFault);
+                mc = obtainMessageContent(rdfNode);
+                if (mc != null)
+                    operation.addFault(mc);
+
                 rdfNode = individual.getPropertyValue(MSM.hasInputFault);
                 mc = obtainMessageContent(rdfNode);
                 if (mc != null)
