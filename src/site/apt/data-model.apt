@@ -39,24 +39,23 @@ Vocabularies Used by MSM4J
 
         * <MSM-NFP>, which provides useful Non-Functional Properties (NFPs) of services to support Web developers, such as service provider information and social media channels.
 
+** {New features coming for MSM 1.3}
 
-** {What is new in MSM 1.3?}
-
-    The last version of MSM contains two main novelties:
+    The next version of MSM will contain two main novelties:
 
         * the definition of a generic <<<msm:isGroundedIn>>> property;
 
         * the introduction of the <<<msm:hasFault>>> property.
 
-    The <<<msm:isGroundedIn>>> property enables to capture the grounding of elements of service descriptions defined by other models, such as WSDL, WADL, WSMO and OWL-S.
-    In other terms, this property allow us to bind any other kind of structured service description to MSM elements, with the aim to make MSM an agnostic model for semantic service annotation.
+    We shall be releasing this version soon.
+
+    The <<<msm:isGroundedIn>>> property enables to capture the grounding of elements of service descriptions defined by other models, such as WSDL, SWAGGER, WSMO and OWL-S.
+    In other terms, this property allows us to bind any other kind of structured service description to MSM elements, with the aim to make MSM an agnostic model for semantic annotation, leaving the technical invocation details to other specifications.
 
     The <<<msm:hasFault>>> property is introduced to define generic operation faults that can not be strictly related to input or output issues.
-    On the best of our knowledge, only model that specifies a clear distinction between input and output fault is {{{http://www.w3.org/TR/wsdl20/#InterfaceFaultReference_ref_attribute}WSDL 2.0}}.
-    For this reason, we kept <<<msm:hasInputFault>>> and <<<msm:hasOutputFault>>> as subproperties of <<<msm:hasFault>>>.
-    However, due to the decreasing usage of WSDL and the few usage of input and output fault specification, <<<msm:hasInputFault>>> and <<<msm:hasOutputFault>>> are tagged as <archaic> terms according to the
-    {{{http://www.w3.org/2003/06/sw-vocab-status/note}Term-centric Semantic Web Vocabulary Annotations}} and their removal can be considered in the future.
-
+    As far we know the only specification which distinguishes between input and output fault is {{{http://www.w3.org/TR/wsdl20/#InterfaceFaultReference_ref_attribute}WSDL 2.0}}. All others simply refer to faults.
+    We have retained <<<msm:hasInputFault>>> and <<<msm:hasOutputFault>>> as subproperties of <<<msm:hasFault>>> for compatibility reasons with WSDL and older MSM descriptions but now recommend using the more generic term <<<msm:hasFault>>>.
+    <<<msm:hasInputFault>>> and <<<msm:hasOutputFault>>> are now tagged as <archaic> terms according to the {{{http://www.w3.org/2003/06/sw-vocab-status/note}Term-centric Semantic Web Vocabulary Annotations}} and their removal may be considered in the future.
 
 * {SAWSDL}
 
@@ -94,10 +93,10 @@ Vocabularies Used by MSM4J
 
 [images/data-model-wsdl-grounding.png] <MSM-WSDL> extension to cover grounding for WSDL services.
 
-* {MSM-NPF}
+* {MSM-NFP}
 
     {{{http://iserve.kmi.open.ac.uk/ns/msm-nfp}MSM-NFP}} is a <MSM> extension that aims to support the description of basic NFPs.
-    The current version of <MSM-NFP> (v0.1) focus on the definition of properties which provide relevant information for developers which integrate Web APIs in their own applications.
+    The current version of <MSM-NFP> (v0.1) focuses on the definition of properties which provide relevant information for developers which integrate services in their own applications.
 
     To inform developers of the usage of a service, <<<msm-nfp:hasTotalMashups>>> and <<<msm-nfp:hasRecentMashups>>> properties has been defined.
     The two properties respectively define the total number and the recent amount of mashups in which a Web API is a component.
@@ -109,14 +108,12 @@ Vocabularies Used by MSM4J
 
     Measures of service provider popularity can be specified by the <<<msm-nfp:hasPopularity>>> property as a numeric value.
     The <<<schema:Organization>>> and <<<schema:Person>>> classes, defined by the {{{http://schema.rdfs.org/}Schema.org vocabulary}},
-    are the domain of the <<<msm-nfp:hasPopularity>>> property. These two classes allow us to define a service provider which is associate with
+    are the domain of the <<<msm-nfp:hasPopularity>>> property. These two classes allow us to define a service provider which is associated with
     a service through the <<<schema:provider>>> property.
 
-    A provider, defined as a <<<foaf:Agent>>>, can have a Twitter account as a medium to provide updates about his Web APIs.
+    A provider, defined as a <<<foaf:Agent>>>, can have a Twitter account as a means to provide updates about his Web APIs.
     A Twitter account is an instance of the <<<msm-nfp:TwitterAccount>>> class (subclass of <<<foaf:OnlineAccount>>>) which is a associated to a provider by
-    the <<<msm-nfp:hasTwitterAccount>>> property (which is a subproperty of <<<foaf:account>>>).
-
-    <SIOC>, <Schema.org> and <FOAF> will be described in the following section.
+    the <<<msm-nfp:hasTwitterAccount>>> property (subproperty of <<<foaf:account>>>).
 
 [images/data-model-nfp.png] <MSM-NFP> extension to define basic NFPs of services.
 
@@ -126,8 +123,6 @@ Vocabularies Used by MSM4J
     creator of a service description, etc.
     {{{http://rdfs.org/sioc/spec/}SIOC vocabulary}} provides the main concepts and properties required to describe information from online communities, such as wikis, weblogs and forums.
     Finally, {{{http://schema.rdfs.org/}Schema.org}} is a collection of terms that webmasters can use to markup their pages, which is introduced by Bing, Google and Yahoo! to improve the display of search engine results.
-
-
 
 * References
 
