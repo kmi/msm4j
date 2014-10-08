@@ -25,11 +25,10 @@
     <version>1.2.0-SNAPSHOT</version>
 
     <name>MSM4J</name>
-    <url>http://kmi.github.io/msm4j/</url>
+    <url>http://kmi.github.io/msm4j/${project.version}</url>
     <description>
         MSM4J is a Java library for manipulating service descriptions expressed in terms of the Minimal
-        Service Model
-        vocabulary.
+        Service Model vocabulary.
     </description>
 
     <licenses>
@@ -53,11 +52,21 @@
     </issueManagement>
 
     <distributionManagement>
+        <!-- Github site -->
         <site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
             <url>${site.path}</url>
         </site>
+        <!-- Releases to repository -->
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <developers>
@@ -115,10 +124,10 @@
         <guice.version>3.0</guice.version>
         <guava.version>14.0</guava.version>
         <commons-config.version>1.9</commons-config.version>
-        <sws-test-collections.version>1.0.0-SNAPSHOT</sws-test-collections.version>
+        <sws-test-collections.version>1.0.0</sws-test-collections.version>
 
         <!-- Configuration for GitHub deployment -->
-        <site.path>snapshot/${project.version}</site.path>
+        <site.path>${project.version}</site.path>
         <github.global.server>github</github.global.server>
         <repositoryName>msm4j</repositoryName>
         <repositoryOwner>kmi</repositoryOwner>
@@ -157,6 +166,76 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <!-- Profile activated on release -->
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Activate PGP signing only when performing a release -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Generate source jar on release -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Generate javadoc jar on release -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile for updating the latest Web page on github site -->
+        <profile>
+            <id>update-latest</id>
+            <properties>
+                <site.path>latest</site.path>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <testResources>
             <testResource>
@@ -165,8 +244,8 @@
             </testResource>
         </testResources>
         <plugins>
+            <!-- Configure Maven site plugin for Reflow skin and Markdown support -->
             <plugin>
-                <!-- Configure Maven site plugin for Reflow skin and Markdown support -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.3</version>
@@ -188,8 +267,8 @@
                 </configuration>
             </plugin>
 
+            <!-- GitHub site plug-in for deployment to GitHub pages -->
             <plugin>
-                <!-- GitHub site plug-in for deployment to GitHub pages -->
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
                 <version>0.9</version>
@@ -211,16 +290,30 @@
                 </executions>
             </plugin>
 
+            <!-- Maven Release Configuration for nexus staging -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.5.1</version>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <!-- During release:perform, enable the "release" profile -->
+                    <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
-                    <goals>ghSite:site</goals>
+                    <goals>deploy ghSite:site</goals>
+                </configuration>
+            </plugin>
+
+            <!-- Staging to Sonatype -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
@@ -286,46 +379,5 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <profiles>
-        <!-- Activate PGP signing only when performing a release -->
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <site.path>${project.version}</site.path>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>update-latest</id>
-            <properties>
-                <site.path>latest</site.path>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>
