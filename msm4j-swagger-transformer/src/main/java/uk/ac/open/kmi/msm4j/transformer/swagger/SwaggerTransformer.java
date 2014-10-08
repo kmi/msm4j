@@ -328,7 +328,7 @@ public class SwaggerTransformer implements ServiceTransformer {
             if (resourceListing.getBasePath() != null) {
                 msmSvc = new Service(new URI(resourceListing.getBasePath()));
             } else {
-                msmSvc = new Service(new URI(resourceListing.getApis().get(0).getDeclaration().getBasePath()));
+                msmSvc = new Service(new URI(new StringBuilder(baseUri).append("/").append(resourceListing.getApis().get(0).getDeclaration().getBasePath()).toString()));
             }
 
             msmSvc.setLabel(resourceListing.getInfo().getTitle());
@@ -366,7 +366,13 @@ public class SwaggerTransformer implements ServiceTransformer {
             return msmOp;
 
         try {
-            URI opUri = new URI(new StringBuilder().append(swaggerOperation.getApi().getApiDeclaration().getBasePath()).append("/").append(swaggerOperation.getNickName()).toString());
+            URI opUri;
+            if (swaggerOperation.getApi().getApiDeclaration().getBasePath().matches("^http")) {
+                opUri = new URI(new StringBuilder().append(swaggerOperation.getApi().getApiDeclaration().getBasePath()).append("/").append(swaggerOperation.getNickName()).toString());
+            } else {
+                opUri = new URI(new StringBuilder().append(baseUri).append("/").append(swaggerOperation.getNickName()).toString());
+            }
+
             msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
             msmOp.setLabel(swaggerOperation.getNickName());
             msmOp.setComment(swaggerOperation.getSummary());
@@ -387,7 +393,7 @@ public class SwaggerTransformer implements ServiceTransformer {
 
             msmOp.addInput(transform(swaggerOperation.getParameters(), opUri, groundingValue));
             msmOp.setOutputs(transformOutputs(swaggerOperation.getResponseMessages(), opUri, groundingValue));
-            msmOp.setOutputFaults(transformOutputFaults(swaggerOperation.getResponseMessages(), opUri, groundingValue));
+            msmOp.setFaults(transformFaults(swaggerOperation.getResponseMessages(), opUri, groundingValue));
 
         } catch (URISyntaxException e) {
             log.error("Syntax exception while generating operation URI", e);
@@ -413,7 +419,7 @@ public class SwaggerTransformer implements ServiceTransformer {
         return r.toString();
     }
 
-    private List<MessageContent> transformOutputFaults(List<ResponseMessage> responseMessages, URI opUri, String operationGrounding) {
+    private List<MessageContent> transformFaults(List<ResponseMessage> responseMessages, URI opUri, String operationGrounding) {
         List<MessageContent> mcs = null;
         if (responseMessages == null)
             return mcs;
