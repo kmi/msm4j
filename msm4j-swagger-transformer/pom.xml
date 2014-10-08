@@ -26,7 +26,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>msm4j-swagger-transformer</artifactId>
-    <name>Swagger Transformer</name>
+    <name>MSM4J Swagger Transformer</name>
     <description>
         Swagger Transformer provides support for transforming Swagger descriptions into Minimal Service
         Model.
