@@ -35,6 +35,7 @@ public class Operation extends InvocableEntity {
 
     private List<MessageContent> inputs;
     private List<MessageContent> outputs;
+    private List<MessageContent> faults;
     private List<MessageContent> inputFaults;
     private List<MessageContent> outputFaults;
 
@@ -47,6 +48,7 @@ public class Operation extends InvocableEntity {
         super(uri);
         this.inputs = new ArrayList<MessageContent>();
         this.outputs = new ArrayList<MessageContent>();
+        this.faults = new ArrayList<MessageContent>();
         this.inputFaults = new ArrayList<MessageContent>();
         this.outputFaults = new ArrayList<MessageContent>();
         this.producesContentTypes = new HashSet<URI>();
@@ -69,18 +71,30 @@ public class Operation extends InvocableEntity {
         this.outputs = outputs;
     }
 
+    public List<MessageContent> getFaults() {
+        return faults;
+    }
+
+    public void setFaults(List<MessageContent> faults) {
+        this.faults = faults;
+    }
+
+    @Deprecated
     public List<MessageContent> getInputFaults() {
         return inputFaults;
     }
 
+    @Deprecated
     public void setInputFaults(List<MessageContent> inputFaults) {
         this.inputFaults = inputFaults;
     }
 
+    @Deprecated
     public List<MessageContent> getOutputFaults() {
         return outputFaults;
     }
 
+    @Deprecated
     public void setOutputFaults(List<MessageContent> outputFaults) {
         this.outputFaults = outputFaults;
     }
@@ -113,6 +127,21 @@ public class Operation extends InvocableEntity {
         return false;
     }
 
+    public boolean addFault(MessageContent mc) {
+        if (mc != null) {
+            return this.faults.add(mc);
+        }
+        return false;
+    }
+
+    public boolean removeFault(MessageContent mc) {
+        if (mc != null) {
+            return this.faults.remove(mc);
+        }
+        return false;
+    }
+
+    @Deprecated
     public boolean addInputFault(MessageContent mc) {
         if (mc != null) {
             return this.inputFaults.add(mc);
@@ -120,6 +149,7 @@ public class Operation extends InvocableEntity {
         return false;
     }
 
+    @Deprecated
     public boolean removeInputFault(MessageContent mc) {
         if (mc != null) {
             return this.inputFaults.remove(mc);
@@ -127,6 +157,7 @@ public class Operation extends InvocableEntity {
         return false;
     }
 
+    @Deprecated
     public boolean addOutputFault(MessageContent mc) {
         if (mc != null) {
             return this.outputFaults.add(mc);
@@ -134,6 +165,7 @@ public class Operation extends InvocableEntity {
         return false;
     }
 
+    @Deprecated
     public boolean removeOutputFault(MessageContent mc) {
         if (mc != null) {
             return this.outputFaults.remove(mc);
@@ -194,12 +226,12 @@ public class Operation extends InvocableEntity {
         return method;
     }
 
-    public void setMethod(String method) {
-        this.method = URI.create(new StringBuilder("http://www.w3.org/2011/http-methods#").append(method.toUpperCase()).toString());
-    }
-
     public void setMethod(URI method) {
         this.method = method;
+    }
+
+    public void setMethod(String method) {
+        this.method = URI.create(new StringBuilder("http://www.w3.org/2011/http-methods#").append(method.toUpperCase()).toString());
     }
 
     public String getAddress() {
