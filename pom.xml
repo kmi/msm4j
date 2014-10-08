@@ -300,7 +300,7 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
-                    <goals>deploy ghSite:site</goals>
+                    <goals>deploy site-deploy</goals>
                 </configuration>
             </plugin>
 
