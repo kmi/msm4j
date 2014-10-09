@@ -1,0 +1,86 @@
+{"apiVersion": "2.0", "swaggerVersion": "1.2", "basePath": "id", "resourcePath": "/id/documents", "apis": [
+    {
+        "path": "/documents",
+        "operations": [
+            {
+                "method": "POST",
+                "summary": "Add a new service document",
+                "notes": "Returns a HTML document which contains the URI of the added document",
+                "type": "void",
+                "nickname": "addDocument",
+                "produces": ["text/html"],
+                "consumes": ["text/html", "text/xml", "application/xml", "application/rdf+xml", "text/turtle", "text/n3", "text/rdf+n3", "text/plain"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "body",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "body",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "Content-Location",
+                        "description": "Document location",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "header",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "Content-Type",
+                        "description": "Document Media type",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "header",
+                        "allowMultiple": false
+                    }
+                ],
+                "responseMessages": [
+                    {
+                        "code": 201,
+                        "message": "Created document"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "path": "/documents/{id}",
+        "operations": [
+            {
+                "method": "DELETE",
+                "summary": "Delete a service document",
+                "notes": "Returns a HTML document which confirms the deletion of the document",
+                "type": "void",
+                "nickname": "deleteDocument",
+                "produces": ["text/html"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Description ID",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false
+                    }
+                ],
+                "responseMessages": [
+                    {
+                        "code": 401,
+                        "message": "Deleted document"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            }
+        ]
+    }
+]}

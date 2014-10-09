@@ -292,11 +292,11 @@ public class SwaggerTransformer implements ServiceTransformer {
             }
 
             try {
-                log.info("Trying to retrieve the description from the Web...");
+                log.info("Trying to retrieve the description from the URI...");
                 ResourceListing resourceListing = Swagger.readSwagger(new URI(baseUri));
                 msmServices.add(transform(resourceListing, baseUri));
             } catch (IOException e) {
-                log.info("Unable to retrieve the swagger description from the Web: {}", e.getMessage());
+                log.info("Unable to retrieve the swagger description from the URI: {}", e.getMessage());
             } catch (URISyntaxException e) {
                 log.error("Provided wrong URI");
             }

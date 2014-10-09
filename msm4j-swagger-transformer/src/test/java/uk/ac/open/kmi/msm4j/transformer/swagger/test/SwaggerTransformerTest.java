@@ -31,7 +31,6 @@ import uk.ac.open.kmi.msm4j.io.impl.TransformerModule;
 import uk.ac.open.kmi.msm4j.transformer.swagger.SwaggerTransformer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.Collection;
 
@@ -59,46 +58,22 @@ public class SwaggerTransformerTest {
         Collection<Service> services = null;
 
         try {
-            services = importer.transform(null, "https://api.kixeye.com/api/v2/api-spec");
+            services = importer.transform(null, "http://localhost:9090/api-docs/pet-store/");
         } catch (TransformationException e) {
             e.printStackTrace();
         }
 
         Assert.assertNotNull("Service collection should not be null", services);
-        Assert.assertTrue("There should be at least one service", 1 >= services.size());
+        Assert.assertTrue("There should be at least one service", 1 <= services.size());
 
         try {
-            services = importer.transform(null, "http://petstore.swagger.wordnik.com/api/api-docs");
+            services = importer.transform(null, "http://localhost:9090/api-docs/iserve/");
         } catch (TransformationException e) {
             e.printStackTrace();
         }
 
         Assert.assertNotNull("Service collection should not be null", services);
         Assert.assertTrue("There should be at least one service", 1 >= services.size());
-    }
-
-    @Test
-    public void testTransformFile() {
-        // Add all the test collections
-        log.info("Transforming test collections");
-
-        File dir = new File(this.getClass().getResource("/").getFile());
-
-        // Test services
-        Collection<Service> services;
-        log.info("Transforming services");
-        File[] swaggerFiles = dir.listFiles(swaggerFilter);
-        for (File file : swaggerFiles) {
-            log.info("Transforming service {}", file.getAbsolutePath());
-            try {
-                services = importer.transform(new FileInputStream(file), "http://localhost:8000/" + file.getName());
-                Assert.assertNotNull("Service collection should not be null", services);
-                Assert.assertTrue("There should be at least one service", 1 >= services.size());
-            } catch (Exception e) {
-                log.error("Problems transforming the service. Continuing", e);
-            }
-        }
-
     }
 
     @Test
@@ -114,7 +89,7 @@ public class SwaggerTransformerTest {
         for (File file : swaggerFiles) {
             log.info("Transforming service {}", file.getAbsolutePath());
             try {
-                services = serviceTransformationEngine.transform(file, null, SwaggerTransformer.mediaType);
+                services = serviceTransformationEngine.transform(file, "http://localhost:9090/api-docs/pet-store/", SwaggerTransformer.mediaType);
                 Assert.assertNotNull("Service collection should not be null", services);
                 Assert.assertEquals(1, services.size());
             } catch (Exception e) {

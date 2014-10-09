@@ -1,0 +1,1256 @@
+{"apiVersion": "2.0", "swaggerVersion": "1.2", "basePath": "id", "resourcePath": "/id/services", "apis": [
+    {
+        "path": "/services/{uniqueId}/{serviceName}",
+        "operations": [
+            {
+                "method": "GET",
+                "summary": "Get a service",
+                "notes": "",
+                "type": "Service",
+                "nickname": "getService",
+                "produces": ["application/rdf+xml", "application/atom+xml", "application/json", "application/xml", "text/turtle", "text/html", "text/xml", "text/plain"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "uniqueId",
+                        "description": "Service ID",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "serviceName",
+                        "description": "Service name",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false
+                    }
+                ],
+                "responseMessages": [
+                    {
+                        "code": 200,
+                        "message": "Service found"
+                    },
+                    {
+                        "code": 404,
+                        "message": "Service not found"
+                    },
+                    {
+                        "code": 403,
+                        "message": "You have not got the appropriate permissions for reading the service"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            },
+            {
+                "method": "DELETE",
+                "summary": "Delete a service",
+                "notes": "Returns a HTML document which confirms the service deletion",
+                "type": "void",
+                "nickname": "deleteService",
+                "produces": ["text/html"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "uniqueId",
+                        "description": "Service ID",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "serviceName",
+                        "description": "Service name",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false
+                    }
+                ],
+                "responseMessages": [
+                    {
+                        "code": 200,
+                        "message": "Service deleted"
+                    },
+                    {
+                        "code": 404,
+                        "message": "Service not found"
+                    },
+                    {
+                        "code": 304,
+                        "message": "The service could not be deleted from the server"
+                    },
+                    {
+                        "code": 403,
+                        "message": "You have not got the appropriate permissions for deleting a service"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "path": "/services",
+        "operations": [
+            {
+                "method": "GET",
+                "summary": "List all services",
+                "notes": "",
+                "type": "Service",
+                "nickname": "getServices",
+                "produces": ["application/rdf+xml", "application/atom+xml", "application/json", "application/xml", "text/turtle", "text/html", "text/xml", "text/plain"],
+                "authorizations": {},
+                "parameters": [],
+                "responseMessages": [
+                    {
+                        "code": 200,
+                        "message": "Services found"
+                    },
+                    {
+                        "code": 404,
+                        "message": "Services not found"
+                    },
+                    {
+                        "code": 403,
+                        "message": "You have not got the appropriate permissions for reading services"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            },
+            {
+                "method": "POST",
+                "summary": "Add a new service",
+                "notes": "Returns a HTML document which contains the URI of the added service",
+                "type": "void",
+                "nickname": "addService",
+                "produces": ["text/html"],
+                "consumes": ["multipart/form-data"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "body",
+                        "description": "Service description passed as body part",
+                        "required": false,
+                        "type": "FormDataBodyPart",
+                        "paramType": "body",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "body",
+                        "description": "Service description passed as file",
+                        "required": false,
+                        "type": "java.io.InputStream",
+                        "paramType": "body",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "Content-Location",
+                        "description": "Service description passed as location URI",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "header",
+                        "allowMultiple": false
+                    }
+                ],
+                "responseMessages": [
+                    {
+                        "code": 201,
+                        "message": "Created document"
+                    },
+                    {
+                        "code": 403,
+                        "message": "You have not got the appropriate permissions for creating a service"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            },
+            {
+                "method": "DELETE",
+                "summary": "Delete all the registered services",
+                "notes": "BE CAREFUL! You can lose all your data. It returns a HTML document which confirms all the service deletions.",
+                "type": "void",
+                "nickname": "clearServices",
+                "produces": ["text/html"],
+                "authorizations": {},
+                "parameters": [],
+                "responseMessages": [
+                    {
+                        "code": 200,
+                        "message": "Registry cleaned. All the services are deleted."
+                    },
+                    {
+                        "code": 304,
+                        "message": "The services could not be cleared."
+                    },
+                    {
+                        "code": 403,
+                        "message": "You have not got the appropriate permissions for clearing the services"
+                    },
+                    {
+                        "code": 500,
+                        "message": "Internal error"
+                    }
+                ]
+            }
+        ]
+    }
+], "models": {
+    "MultiPart": {
+        "id": "MultiPart",
+        "properties": {
+            "bodyParts": {
+                "type": "array",
+                "items": {
+                    "$ref": "BodyPart"
+                }
+            },
+            "entity": {
+                "$ref": "Object"
+            },
+            "contentDisposition": {
+                "$ref": "ContentDisposition"
+            },
+            "parameterizedHeaders": {
+                "$ref": "javax.ws.rs.core.MultivaluedMap<java.lang.String, org.glassfish.jersey.message.internal.ParameterizedHeader>"
+            },
+            "parent": {
+                "$ref": "MultiPart"
+            },
+            "providers": {
+                "$ref": "Providers"
+            },
+            "headers": {
+                "$ref": "javax.ws.rs.core.MultivaluedMap<java.lang.String, java.lang.String>"
+            },
+            "mediaType": {
+                "$ref": "MediaType"
+            },
+            "messageBodyWorkers": {
+                "$ref": "MessageBodyWorkers"
+            }
+        }
+    },
+    "URI": {
+        "id": "URI",
+        "properties": {
+            "scheme": {
+                "type": "string"
+            },
+            "fragment": {
+                "type": "string"
+            },
+            "authority": {
+                "type": "string"
+            },
+            "userInfo": {
+                "type": "string"
+            },
+            "host": {
+                "type": "string"
+            },
+            "port": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "path": {
+                "type": "string"
+            },
+            "query": {
+                "type": "string"
+            },
+            "schemeSpecificPart": {
+                "type": "string"
+            },
+            "absolute": {
+                "type": "boolean"
+            },
+            "opaque": {
+                "type": "boolean"
+            },
+            "rawSchemeSpecificPart": {
+                "type": "string"
+            },
+            "rawAuthority": {
+                "type": "string"
+            },
+            "rawUserInfo": {
+                "type": "string"
+            },
+            "rawPath": {
+                "type": "string"
+            },
+            "rawQuery": {
+                "type": "string"
+            },
+            "rawFragment": {
+                "type": "string"
+            }
+        }
+    },
+    "Grounding": {
+        "id": "Grounding",
+        "properties": {
+            "groundingType": {
+                "$ref": "URI"
+            }
+        }
+    },
+    "NonFunctionalProperty": {
+        "id": "NonFunctionalProperty",
+        "properties": {
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "URL": {
+        "id": "URL",
+        "properties": {
+            "protocol": {
+                "type": "string"
+            },
+            "host": {
+                "type": "string"
+            },
+            "port": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "file": {
+                "type": "string"
+            },
+            "query": {
+                "type": "string"
+            },
+            "authority": {
+                "type": "string"
+            },
+            "path": {
+                "type": "string"
+            },
+            "userInfo": {
+                "type": "string"
+            },
+            "ref": {
+                "type": "string"
+            },
+            "hashCode": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "defaultPort": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "content": {
+                "$ref": "Object"
+            }
+        }
+    },
+    "Provider": {
+        "id": "Provider",
+        "properties": {
+            "popularity": {
+                "type": "number",
+                "format": "double"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "Condition": {
+        "id": "Condition",
+        "properties": {
+            "typedValue": {
+                "$ref": "Object"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "FormDataBodyPart": {
+        "id": "FormDataBodyPart",
+        "properties": {
+            "contentDisposition": {
+                "$ref": "ContentDisposition"
+            },
+            "formDataContentDisposition": {
+                "$ref": "FormDataContentDisposition"
+            },
+            "name": {
+                "type": "string"
+            },
+            "value": {
+                "type": "string"
+            },
+            "simple": {
+                "type": "boolean"
+            },
+            "parameterizedHeaders": {
+                "$ref": "javax.ws.rs.core.MultivaluedMap<java.lang.String, org.glassfish.jersey.message.internal.ParameterizedHeader>"
+            },
+            "parent": {
+                "$ref": "MultiPart"
+            },
+            "providers": {
+                "$ref": "Providers"
+            },
+            "headers": {
+                "$ref": "javax.ws.rs.core.MultivaluedMap<java.lang.String, java.lang.String>"
+            },
+            "entity": {
+                "$ref": "Object"
+            },
+            "mediaType": {
+                "$ref": "MediaType"
+            },
+            "messageBodyWorkers": {
+                "$ref": "MessageBodyWorkers"
+            }
+        }
+    },
+    "Resource": {
+        "id": "Resource",
+        "properties": {
+            "uri": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "TwitterAccount": {
+        "id": "TwitterAccount",
+        "properties": {
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "Service": {
+        "id": "Service",
+        "properties": {
+            "operations": {
+                "type": "array",
+                "items": {
+                    "$ref": "Operation"
+                }
+            },
+            "address": {
+                "type": "string"
+            },
+            "forum": {
+                "$ref": "Forum"
+            },
+            "twitterAccount": {
+                "$ref": "TwitterAccount"
+            },
+            "provider": {
+                "$ref": "Provider"
+            },
+            "totalMashups": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "recentMashups": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "conditions": {
+                "type": "array",
+                "items": {
+                    "$ref": "Condition"
+                }
+            },
+            "effects": {
+                "type": "array",
+                "items": {
+                    "$ref": "Effect"
+                }
+            },
+            "modelReferences": {
+                "type": "array",
+                "items": {
+                    "$ref": "Resource"
+                }
+            },
+            "nfps": {
+                "type": "array",
+                "items": {
+                    "$ref": "NonFunctionalProperty"
+                }
+            },
+            "grounding": {
+                "$ref": "Grounding"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "Operation": {
+        "id": "Operation",
+        "properties": {
+            "inputs": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessageContent"
+                }
+            },
+            "outputs": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessageContent"
+                }
+            },
+            "inputFaults": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessageContent"
+                }
+            },
+            "outputFaults": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessageContent"
+                }
+            },
+            "producesContentTypes": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "acceptsContentTypes": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "method": {
+                "$ref": "URI"
+            },
+            "address": {
+                "type": "string"
+            },
+            "conditions": {
+                "type": "array",
+                "items": {
+                    "$ref": "Condition"
+                }
+            },
+            "effects": {
+                "type": "array",
+                "items": {
+                    "$ref": "Effect"
+                }
+            },
+            "modelReferences": {
+                "type": "array",
+                "items": {
+                    "$ref": "Resource"
+                }
+            },
+            "nfps": {
+                "type": "array",
+                "items": {
+                    "$ref": "NonFunctionalProperty"
+                }
+            },
+            "grounding": {
+                "$ref": "Grounding"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "MessagePart": {
+        "id": "MessagePart",
+        "properties": {
+            "mandatoryParts": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessagePart"
+                }
+            },
+            "optionalParts": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessagePart"
+                }
+            },
+            "liftingSchemaMappings": {
+                "$ref": "java.util.Collection<java.net.URI>"
+            },
+            "loweringSchemaMappings": {
+                "$ref": "java.util.Collection<java.net.URI>"
+            },
+            "modelReferences": {
+                "type": "array",
+                "items": {
+                    "$ref": "Resource"
+                }
+            },
+            "nfps": {
+                "type": "array",
+                "items": {
+                    "$ref": "NonFunctionalProperty"
+                }
+            },
+            "grounding": {
+                "$ref": "Grounding"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "MediaType": {
+        "id": "MediaType",
+        "properties": {
+            "type": {
+                "type": "string"
+            },
+            "subtype": {
+                "type": "string"
+            },
+            "parameters": {
+                "$ref": "Map[string,string]"
+            },
+            "wildcardType": {
+                "type": "boolean"
+            },
+            "wildcardSubtype": {
+                "type": "boolean"
+            }
+        }
+    },
+    "Forum": {
+        "id": "Forum",
+        "properties": {
+            "vitality": {
+                "type": "number",
+                "format": "double"
+            },
+            "site": {
+                "$ref": "URL"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "ContentDisposition": {
+        "id": "ContentDisposition",
+        "properties": {
+            "type": {
+                "type": "string"
+            },
+            "parameters": {
+                "$ref": "Map[string,string]"
+            },
+            "fileName": {
+                "type": "string"
+            },
+            "creationDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "modificationDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "readDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "size": {
+                "type": "integer",
+                "format": "int64"
+            }
+        }
+    },
+    "FormDataContentDisposition": {
+        "id": "FormDataContentDisposition",
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "modificationDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "readDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "type": {
+                "type": "string"
+            },
+            "size": {
+                "type": "integer",
+                "format": "int64"
+            },
+            "fileName": {
+                "type": "string"
+            },
+            "parameters": {
+                "$ref": "Map[string,string]"
+            },
+            "creationDate": {
+                "type": "string",
+                "format": "date-time"
+            }
+        }
+    },
+    "MessageContent": {
+        "id": "MessageContent",
+        "properties": {
+            "loweringSchemaMappings": {
+                "$ref": "java.util.Collection<java.net.URI>"
+            },
+            "mandatoryParts": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessagePart"
+                }
+            },
+            "optionalParts": {
+                "type": "array",
+                "items": {
+                    "$ref": "MessagePart"
+                }
+            },
+            "liftingSchemaMappings": {
+                "$ref": "java.util.Collection<java.net.URI>"
+            },
+            "modelReferences": {
+                "type": "array",
+                "items": {
+                    "$ref": "Resource"
+                }
+            },
+            "nfps": {
+                "type": "array",
+                "items": {
+                    "$ref": "NonFunctionalProperty"
+                }
+            },
+            "grounding": {
+                "$ref": "Grounding"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    },
+    "BodyPart": {
+        "id": "BodyPart",
+        "properties": {
+            "entity": {
+                "$ref": "Object"
+            },
+            "headers": {
+                "$ref": "javax.ws.rs.core.MultivaluedMap<java.lang.String, java.lang.String>"
+            },
+            "mediaType": {
+                "$ref": "MediaType"
+            },
+            "parent": {
+                "$ref": "MultiPart"
+            },
+            "providers": {
+                "$ref": "Providers"
+            },
+            "contentDisposition": {
+                "$ref": "ContentDisposition"
+            },
+            "parameterizedHeaders": {
+                "$ref": "javax.ws.rs.core.MultivaluedMap<java.lang.String, org.glassfish.jersey.message.internal.ParameterizedHeader>"
+            },
+            "messageBodyWorkers": {
+                "$ref": "MessageBodyWorkers"
+            }
+        }
+    },
+    "Effect": {
+        "id": "Effect",
+        "properties": {
+            "typedValue": {
+                "$ref": "Object"
+            },
+            "comment": {
+                "type": "string"
+            },
+            "source": {
+                "$ref": "URI"
+            },
+            "label": {
+                "type": "string"
+            },
+            "creator": {
+                "$ref": "URI"
+            },
+            "issued": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "sameAsIndividuals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "uri": {
+                "$ref": "URI"
+            },
+            "created": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "licenses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            },
+            "seeAlsos": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "$ref": "URI"
+                }
+            }
+        }
+    }
+}}

@@ -1,0 +1,275 @@
+{"apiVersion": "2.0", "swaggerVersion": "1.2", "basePath": "discovery", "resourcePath": "/discovery", "produces": ["application/atom+xml", "application/json"], "apis": [
+    {
+        "path": "/{type}/func-rdfs",
+        "operations": [
+            {
+                "method": "GET",
+                "summary": "Get services or operations classified by specific RDF classes.",
+                "notes": "The search is performed through RDFS-based reasoning.",
+                "type": "DiscoveryResult",
+                "nickname": "classificationBasedDiscovery",
+                "produces": ["application/atom+xml", "application/json"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "type",
+                        "description": "Parameter indicating the type of item to discover. The only values accepted are \"op\" for discovering operations, and \"svc\" for discovering services.",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false,
+                        "enum": ["svc", "op"]
+                    },
+                    {
+                        "name": "f",
+                        "description": "Type of matching. The value should be either \"and\" or \"or\". The result should be the set- based conjunction or disjunction depending on the classes selected.",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "query",
+                        "allowMultiple": false,
+                        "enum": ["and", "or"]
+                    },
+                    {
+                        "name": "class",
+                        "description": "Multivalued parameter indicating the functional classifications to match. The class should be the URL of the concept to match. This URL should be URL encoded.",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "paramType": "query",
+                        "allowMultiple": true
+                    },
+                    {
+                        "name": "ranking",
+                        "description": "Popularity-based ranking. The value should be \"standard\" to rank the results according the popularity of the provider.",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "query",
+                        "allowMultiple": false,
+                        "enum": ["standard"]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "path": "/{type}/io-rdfs",
+        "operations": [
+            {
+                "method": "GET",
+                "summary": "Get services or operations that have inputs or/and outputs classified by specific RDF classes.",
+                "notes": "The search is performed through RDFS-based reasoning.",
+                "type": "DiscoveryResult",
+                "nickname": "ioDiscovery",
+                "produces": ["application/atom+xml", "application/json"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "type",
+                        "description": "Parameter indicating the type of item to discover. The only values accepted are \"op\" for discovering operations, and \"svc\" for discovering services.",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false,
+                        "enum": ["svc", "op"]
+                    },
+                    {
+                        "name": "f",
+                        "description": "type of matching. The value should be either \"and\" or \"or\". The result should be the set- based conjunction or disjunction depending on the value selected between the services matching the inputs and those matching the outputs.",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "query",
+                        "allowMultiple": false,
+                        "enum": ["and", "or"]
+                    },
+                    {
+                        "name": "ranking",
+                        "description": "Popularity-based ranking. The value should be \"standard\" to rank the results according the popularity of the provider.",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "query",
+                        "allowMultiple": false,
+                        "enum": ["standard"]
+                    },
+                    {
+                        "name": "filtering",
+                        "defaultValue": "disabled",
+                        "required": false,
+                        "type": "string",
+                        "paramType": "query",
+                        "allowMultiple": false
+                    },
+                    {
+                        "name": "i",
+                        "description": "Multivalued parameter indicating the classes that the input of the service should match to. The classes are indicated with the URL of the concept to match. This URL should be URL encoded.",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "paramType": "query",
+                        "allowMultiple": true
+                    },
+                    {
+                        "name": "o",
+                        "description": "Multivalued parameter indicating the classes that the output of the service should match to. The classes are indicated with the URL of the concept to match. This URL should be URL encoded.",
+                        "required": false,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "paramType": "query",
+                        "allowMultiple": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "path": "/{type}/search",
+        "operations": [
+            {
+                "method": "GET",
+                "summary": "Free text-based search of services, operations or service parts",
+                "notes": "",
+                "type": "URI",
+                "nickname": "search",
+                "produces": ["application/atom+xml", "application/json"],
+                "authorizations": {},
+                "parameters": [
+                    {
+                        "name": "type",
+                        "description": "Parameter indicating the type of item to discover. The only values accepted are \"op\" for discovering operations, \"svc\" for discovering services and \"all\" for any kind of service component",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "path",
+                        "allowMultiple": false,
+                        "enum": ["svc", "op", "all"]
+                    },
+                    {
+                        "name": "q",
+                        "description": "Parameter indicating a query that specifies keywords to search. Regular expressions are allowed.",
+                        "required": true,
+                        "type": "string",
+                        "paramType": "query",
+                        "allowMultiple": false
+                    }
+                ]
+            }
+        ]
+    }
+], "models": {
+    "DiscoveryResult": {
+        "id": "DiscoveryResult",
+        "properties": {
+            "label": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
+            },
+            "rankPropertyValues": {
+                "$ref": "Map[URI,Object]"
+            },
+            "rankingScore": {
+                "type": "number",
+                "format": "double"
+            },
+            "matchResult": {
+                "$ref": "MatchResult"
+            }
+        }
+    },
+    "URI": {
+        "id": "URI",
+        "properties": {
+            "scheme": {
+                "type": "string"
+            },
+            "fragment": {
+                "type": "string"
+            },
+            "authority": {
+                "type": "string"
+            },
+            "userInfo": {
+                "type": "string"
+            },
+            "host": {
+                "type": "string"
+            },
+            "port": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "path": {
+                "type": "string"
+            },
+            "query": {
+                "type": "string"
+            },
+            "schemeSpecificPart": {
+                "type": "string"
+            },
+            "absolute": {
+                "type": "boolean"
+            },
+            "opaque": {
+                "type": "boolean"
+            },
+            "rawSchemeSpecificPart": {
+                "type": "string"
+            },
+            "rawAuthority": {
+                "type": "string"
+            },
+            "rawUserInfo": {
+                "type": "string"
+            },
+            "rawPath": {
+                "type": "string"
+            },
+            "rawQuery": {
+                "type": "string"
+            },
+            "rawFragment": {
+                "type": "string"
+            }
+        }
+    },
+    "Matcher": {
+        "id": "Matcher",
+        "properties": {
+            "matcherDescription": {
+                "type": "string"
+            },
+            "matcherVersion": {
+                "type": "string"
+            },
+            "matchTypesSupported": {
+                "$ref": "uk.ac.open.kmi.iserve.discovery.api.MatchTypes<uk.ac.open.kmi.iserve.discovery.api.MatchType>"
+            }
+        }
+    },
+    "MatchResult": {
+        "id": "MatchResult",
+        "properties": {
+            "explanation": {
+                "type": "string"
+            },
+            "matchType": {
+                "$ref": "MatchType"
+            },
+            "resourceToMatch": {
+                "$ref": "URI"
+            },
+            "matchedResource": {
+                "$ref": "URI"
+            },
+            "matcher": {
+                "$ref": "Matcher"
+            }
+        }
+    }
+}}

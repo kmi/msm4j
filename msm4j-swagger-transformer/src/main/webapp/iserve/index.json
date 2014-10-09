@@ -1,0 +1,21 @@
+{"apiVersion": "2.0", "swaggerVersion": "1.2", "apis": [
+    {
+        "path": "/id/documents",
+        "description": "Operations about service documents"
+    },
+    {
+        "path": "/discovery",
+        "description": "Service discovery operations"
+    },
+    {
+        "path": "/id/services",
+        "description": "Operations about services"
+    }
+], "info": {
+    "title": "iServe RESTful API",
+    "description": "This is the documentation of the RESTful API to access iServe functionalities. You can find out more about iServe at <a href=\"http://iserve.kmi.open.ac.uk\">http://iserve.kmi.open.ac.uk</a>.",
+    "termsOfServiceUrl": "",
+    "contact": "iserve-general@googlegroups.com",
+    "license": "Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+}}
