@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.open.kmi.msm4j.transformer.swagger.test;
+package uk.ac.open.kmi.msm4j.transformer.swagger;
 
 import junit.framework.Assert;
 import org.jukito.JukitoModule;
@@ -28,11 +28,12 @@ import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceTransformationEngine;
 import uk.ac.open.kmi.msm4j.io.impl.TransformerModule;
-import uk.ac.open.kmi.msm4j.transformer.swagger.SwaggerTransformer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.Collection;
+import java.util.List;
 
 @RunWith(JukitoRunner.class)
 public class SwaggerTransformerTest {
@@ -78,23 +79,12 @@ public class SwaggerTransformerTest {
 
     @Test
     public void testPluginBasedTransformation(ServiceTransformationEngine serviceTransformationEngine) {
-        // Add all the test collections
-        log.info("Transforming test collections");
-        File dir = new File(this.getClass().getResource("/").getFile());
-
-        // Test services
-        Collection<Service> services;
-        log.info("Transforming services");
-        File[] swaggerFiles = dir.listFiles(swaggerFilter);
-        for (File file : swaggerFiles) {
-            log.info("Transforming service {}", file.getAbsolutePath());
-            try {
-                services = serviceTransformationEngine.transform(file, "http://localhost:9090/api-docs/pet-store/", SwaggerTransformer.mediaType);
-                Assert.assertNotNull("Service collection should not be null", services);
-                Assert.assertEquals(1, services.size());
-            } catch (Exception e) {
-                log.error("Problems transforming the service. Continuing", e);
-            }
+        try {
+            List<Service> services = serviceTransformationEngine.transform(new FileInputStream(""), "http://localhost:9090/api-docs/pet-store/", SwaggerTransformer.mediaType);
+            Assert.assertNotNull("Service collection should not be null", services);
+            Assert.assertEquals(1, services.size());
+        } catch (Exception e) {
+            log.error("Problems transforming the service. Continuing", e);
         }
 
 
