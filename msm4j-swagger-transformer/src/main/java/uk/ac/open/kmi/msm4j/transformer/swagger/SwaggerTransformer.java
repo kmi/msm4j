@@ -67,7 +67,7 @@ public class SwaggerTransformer implements ServiceTransformer {
 
     public SwaggerTransformer() throws TransformationException {
         httpStatusCodeModel = ModelFactory.createDefaultModel();
-        httpStatusCodeModel.read(this.getClass().getResource("/http-statusCodes-2014-09-03.rdf").getFile());
+        httpStatusCodeModel.read(this.getClass().getResourceAsStream("/http-statusCodes-2014-09-03.rdf"), "http://www.w3.org/2011/http-statusCodes");
     }
 
     public static void main(String[] args) throws TransformationException {
