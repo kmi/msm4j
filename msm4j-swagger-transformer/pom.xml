@@ -38,6 +38,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
+            <artifactId>msm4j-vocabulary</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
             <artifactId>msm4j-io</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -147,6 +153,8 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
+                    <useTestScope>true</useTestScope>
+                    <webAppSourceDirectory>${project.basedir}/src/test/resources</webAppSourceDirectory>
                     <webAppConfig>
                         <contextPath>/api-docs</contextPath>
                     </webAppConfig>
@@ -156,7 +164,7 @@
                     <connectors>
                         <connector
                                 implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>9090</port>
+                            <port>10000</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
                     </connectors>

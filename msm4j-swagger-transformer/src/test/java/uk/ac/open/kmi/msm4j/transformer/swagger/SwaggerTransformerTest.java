@@ -59,7 +59,7 @@ public class SwaggerTransformerTest {
         Collection<Service> services = null;
 
         try {
-            services = importer.transform(null, "http://localhost:9090/api-docs/pet-store/");
+            services = importer.transform(null, "http://localhost:10000/api-docs/pet-store/");
         } catch (TransformationException e) {
             e.printStackTrace();
         }
@@ -68,7 +68,7 @@ public class SwaggerTransformerTest {
         Assert.assertTrue("There should be at least one service", 1 <= services.size());
 
         try {
-            services = importer.transform(null, "http://localhost:9090/api-docs/iserve/");
+            services = importer.transform(null, "http://localhost:10000/api-docs/iserve/");
         } catch (TransformationException e) {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class SwaggerTransformerTest {
     @Test
     public void testPluginBasedTransformation(ServiceTransformationEngine serviceTransformationEngine) {
         try {
-            List<Service> services = serviceTransformationEngine.transform(new FileInputStream(""), "http://localhost:9090/api-docs/pet-store/", SwaggerTransformer.mediaType);
+            List<Service> services = serviceTransformationEngine.transform(new FileInputStream(""), "http://localhost:10000/api-docs/pet-store/", SwaggerTransformer.mediaType);
             Assert.assertNotNull("Service collection should not be null", services);
             Assert.assertEquals(1, services.size());
         } catch (Exception e) {

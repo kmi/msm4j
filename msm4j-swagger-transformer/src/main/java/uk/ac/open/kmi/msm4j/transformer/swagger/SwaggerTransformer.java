@@ -20,7 +20,6 @@ package uk.ac.open.kmi.msm4j.transformer.swagger;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.smartbear.swagger4j.*;
-import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.LiteralGrounding;
@@ -31,11 +30,9 @@ import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
 import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
-import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 import uk.ac.open.kmi.msm4j.vocabulary.MSM_SWAGGER;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
@@ -68,111 +65,6 @@ public class SwaggerTransformer implements ServiceTransformer {
     public SwaggerTransformer() throws TransformationException {
         httpStatusCodeModel = ModelFactory.createDefaultModel();
         httpStatusCodeModel.read(this.getClass().getResourceAsStream("/http-statusCodes-2014-09-03.rdf"), "http://www.w3.org/2011/http-statusCodes");
-    }
-
-    public static void main(String[] args) throws TransformationException {
-
-        Options options = new Options();
-        // automatically generate the help statement
-        HelpFormatter formatter = new HelpFormatter();
-        // create the parser
-        CommandLineParser parser = new GnuParser();
-
-        options.addOption("h", "help", false, "print this message");
-        options.addOption("i", "input", true, "input directory, file or URL of documents to transform");
-        options.addOption("s", "save", false, "save result? (default: false)");
-        options.addOption("f", "format", true, "format to use when serialising. Default: TTL.");
-
-        // parse the command line arguments
-        CommandLine line = null;
-        String input = null;
-        File inputFile;
-        try {
-            line = parser.parse(options, args);
-            input = line.getOptionValue("i");
-            if (line.hasOption("help")) {
-                formatter.printHelp("SwaggerImporter", options);
-                return;
-            }
-            if (input == null) {
-                // The input should not be null
-                formatter.printHelp(80, "java " + SwaggerTransformer.class.getCanonicalName(), "Options:", options, "You must provide an input", true);
-                return;
-            }
-        } catch (ParseException e) {
-            formatter.printHelp(80, "java " + SwaggerTransformer.class.getCanonicalName(), "Options:", options, "Error parsing input", true);
-        }
-
-        SwaggerTransformer importer = new SwaggerTransformer();
-
-        ServiceWriter writer = new ServiceWriterImpl();
-
-        File rdfDir = null;
-        boolean save = line.hasOption("s");
-        if (save) {
-            rdfDir = new File("RDF");
-            rdfDir.mkdir();
-        }
-
-        // Obtain details for serialisation format
-        String format = line.getOptionValue("f", Syntax.TTL.getName());
-        Syntax syntax = Syntax.valueOf(format);
-
-
-        try {
-            URI inputUri = new URI(input);
-            List<Service> services = importer.transform(inputUri.toURL().openStream(), inputUri.toASCIIString());
-            writeServicesToFileSystem(services, rdfDir, "out.", syntax, writer);
-            return;
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        inputFile = new File(input);
-        if (inputFile == null || !inputFile.exists()) {
-            formatter.printHelp(80, "java " + SwaggerTransformer.class.getCanonicalName(), "Options:", options, "Input not found", true);
-            System.out.println(inputFile.getAbsolutePath());
-            return;
-        }
-
-
-        // Obtain input for transformation
-        File[] toTransform;
-        if (inputFile.isDirectory()) {
-            // Get potential files to transform based on extension
-            FilenameFilter swaggerFilter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (name.endsWith(".json"));
-                }
-            };
-
-            toTransform = inputFile.listFiles(swaggerFilter);
-        } else {
-            toTransform = new File[1];
-            toTransform[0] = inputFile;
-        }
-
-
-        List<Service> services;
-        System.out.println("Transforming input");
-        for (File file : toTransform) {
-            try {
-                services = importer.transform(new FileInputStream(file), null);
-                writeServicesToFileSystem(services, rdfDir, file.getName(), syntax, writer);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (TransformationException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static void writeServicesToFileSystem(List<Service> services, File rdfDir, String fileName, Syntax syntax, ServiceWriter writer) {
