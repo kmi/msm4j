@@ -258,12 +258,13 @@ public class SwaggerTransformer implements ServiceTransformer {
             return msmOp;
 
         try {
-            URI opUri;
+            String modelUri;
             if (swaggerOperation.getApi().getApiDeclaration().getBasePath().matches("^http")) {
-                opUri = new URI(new StringBuilder().append(swaggerOperation.getApi().getApiDeclaration().getBasePath()).append("/").append(swaggerOperation.getNickName()).toString());
+                modelUri = new StringBuilder().append(swaggerOperation.getApi().getApiDeclaration().getBasePath()).toString();
             } else {
-                opUri = new URI(new StringBuilder().append(baseUri).append("/").append(swaggerOperation.getNickName()).toString());
+                modelUri = baseUri;
             }
+            URI opUri = new URI(new StringBuilder(modelUri).append(swaggerOperation.getNickName()).toString());
 
             msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
             msmOp.setLabel(swaggerOperation.getNickName());
@@ -284,6 +285,7 @@ public class SwaggerTransformer implements ServiceTransformer {
             }
 
             msmOp.addInput(transform(swaggerOperation.getParameters(), opUri, groundingValue));
+            msmOp.addOutput(transformOutput(swaggerOperation.getResponseClass(), modelUri));
             msmOp.setOutputs(transformOutputs(swaggerOperation.getResponseMessages(), opUri, groundingValue));
             msmOp.setFaults(transformFaults(swaggerOperation.getResponseMessages(), opUri, groundingValue));
 
@@ -293,6 +295,17 @@ public class SwaggerTransformer implements ServiceTransformer {
 
 
         return msmOp;
+    }
+
+    private MessageContent transformOutput(String responseClass, String modelUri) {
+        try {
+            if (!responseClass.equals("void")) {
+                return new MessageContent(new URI(new StringBuilder(modelUri).append(responseClass).toString()));
+            }
+        } catch (URISyntaxException e) {
+            log.error("Syntax exception while generating output URI", e);
+        }
+        return null;
     }
 
     private String buildParametersTemplate(List<Parameter> parameters) {
