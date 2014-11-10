@@ -27,16 +27,13 @@ import uk.ac.open.kmi.msm4j.MessageContent;
 import uk.ac.open.kmi.msm4j.MessagePart;
 import uk.ac.open.kmi.msm4j.Service;
 import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
-import uk.ac.open.kmi.msm4j.io.ServiceWriter;
-import uk.ac.open.kmi.msm4j.io.Syntax;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.vocabulary.MSM_SWAGGER;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.CodeSource;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -67,58 +64,12 @@ public class SwaggerTransformer implements ServiceTransformer {
         httpStatusCodeModel.read(this.getClass().getResourceAsStream("/http-statusCodes-2014-09-03.rdf"), "http://www.w3.org/2011/http-statusCodes");
     }
 
-    public static void writeServicesToFileSystem(List<Service> services, File rdfDir, String fileName, Syntax syntax, ServiceWriter writer) {
-        if (services != null) {
-            System.out.println("Services obtained: " + services.size());
-
-            File resultFile = null;
-            if (rdfDir != null) {
-                String newFileName = fileName.substring(0, fileName.lastIndexOf('.') + 1) + syntax.getExtension();
-                resultFile = new File(rdfDir.getAbsolutePath() + "/" + newFileName);
-            }
-
-            if (rdfDir != null) {
-                OutputStream out = null;
-                try {
-                    out = new FileOutputStream(resultFile);
-                    for (Service service : services) {
-                        if (out != null) {
-                            writer.serialise(service, out, syntax);
-                            System.out.println("Service saved at: " + resultFile.getAbsolutePath());
-                        } else {
-                            writer.serialise(service, System.out, syntax);
-                        }
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (out != null)
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                }
-            }
-
-        }
-    }
-
     public void setProxy(String proxyHost, String proxyPort) {
         if (proxyHost != null && proxyPort != null) {
             Properties prop = System.getProperties();
             prop.put("http.proxyHost", proxyHost);
             prop.put("http.proxyPort", proxyPort);
         }
-    }
-
-    private String getJaxpImplementationInfo(String componentName, Class componentClass) {
-        CodeSource source = componentClass.getProtectionDomain().getCodeSource();
-        return MessageFormat.format(
-                "{0} implementation: {1} loaded from: {2}",
-                componentName,
-                componentClass.getCanonicalName(),
-                source == null ? "Java Runtime" : source.getLocation());
     }
 
     /**
@@ -175,37 +126,44 @@ public class SwaggerTransformer implements ServiceTransformer {
             return msmServices;
         } else {
             URI base = null;
+            ResourceListing resourceListing = null;
+            Service service = null;
             if (baseUri != null) {
                 try {
                     base = new URI(baseUri);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
-            }
 
-            try {
-                log.info("Trying to retrieve the description from the URI...");
-                ResourceListing resourceListing = Swagger.readSwagger(new URI(baseUri));
-                msmServices.add(transform(resourceListing, baseUri));
-            } catch (IOException e) {
-                log.info("Unable to retrieve the swagger description from the URI: {}", e.getMessage());
-            } catch (URISyntaxException e) {
-                log.error("Provided wrong URI");
-            }
-
-            if (msmServices == null || msmServices.size() == 0) {
-                try {
-                    log.info("Trying to parse the description from the provided InputStream...");
-                    ResourceListing resourceListing = Swagger.createReader().readResourceListing(new InputStreamSwaggerSource(originalDescription, base));
-                    msmServices.add(transform(resourceListing, baseUri));
-                } catch (IOException e) {
-                    log.info("Unable to parse the swagger from the provided InputStream");
+                if ( base != null) {
+                    log.info("Trying to retrieve the description from {}", base);
+                    try {
+                        resourceListing = Swagger.readSwagger(base);
+                        service = transform(resourceListing, baseUri);
+                    } catch (IOException e) {
+                        log.info("Unable to retrieve the swagger description from the URI: {}", e.getMessage());
+                    }
                 }
 
+                if (service == null && originalDescription != null) {
+                    try {
+                        log.info("Trying to parse the description from the provided InputStream");
+                        resourceListing = Swagger.createReader().readResourceListing(new InputStreamSwaggerSource(originalDescription, base));
+                        service = transform(resourceListing, baseUri);
+                    } catch (IOException e) {
+                        log.info("Unable to parse the swagger from the provided InputStream.");
+                    }
+                }
+
+                if (service != null) {
+                    msmServices.add(service);
+                } else {
+                    log.warn("No service description was generated from {}", base);
+                }
             }
+
             return msmServices;
         }
-
     }
 
     private Service transform(ResourceListing resourceListing, String baseUri) {
