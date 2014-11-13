@@ -232,8 +232,8 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://xmlns.com/foaf/0.1/ \
-                                -i ${basedir}/src/main/resources/foaf-2010-08-09.rdf \
-                                -e RDF/XML \
+                                -i ${basedir}/src/main/resources/foaf-2010-08-09.ttl \
+                                -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n FOAF \
@@ -252,8 +252,8 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://rdfs.org/sioc/ns# \
-                                -i ${basedir}/src/main/resources/sioc-2010-03-25.rdf \
-                                -e RDF/XML \
+                                -i ${basedir}/src/main/resources/sioc-2010-03-25.ttl \
+                                -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n SIOC \
@@ -273,8 +273,8 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://creativecommons.org/ns# \
-                                -i ${basedir}/src/main/resources/cc-2013-12-11.rdf \
-                                -e RDF/XML \
+                                -i ${basedir}/src/main/resources/cc-2013-12-11.ttl \
+                                -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n CC \
@@ -294,8 +294,8 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://schema.org/ \
-                                -i ${basedir}/src/main/resources/schema-dot-org-2014-04-03.rdf \
-                                -e RDF/XML \
+                                -i ${basedir}/src/main/resources/schema-dot-org-2014-04-03.ttl \
+                                -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n SCHEMA \
@@ -315,8 +315,8 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://www.w3.org/2011/http-statusCodes# \
-                                -i ${basedir}/src/main/resources/http-statusCodes-2014-09-03.rdf \
-                                -e RDF/XML \
+                                -i ${basedir}/src/main/resources/http-statusCodes-2014-09-03.ttl \
+                                -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n HTTP_STATUS_CODES \
@@ -355,8 +355,8 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://purl.org/NET/mediatypes/ \
-                                -i ${basedir}/src/main/resources/media-types-2014-09-03.rdf \
-                                -e RDF/XML \
+                                -i ${basedir}/src/main/resources/media-types-2014-09-03.ttl \
+                                -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
                                 -n MEDIA_TYPES \

@@ -1,0 +1,360 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix http: <http://www.w3.org/2011/http#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<http://www.ietf.org/rfc/rfc2518.txt>
+    dct:identifier "http://www.ietf.org/rfc/rfc2518.txt" ;
+    dct:title "HTTP Extensions for Distributed Authoring -- WEBDAV"@en .
+
+<http://www.ietf.org/rfc/rfc2616.txt>
+    dct:identifier "http://www.ietf.org/rfc/rfc2616.txt" ;
+    dct:title "Hypertext Transfer Protocol -- HTTP/1.1"@en .
+
+<http://www.ietf.org/rfc/rfc2774.txt>
+    dct:identifier "http://www.ietf.org/rfc/rfc2774.txt" ;
+    dct:title "An HTTP Extension Framework"@en .
+
+<http://www.ietf.org/rfc/rfc2817.txt>
+    dct:identifier "http://www.ietf.org/rfc/rfc2817.txt" ;
+    dct:title "Upgrading to TLS Within HTTP/1.1"@en .
+
+<http://www.ietf.org/rfc/rfc3229.txt>
+    dct:identifier "http://www.ietf.org/rfc/rfc3229.txt" ;
+    dct:title "Delta encoding in HTTP"@en .
+
+<http://www.ietf.org/rfc/rfc4918.txt>
+    dct:identifier "http://www.ietf.org/rfc/rfc4918.txt" ;
+    dct:title "HTTP Extensions for Distributed Authoring - WebDAV"@en .
+
+<http://www.w3.org/2011/http-statusCodes#Accepted>
+    dct:title "Accepted"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "202" .
+
+<http://www.w3.org/2011/http-statusCodes#BadGateway>
+    dct:title "Bad Gateway"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "502" .
+
+<http://www.w3.org/2011/http-statusCodes#BadRequest>
+    dct:title "Bad Request"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "400" .
+
+<http://www.w3.org/2011/http-statusCodes#Conflict>
+    dct:title "Conflict"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "409" .
+
+<http://www.w3.org/2011/http-statusCodes#Continue>
+    dct:title "Continue"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode1xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "100" .
+
+<http://www.w3.org/2011/http-statusCodes#Created>
+    dct:title "Created"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "201" .
+
+<http://www.w3.org/2011/http-statusCodes#ExpectationFailed>
+    dct:title "Expectation Failed"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "417" .
+
+<http://www.w3.org/2011/http-statusCodes#FailedDependency>
+    dct:title "Failed Dependency"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc4918.txt> ;
+    http:statusCodeNumber "424" .
+
+<http://www.w3.org/2011/http-statusCodes#Forbidden>
+    dct:title "Forbidden"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "403" .
+
+<http://www.w3.org/2011/http-statusCodes#Found>
+    dct:title "Found"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "302" .
+
+<http://www.w3.org/2011/http-statusCodes#GatewayTimeout>
+    dct:title "Gateway Timeout"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "504" .
+
+<http://www.w3.org/2011/http-statusCodes#Gone>
+    dct:title "Gone"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "410" .
+
+<http://www.w3.org/2011/http-statusCodes#HTTPVersionNotSupported>
+    dct:title "HTTP Version Not Supported"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "505" .
+
+<http://www.w3.org/2011/http-statusCodes#IMUsed>
+    dct:title "IM Used"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc3229.txt> ;
+    http:statusCodeNumber "226" .
+
+<http://www.w3.org/2011/http-statusCodes#InsufficientStorage>
+    dct:title "Insufficient Storage"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc4918.txt> ;
+    http:statusCodeNumber "507" .
+
+<http://www.w3.org/2011/http-statusCodes#InternalServerError>
+    dct:title "Internal Server Error"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "500" .
+
+<http://www.w3.org/2011/http-statusCodes#LengthRequired>
+    dct:title "Length Required"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "411" .
+
+<http://www.w3.org/2011/http-statusCodes#Locked>
+    dct:title "Locked"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc4918.txt> ;
+    http:statusCodeNumber "423" .
+
+<http://www.w3.org/2011/http-statusCodes#MethodNotAllowed>
+    dct:title "Method Not Allowed"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "405" .
+
+<http://www.w3.org/2011/http-statusCodes#MovedPermanently>
+    dct:title "Moved Permanently"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "301" .
+
+<http://www.w3.org/2011/http-statusCodes#MultiStatus>
+    dct:title "Multi-Status"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc4918.txt> ;
+    http:statusCodeNumber "207" .
+
+<http://www.w3.org/2011/http-statusCodes#MultipleChoices>
+    dct:title "Multiple Choices"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "300" .
+
+<http://www.w3.org/2011/http-statusCodes#NoContent>
+    dct:title "No Content"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "204" .
+
+<http://www.w3.org/2011/http-statusCodes#NonAuthoritativeInformation>
+    dct:title "Non-Authoritative Information"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "203" .
+
+<http://www.w3.org/2011/http-statusCodes#NotAcceptable>
+    dct:title "Not Acceptable"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "406" .
+
+<http://www.w3.org/2011/http-statusCodes#NotExtended>
+    dct:title "Not Extended"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2774.txt> ;
+    http:statusCodeNumber "510" .
+
+<http://www.w3.org/2011/http-statusCodes#NotFound>
+    dct:title "Not Found"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "404" .
+
+<http://www.w3.org/2011/http-statusCodes#NotImplemented>
+    dct:title "Not Implemented"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "501" .
+
+<http://www.w3.org/2011/http-statusCodes#NotModified>
+    dct:title "Not Modified"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "304" .
+
+<http://www.w3.org/2011/http-statusCodes#OK>
+    dct:title "OK"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "200" .
+
+<http://www.w3.org/2011/http-statusCodes#PartialContent>
+    dct:title "Partial Content"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "206" .
+
+<http://www.w3.org/2011/http-statusCodes#PaymentRequired>
+    dct:title "Payment Required"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "402" .
+
+<http://www.w3.org/2011/http-statusCodes#PreconditionFailed>
+    dct:title "Precondition Failed"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "412" .
+
+<http://www.w3.org/2011/http-statusCodes#Processing>
+    dct:title "Processing"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode1xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2518.txt> ;
+    http:statusCodeNumber "102" .
+
+<http://www.w3.org/2011/http-statusCodes#ProxyAuthenticationRequired>
+    dct:title "Proxy Authentication Required"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "407" .
+
+<http://www.w3.org/2011/http-statusCodes#RequestEntityTooLarge>
+    dct:title "Request Entity Too Large"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "413" .
+
+<http://www.w3.org/2011/http-statusCodes#RequestTimeout>
+    dct:title "Request Timeout"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "408" .
+
+<http://www.w3.org/2011/http-statusCodes#RequestURITooLong>
+    dct:title "Request-URI Too Long"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "414" .
+
+<http://www.w3.org/2011/http-statusCodes#RequestedRangeNotSatisfiable>
+    dct:title "Requested Range Not Satisfiable"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "416" .
+
+<http://www.w3.org/2011/http-statusCodes#Reserved>
+    dct:title "(Reserved)"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "306" .
+
+<http://www.w3.org/2011/http-statusCodes#ResetContent>
+    dct:title "Reset Content"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode2xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "205" .
+
+<http://www.w3.org/2011/http-statusCodes#SeeOther>
+    dct:title "See Other"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "303" .
+
+<http://www.w3.org/2011/http-statusCodes#ServiceUnavailable>
+    dct:title "Service Unavailable"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "503" .
+
+<http://www.w3.org/2011/http-statusCodes#StatusCode1xx>
+    a rdfs:Class ;
+    rdfs:comment "A status code starting with 1"@en ;
+    rdfs:label "Informational"@en .
+
+<http://www.w3.org/2011/http-statusCodes#StatusCode2xx>
+    a rdfs:Class ;
+    rdfs:comment "A status code starting with 2"@en ;
+    rdfs:label "Successful"@en .
+
+<http://www.w3.org/2011/http-statusCodes#StatusCode3xx>
+    a rdfs:Class ;
+    rdfs:comment "A status code starting with 3"@en ;
+    rdfs:label "Redirection"@en .
+
+<http://www.w3.org/2011/http-statusCodes#StatusCode4xx>
+    a rdfs:Class ;
+    rdfs:comment "A status code starting with 4"@en ;
+    rdfs:label "Client Error"@en .
+
+<http://www.w3.org/2011/http-statusCodes#StatusCode5xx>
+    a rdfs:Class ;
+    rdfs:comment "A status code starting with 5"@en ;
+    rdfs:label "Server Error"@en .
+
+<http://www.w3.org/2011/http-statusCodes#SwitchingProtocols>
+    dct:title "Switching Protocols"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode1xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "101" .
+
+<http://www.w3.org/2011/http-statusCodes#TemporaryRedirect>
+    dct:title "Temporary Redirect"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "307" .
+
+<http://www.w3.org/2011/http-statusCodes#Unauthorized>
+    dct:title "Unauthorized"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "401" .
+
+<http://www.w3.org/2011/http-statusCodes#UnprocessableEntity>
+    dct:title "Unprocessable Entity"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc4918.txt> ;
+    http:statusCodeNumber "422" .
+
+<http://www.w3.org/2011/http-statusCodes#UnsupportedMediaType>
+    dct:title "Unsupported Media Type"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "415" .
+
+<http://www.w3.org/2011/http-statusCodes#UpgradeRequired>
+    dct:title "Upgrade Required"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode4xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2817.txt> ;
+    http:statusCodeNumber "426" .
+
+<http://www.w3.org/2011/http-statusCodes#UseProxy>
+    dct:title "Use Proxy"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode3xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2616.txt> ;
+    http:statusCodeNumber "305" .
+
+<http://www.w3.org/2011/http-statusCodes#VariantAlsoNegotiates>
+    dct:title "Variant Also Negotiates (Experimental)"@en ;
+    a http:StatusCode, <http://www.w3.org/2011/http-statusCodes#StatusCode5xx> ;
+    rdfs:isDefinedBy <http://www.ietf.org/rfc/rfc2295.txt> ;
+    http:statusCodeNumber "506" .
+

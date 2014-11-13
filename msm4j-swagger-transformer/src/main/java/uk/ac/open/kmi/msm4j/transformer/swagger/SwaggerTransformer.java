@@ -61,7 +61,7 @@ public class SwaggerTransformer implements ServiceTransformer {
 
     public SwaggerTransformer() throws TransformationException {
         httpStatusCodeModel = ModelFactory.createDefaultModel();
-        httpStatusCodeModel.read(this.getClass().getResourceAsStream("/http-statusCodes-2014-09-03.rdf"), "http://www.w3.org/2011/http-statusCodes");
+        httpStatusCodeModel.read(this.getClass().getResourceAsStream("/http-statusCodes-2014-09-03.ttl"), "http://www.w3.org/2011/http-statusCodes", "TTL");
     }
 
     public void setProxy(String proxyHost, String proxyPort) {
