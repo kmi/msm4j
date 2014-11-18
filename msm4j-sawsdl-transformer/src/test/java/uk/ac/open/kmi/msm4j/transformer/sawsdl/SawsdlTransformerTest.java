@@ -34,15 +34,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RunWith(JukitoRunner.class)
 public class SawsdlTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(SawsdlTransformerTest.class);
     private static final String SAWSDL_TC3_SERVICES = "/services/sawsdl_wsdl11/";
+
+    // Number of files to transform. Integer.MAX_VALUE for all
+    private static final int NUM_TESTS = 25 ;
 
     private SawsdlTransformer importer;
     private ServiceWriter writer;
@@ -89,7 +90,11 @@ public class SawsdlTransformerTest {
             Collection<Service> services;
             log.info("Transforming services");
             File[] sawsdlFiles = dir.listFiles(sawsdlFilter);
-            for (File file : sawsdlFiles) {
+            List<File> files = Arrays.asList(sawsdlFiles);
+            Collections.shuffle(files);
+
+            for (int i = 0; i < NUM_TESTS && i < files.size(); i++) {
+                File file = files.get(i);
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
                     services = importer.transform(new FileInputStream(file), null);
@@ -113,8 +118,12 @@ public class SawsdlTransformerTest {
             // Test services
             Collection<Service> services;
             log.info("Transforming services");
-            File[] owlsFiles = dir.listFiles(sawsdlFilter);
-            for (File file : owlsFiles) {
+            File[] sawsdlFiles = dir.listFiles(sawsdlFilter);
+            List<File> files = Arrays.asList(sawsdlFiles);
+            Collections.shuffle(files);
+
+            for (int i = 0; i < NUM_TESTS && i < files.size(); i++) {
+                File file = files.get(i);
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
                     services = serviceTransformationEngine.transform(file, null, SawsdlTransformer.mediaType);

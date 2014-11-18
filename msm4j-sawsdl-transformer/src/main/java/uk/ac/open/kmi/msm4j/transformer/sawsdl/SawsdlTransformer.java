@@ -26,14 +26,11 @@ import com.ebmwebsourcing.easywsdl11.api.element.Operation;
 import com.ebmwebsourcing.easywsdl11.api.element.Service;
 import com.ebmwebsourcing.easywsdl11.api.type.TBindingOperationMessage;
 import com.ebmwebsourcing.easywsdl11.api.type.TDocumented;
-import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.msm4j.*;
 import uk.ac.open.kmi.msm4j.io.ServiceTransformer;
-import uk.ac.open.kmi.msm4j.io.ServiceWriter;
 import uk.ac.open.kmi.msm4j.io.TransformationException;
-import uk.ac.open.kmi.msm4j.io.impl.ServiceWriterImpl;
 import uk.ac.open.kmi.msm4j.io.util.URIUtil;
 import uk.ac.open.kmi.msm4j.vocabulary.MSM_WSDL;
 
@@ -42,14 +39,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.xpath.XPathFactory;
-import java.io.*;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class SawsdlTransformer implements ServiceTransformer {
 
@@ -106,132 +102,6 @@ public class SawsdlTransformer implements ServiceTransformer {
         log.debug(this.getJaxpImplementationInfo("SAXParserFactory", SAXParserFactory.newInstance().getClass()));
     }
 
-    public static void main(String[] args) throws TransformationException {
-
-        Options options = new Options();
-        // automatically generate the help statement
-        HelpFormatter formatter = new HelpFormatter();
-        // create the parser
-        CommandLineParser parser = new GnuParser();
-
-        options.addOption("h", "help", false, "print this message");
-        options.addOption("i", "input", true, "input directory or file to transform");
-        options.addOption("s", "save", false, "save result? (default: false)");
-        options.addOption("f", "format", true, "format to use when serialising. Default: TTL.");
-
-        // parse the command line arguments
-        CommandLine line = null;
-        String input = null;
-        File inputFile;
-        try {
-            line = parser.parse(options, args);
-            input = line.getOptionValue("i");
-            if (line.hasOption("help")) {
-                formatter.printHelp("SawsdlImporter", options);
-                return;
-            }
-            if (input == null) {
-                // The input should not be null
-                formatter.printHelp(80, "java " + SawsdlTransformer.class.getCanonicalName(), "Options:", options, "You must provide an input", true);
-                return;
-            }
-        } catch (ParseException e) {
-            formatter.printHelp(80, "java " + SawsdlTransformer.class.getCanonicalName(), "Options:", options, "Error parsing input", true);
-        }
-
-        inputFile = new File(input);
-        if (inputFile == null || !inputFile.exists()) {
-            formatter.printHelp(80, "java " + SawsdlTransformer.class.getCanonicalName(), "Options:", options, "Input not found", true);
-            System.out.println(inputFile.getAbsolutePath());
-            return;
-        }
-
-        // Obtain input for transformation
-        File[] toTransform;
-        if (inputFile.isDirectory()) {
-            // Get potential files to transform based on extension
-            FilenameFilter owlsFilter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (name.endsWith(".wsdl") || name.endsWith(".sawsdl"));
-                }
-            };
-
-            toTransform = inputFile.listFiles(owlsFilter);
-        } else {
-            toTransform = new File[1];
-            toTransform[0] = inputFile;
-        }
-
-        // Obtain details for saving results
-        File rdfDir = null;
-        boolean save = line.hasOption("s");
-        if (save) {
-            rdfDir = new File(inputFile.getAbsolutePath() + "/RDF");
-            rdfDir.mkdir();
-        }
-
-        // Obtain details for serialisation format
-        String format = line.getOptionValue("f", uk.ac.open.kmi.msm4j.io.Syntax.TTL.getName());
-        uk.ac.open.kmi.msm4j.io.Syntax syntax = uk.ac.open.kmi.msm4j.io.Syntax.valueOf(format);
-
-        SawsdlTransformer importer;
-        ServiceWriter writer;
-
-        importer = new SawsdlTransformer();
-        writer = new ServiceWriterImpl();
-
-        List<uk.ac.open.kmi.msm4j.Service> services;
-        System.out.println("Transforming input");
-        for (File file : toTransform) {
-            try {
-                services = importer.transform(new FileInputStream(file), null);
-
-                if (services != null) {
-                    System.out.println("Services obtained: " + services.size());
-
-                    File resultFile = null;
-                    if (rdfDir != null) {
-                        String fileName = file.getName();
-                        String newFileName = fileName.substring(0, fileName.length() - 4) + syntax.getExtension();
-                        resultFile = new File(rdfDir.getAbsolutePath() + "/" + newFileName);
-                    }
-
-                    if (rdfDir != null) {
-                        OutputStream out = null;
-                        try {
-                            out = new FileOutputStream(resultFile);
-                            for (uk.ac.open.kmi.msm4j.Service service : services) {
-                                if (out != null) {
-                                    writer.serialise(service, out, syntax);
-                                    System.out.println("Service saved at: " + resultFile.getAbsolutePath());
-                                } else {
-                                    writer.serialise(service, System.out, syntax);
-                                }
-                            }
-                        } finally {
-                            if (out != null)
-                                out.close();
-                        }
-                    }
-
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (TransformationException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void setProxy(String proxyHost, String proxyPort) {
-        if (proxyHost != null && proxyPort != null) {
-            Properties prop = System.getProperties();
-            prop.put("http.proxyHost", proxyHost);
-            prop.put("http.proxyPort", proxyPort);
-        }
-    }
 
     private String getJaxpImplementationInfo(String componentName, Class componentClass) {
         CodeSource source = componentClass.getProtectionDomain().getCodeSource();

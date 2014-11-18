@@ -36,9 +36,7 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Test class for the OWLS Importer
@@ -52,6 +50,9 @@ public class OwlsTransformerTest {
 
     private static final Logger log = LoggerFactory.getLogger(OwlsTransformerTest.class);
     private static final String OWLS_TC4 = "/services/OWLS-1.1/";
+
+    // Number of files to transform. Integer.MAX_VALUE for all
+    private static final int NUM_TESTS = 25 ;
 
     private OwlsTransformer importer;
     private ServiceWriter writer;
@@ -83,6 +84,7 @@ public class OwlsTransformerTest {
                 return (name.endsWith(".owl") || name.endsWith(".owls"));
             }
         };
+
     }
 
     @Test
@@ -101,7 +103,11 @@ public class OwlsTransformerTest {
             Collection<Service> services;
             log.info("Transforming services");
             File[] owlsFiles = dir.listFiles(owlsFilter);
-            for (File file : owlsFiles) {
+            List<File> files = Arrays.asList(owlsFiles);
+            Collections.shuffle(files);
+
+            for (int i = 0; i < NUM_TESTS && i < files.size(); i++) {
+                File file = files.get(i);
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
                     InputStream in = new FileInputStream(file);
@@ -127,7 +133,11 @@ public class OwlsTransformerTest {
             Collection<Service> services;
             log.info("Transforming services");
             File[] owlsFiles = dir.listFiles(owlsFilter);
-            for (File file : owlsFiles) {
+            List<File> files = Arrays.asList(owlsFiles);
+            Collections.shuffle(files);
+
+            for (int i = 0; i < NUM_TESTS && i < files.size(); i++) {
+                File file = files.get(i);
                 log.info("Transforming service {}", file.getAbsolutePath());
                 try {
                     services = serviceTransformationEngine.transform(file, null, OwlsTransformer.mediaType);
