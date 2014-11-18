@@ -85,6 +85,23 @@
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javax.servlet</artifactId>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>javax.servlet.jsp</artifactId>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
@@ -120,14 +137,15 @@
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <testResources>
-            <testResource>
-                <directory>${project.basedir}/src/test/resources</directory>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
@@ -146,8 +164,35 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Configure Integration Tests-->
+            <!-- skip unit test run, tests to be executed during integration-test -->
             <plugin>
-            <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.15</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Launch Jetty before tests -->
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
@@ -170,7 +215,7 @@
                 <executions>
                     <execution>
                         <id>start-jetty</id>
-                        <phase>compile</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>start</goal>
                         </goals>
@@ -181,7 +226,7 @@
                     </execution>
                     <execution>
                         <id>stop-jetty</id>
-                        <phase>test</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>stop</goal>
                         </goals>
@@ -198,6 +243,5 @@
             <url>http://www.soapui.org/repository/maven2</url>
         </repository>
     </repositories>
-
 
 </project>
