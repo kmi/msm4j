@@ -29,7 +29,6 @@ import uk.ac.open.kmi.msm4j.io.TransformationException;
 import uk.ac.open.kmi.msm4j.io.impl.ServiceTransformationEngine;
 import uk.ac.open.kmi.msm4j.io.impl.TransformerModule;
 
-import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,9 +71,9 @@ public class SwaggerTransformerIT {
     @Test
     public void testPluginBasedTransformation(ServiceTransformationEngine serviceTransformationEngine) {
         try {
-            List<Service> services = serviceTransformationEngine.transform(new FileInputStream(""), API_DOCS_URL + "/pet-store/", SwaggerTransformer.mediaType);
+            List<Service> services = serviceTransformationEngine.transform(API_DOCS_URL + "/pet-store/", SwaggerTransformer.mediaType);
             Assert.assertNotNull("Service collection should not be null", services);
-            Assert.assertEquals(1, services.size());
+            Assert.assertTrue("There should be one service", 1 == services.size());
         } catch (Exception e) {
             log.error("Problems transforming the service. Continuing", e);
         }

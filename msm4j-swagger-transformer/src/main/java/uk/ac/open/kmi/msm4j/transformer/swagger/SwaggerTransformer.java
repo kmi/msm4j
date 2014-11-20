@@ -135,23 +135,13 @@ public class SwaggerTransformer implements ServiceTransformer {
                     e.printStackTrace();
                 }
 
-                if ( base != null) {
+                if (base != null) {
                     log.info("Trying to retrieve the description from {}", base);
                     try {
                         resourceListing = Swagger.readSwagger(base);
                         service = transform(resourceListing, baseUri);
                     } catch (IOException e) {
                         log.info("Unable to retrieve the swagger description from the URI: {}", e.getMessage());
-                    }
-                }
-
-                if (service == null && originalDescription != null) {
-                    try {
-                        log.info("Trying to parse the description from the provided InputStream");
-                        resourceListing = Swagger.createReader().readResourceListing(new InputStreamSwaggerSource(originalDescription, base));
-                        service = transform(resourceListing, baseUri);
-                    } catch (IOException e) {
-                        log.info("Unable to parse the swagger from the provided InputStream.");
                     }
                 }
 
