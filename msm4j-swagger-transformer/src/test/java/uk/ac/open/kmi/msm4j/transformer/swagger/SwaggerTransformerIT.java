@@ -57,7 +57,7 @@ public class SwaggerTransformerIT {
         }
 
         Assert.assertNotNull("Service collection should not be null", services);
-        Assert.assertTrue("There should be at least one service", 1 <= services.size());
+        Assert.assertTrue("There should be one service", 1 == services.size());
 
         try {
             services = importer.transform(null, API_DOCS_URL + "/iserve/");
@@ -66,7 +66,7 @@ public class SwaggerTransformerIT {
         }
 
         Assert.assertNotNull("Service collection should not be null", services);
-        Assert.assertTrue("There should be at least one service", 1 >= services.size());
+        Assert.assertTrue("There should be one service", 1 == services.size());
     }
 
     @Test
