@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>msm4j-parent</artifactId>
         <groupId>uk.ac.open.kmi.msm4j</groupId>
@@ -335,7 +336,7 @@
                             <mainClass>jena.schemagen</mainClass>
                             <commandlineArgs>
                                 -a http://www.w3.org/2011/http-methods# \
-                                -i ${basedir}/src/main/resources/http-Methods-2011-04-29.ttl \
+                                -i ${basedir}/src/main/resources/http-methods-2011-04-29.ttl \
                                 -e TTL \
                                 --package uk.ac.open.kmi.msm4j.vocabulary \
                                 -o ${project.build.directory}/generated-sources/java \
