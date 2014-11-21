@@ -168,6 +168,7 @@ public class SwaggerTransformer implements ServiceTransformer {
             if (resourceListing.getBasePath() != null) {
                 msmSvc = new Service(new URI(resourceListing.getBasePath()));
             } else {
+                // TODO: Use .resolve instead
                 msmSvc = new Service(new URI(new StringBuilder(baseUri).append("/").append(resourceListing.getApis().get(0).getDeclaration().getBasePath()).toString()));
             }
 
@@ -212,7 +213,7 @@ public class SwaggerTransformer implements ServiceTransformer {
             } else {
                 modelUri = baseUri;
             }
-            URI opUri = new URI(new StringBuilder(modelUri).append(swaggerOperation.getNickName()).toString());
+            URI opUri = new URI(modelUri).resolve(swaggerOperation.getNickName());
 
             msmOp = new uk.ac.open.kmi.msm4j.Operation(opUri);
             msmOp.setLabel(swaggerOperation.getNickName());
