@@ -19,7 +19,7 @@
     <parent>
         <artifactId>msm4j-parent</artifactId>
         <groupId>uk.ac.open.kmi.msm4j</groupId>
-        <version>1.3.1-SNAPSHOT</version>
+        <version>1.3.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
