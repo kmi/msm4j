@@ -211,7 +211,7 @@ public class ServiceReaderImpl implements ServiceReader {
         }
 
         //Swagger grounding
-        rdfGrounding = individual.getPropertyValue(MSM_WSDL.isGroundedIn);
+        rdfGrounding = individual.getPropertyValue(MSM_SWAGGER.isGroundedIn);
         if (rdfGrounding != null) {
             if (rdfGrounding.isLiteral()) {
                 if (rdfGrounding.asLiteral().getDatatypeURI() != null) {
