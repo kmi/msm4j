@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Knowledge Media Institute - The Open University
+ * Copyright (c) 2015. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,7 +211,7 @@ public class ServiceReaderImpl implements ServiceReader {
         }
 
         //Swagger grounding
-        rdfGrounding = individual.getPropertyValue(MSM_WSDL.isGroundedIn);
+        rdfGrounding = individual.getPropertyValue(MSM_SWAGGER.isGroundedIn);
         if (rdfGrounding != null) {
             if (rdfGrounding.isLiteral()) {
                 if (rdfGrounding.asLiteral().getDatatypeURI() != null) {
@@ -281,7 +281,12 @@ public class ServiceReaderImpl implements ServiceReader {
 
                 // Method
                 if (individual.hasProperty(HRESTS.hasMethod)) {
-                    operation.setMethod(new URI(individual.getProperty(HRESTS.hasMethod).getString()));
+                    RDFNode method = individual.getPropertyValue(HRESTS.hasMethod);
+                    if (method.isLiteral()) {
+                        operation.setMethod(method.asLiteral().getString());
+                    } else {
+                        operation.setMethod(new URI(method.asResource().getURI()));
+                    }
                 }
 
                 // ProducesContentTypes
