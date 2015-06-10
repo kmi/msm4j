@@ -8,7 +8,9 @@ uk.ac.open.kmi.msm4j.io
 uk.ac.open.kmi.msm4j.io.extensionTypes
 uk.ac.open.kmi.msm4j.io.impl
 uk.ac.open.kmi.msm4j.io.util
+uk.ac.open.kmi.msm4j.nfp
 uk.ac.open.kmi.msm4j.transformer.hrests
 uk.ac.open.kmi.msm4j.transformer.owls
 uk.ac.open.kmi.msm4j.transformer.sawsdl
+uk.ac.open.kmi.msm4j.transformer.swagger
 uk.ac.open.kmi.msm4j.util
