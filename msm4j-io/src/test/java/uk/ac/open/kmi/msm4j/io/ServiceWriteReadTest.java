@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2015. Knowledge Media Institute - The Open University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.open.kmi.msm4j.io;
 
 import org.jukito.JukitoModule;
@@ -33,29 +49,17 @@ public class ServiceWriteReadTest {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceWriteReadTest.class);
 
-    /**
-     * JukitoModule.
-     */
-    public static class InnerModule extends JukitoModule {
-        @Override
-        protected void configureTest() {
-
-            // Ensure configuration is loaded
-            install(new TransformerModule());
-        }
-    }
-
     @Test
     public void testReadWrite(ServiceReader reader, ServiceWriter writer) throws Exception {
         FileInputStream fis = new FileInputStream(ServiceWriteReadTest.class.getResource("/twitter.n3").getFile());
-        List<Service> services = reader.parse(fis,"http://iserve.kmi.open.ac.uk/iserve/id/services/ec6f7ee4-bbbe-4463-9cfa-3b5f54b6cc99/twitter",Syntax.N3);
-        for(Service service:services){
+        List<Service> services = reader.parse(fis, "http://iserve.kmi.open.ac.uk/iserve/id/services/ec6f7ee4-bbbe-4463-9cfa-3b5f54b6cc99/twitter", Syntax.N3);
+        for (Service service : services) {
             //seeAlso test
             Assert.assertTrue(service.getSeeAlsos().size() == 1);
             service.getSeeAlsos().remove(URI.create("http://www.programmableweb.com/api/twitter"));
             Assert.assertTrue(service.getSeeAlsos().size() == 0);
             service.addSeeAlso(URI.create("http://www.programmableweb.com/api/twitter"));
-            service.addSeeAlso(URI.create("https://dev.twitter.com/docs/api/1.1"));
+            service.setDocumentation(new URL("https://dev.twitter.com/docs/api/1.1"));
 
             //enrich the service description
             Provider provider = new Provider(URI.create("http://iserve.open.ac.uk/iserve/id/providers/twitter"));
@@ -81,7 +85,7 @@ public class ServiceWriteReadTest {
             //write the service description
             File ontoFile = new File("temp.n3");
             FileOutputStream fos = new FileOutputStream(ontoFile);
-            writer.serialise(service,fos,Syntax.N3);
+            writer.serialise(service, fos, Syntax.N3);
             fos.flush();
             fos.close();
 
@@ -91,6 +95,18 @@ public class ServiceWriteReadTest {
             // match if the service is equal
             Assert.assertTrue(service.equals(servicesNt.get(0)));
             ontoFile.delete();
+        }
+    }
+
+    /**
+     * JukitoModule.
+     */
+    public static class InnerModule extends JukitoModule {
+        @Override
+        protected void configureTest() {
+
+            // Ensure configuration is loaded
+            install(new TransformerModule());
         }
     }
 }

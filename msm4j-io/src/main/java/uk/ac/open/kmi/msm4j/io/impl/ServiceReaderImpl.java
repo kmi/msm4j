@@ -177,6 +177,16 @@ public class ServiceReaderImpl implements ServiceReader {
             service.setProvider(provider);
         }
 
+        // Documentation
+        Resource documentationValue = individual.getPropertyResourceValue(MSM_NFP.hasDocumentation);
+        if (documentationValue != null) {
+            try {
+                service.setDocumentation(new URL(documentationValue.getURI()));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return service;
     }
 

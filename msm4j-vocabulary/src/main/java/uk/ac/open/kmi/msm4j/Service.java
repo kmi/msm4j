@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013. Knowledge Media Institute - The Open University
+ * Copyright (c) 2015. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import uk.ac.open.kmi.msm4j.nfp.Provider;
 import uk.ac.open.kmi.msm4j.nfp.TwitterAccount;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,7 @@ public class Service extends InvocableEntity {
     private Provider provider;
     private Integer totalMashups;
     private Integer recentMashups;
+    private URL documentation;
 
     public Service(URI uri) {
         super(uri);
@@ -133,6 +135,8 @@ public class Service extends InvocableEntity {
             return false;
         if (twitterAccount != null ? !twitterAccount.equals(service.twitterAccount) : service.twitterAccount != null)
             return false;
+        if (documentation != null ? !documentation.equals(service.documentation) : service.documentation != null)
+            return false;
 
         return true;
     }
@@ -155,5 +159,13 @@ public class Service extends InvocableEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public URL getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(URL documentation) {
+        this.documentation = documentation;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Knowledge Media Institute - The Open University
+ * Copyright (c) 2015. Knowledge Media Institute - The Open University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import uk.ac.open.kmi.msm4j.vocabulary.*;
 
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -114,7 +115,22 @@ public class ServiceWriterImpl implements ServiceWriter {
         addTotalMashups(model, service);
         addRecentMashups(model, service);
 
+        addDocumentation(model, service);
+
         return model;
+    }
+
+    private void addDocumentation(Model model, Service service) {
+        if (service.getDocumentation() != null) {
+            com.hp.hpl.jena.rdf.model.Resource current = model.createResource(service.getUri().toASCIIString());
+            try {
+                com.hp.hpl.jena.rdf.model.Resource documentationRes = model.createResource(service.getDocumentation().toURI().toASCIIString());
+                current.addProperty(MSM_NFP.hasDocumentation, documentationRes);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     private void addAddress(Model model, Service service) {
