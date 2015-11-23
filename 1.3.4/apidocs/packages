@@ -1,0 +1,16 @@
+uk.ac.open.kmi.msm4j
+uk.ac.open.kmi.msm4j.nfp
+uk.ac.open.kmi.msm4j.util
+uk.ac.open.kmi.msm4j.io.extensionTypes
+uk.ac.open.kmi.msm4j.io.impl
+uk.ac.open.kmi.msm4j.io
+uk.ac.open.kmi.msm4j.io.util
+uk.ac.open.kmi.msm4j.transformer.hrests
+uk.ac.open.kmi.msm4j.transformer.owls
+uk.ac.open.kmi.msm4j.transformer.sawsdl
+es.usc.citius.composit.transformer.wsc.wscxml
+es.usc.citius.composit.transformer.wsc.wscxml.model.problem
+es.usc.citius.composit.transformer.wsc.wscxml.model.services
+es.usc.citius.composit.transformer.wsc.wscxml.model.taxonomy
+es.usc.citius.composit.transformer.wsc.wscxml.model
+uk.ac.open.kmi.msm4j.transformer.swagger
